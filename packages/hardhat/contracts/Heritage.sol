@@ -28,8 +28,9 @@ contract Heritage is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 	// /// @custom:oz-upgrades-unsafe-allow constructor
 	// constructor() initializer {}
 
-	function initialize() public initializer {
+	function initialize(address owner) public initializer {
 		// __Ownable_init();
+		__Ownable_init(owner);
 	}
 
 	function _authorizeUpgrade(
@@ -38,4 +39,6 @@ contract Heritage is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 		console.log("_authorizeUpgrade executed for admin:", _msgSender());
 		console.log("New implementation address:", newImplementation);
 	}
+
+	function dummyFunc() public {}
 }

@@ -1,5 +1,21 @@
+// import fs from "fs";
+// import path from "path";
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction } from "hardhat-deploy/types";
+import {
+  ABI,
+  // ArtifactData,
+  DeployFunction,
+  // DeployOptions,
+  // Deployment,
+  DeploymentSubmission,
+  // DeploymentsExtension,
+  // ExtendedArtifact,
+} from "hardhat-deploy/types";
+import { DeploymentsManager } from "hardhat-deploy/dist/src/DeploymentsManager";
+import { mergeABIs } from "hardhat-deploy/dist/src/utils";
+import { Contract } from "ethers";
+import eip173Proxy from "hardhat-deploy/extendedArtifacts/EIP173Proxy.json";
+import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -22,19 +38,74 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
 
   const { deployer } = await getNamedAccounts();
 
-  const Heritage = await ethers.getContractFactory("Heritage");
+  // const { deploy } = hre.deployments;
 
-  const heritage = await upgrades.deployProxy(Heritage, {
+  // await deploy("Heritage", {
+  //   from: deployer,
+  //   // Contract constructor arguments
+  //   log: true,
+  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
+  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
+  //   autoMine: true,
+  //   proxy: { owner: deployer, methodName: "initialize", proxyArgs: [deployer] },
+  // });
+
+  const contractName = "Heritage";
+
+  const Heritage = await ethers.getContractFactory(contractName);
+
+  const proxy = await upgrades.deployProxy(Heritage, [deployer], {
     initializer: "initialize",
+    kind: "uups",
   });
 
-  await heritage.waitForDeployment();
+  await proxy.waitForDeployment();
 
-  // Get the deployed contract
-  // const yourContract = await hre.ethers.getContract("YourContract", deployer);
+  const currentImplAddress = await getImplementationAddress(hre.network.provider, proxy.target as string);
 
-  console.log("Heritage deployed to:", heritage.target, "by:", deployer);
+  console.info({ currentImplAddress });
+
+  console.info("Heritage proxy deployed to:", proxy.target, "by:", deployer);
+
+  await saveDeployment(hre, contractName, proxy, currentImplAddress);
 };
+
+async function saveDeployment(
+  hre: HardhatRuntimeEnvironment,
+  contractName: string,
+  proxy: Contract,
+  implementationAddress: string,
+) {
+  // const oldDeployment = await hre.deployments.getOrNull(contractName);
+
+  const deploymentsManager = new DeploymentsManager(hre, hre.network);
+
+  // const proxyArtifactPath = path.join(__dirname, `../artifacts/contracts/${contractName}.sol/${contractName}.json`);
+
+  // let proxyContract: ExtendedArtifact = JSON.parse(fs.readFileSync(proxyArtifactPath, "utf-8"));
+
+  const proxyArtifact = await hre.deployments.getArtifact(contractName);
+  const mergedABI: ABI = mergeABIs([proxyArtifact.abi, eip173Proxy.abi], {
+    check: true, // TODO options for custom proxy ?
+    skipSupportsInterface: true, // TODO options for custom proxy ?
+  }).filter(v => v.type !== "constructor");
+
+  const proxiedDeployment: DeploymentSubmission = {
+    ...eip173Proxy,
+    address: proxy.target as string,
+    implementation: implementationAddress,
+    receipt: proxy.deploymentTransaction() as unknown as undefined,
+    abi: mergedABI,
+    // execute: updateMethod
+    //   ? {
+    //       methodName: updateMethod,
+    //       args: updateArgs,
+    //     }
+    //   : undefined,
+  };
+
+  await deploymentsManager.saveDeployment(contractName, proxiedDeployment);
+}
 
 export default deployYourContract;
 
