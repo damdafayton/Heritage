@@ -10,8 +10,8 @@ import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
 
 contract Heritage is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 	// Cant change the order or type of the variables down
-	uint minimumFeePerYer;
-	uint feeThousandagePerYear;
+	uint public usdMinFeePerYer;
+	uint public feeThousandagePerYear;
 	address[] addressesToPay;
 	address[] subscribedAddresses;
 	struct Subscription {
@@ -19,18 +19,23 @@ contract Heritage is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 		uint startDate;
 		uint feePerYear;
 		uint feeThousandagePerYear;
-		bool lastYearPaid;
 		uint payCount;
-		bool paidLastYear;
+		bool lastYearPaid;
 	}
-	mapping(address => Subscription) addressSubscriptionMap;
+	mapping(address => Subscription) public addressSubscriptionMap;
 
 	// /// @custom:oz-upgrades-unsafe-allow constructor
 	// constructor() initializer {}
 
-	function initialize(address owner) public initializer {
+	function initialize(
+		address owner,
+		uint _usdMinFeePerYer,
+		uint _feeThousandagePerYear
+	) public initializer {
 		// __Ownable_init();
 		__Ownable_init(owner);
+		usdMinFeePerYer = _usdMinFeePerYer;
+		feeThousandagePerYear = _feeThousandagePerYear;
 	}
 
 	function _authorizeUpgrade(
@@ -40,5 +45,22 @@ contract Heritage is Initializable, UUPSUpgradeable, OwnableUpgradeable {
 		console.log("New implementation address:", newImplementation);
 	}
 
-	function dummyFunc() public {}
+	function subscribe() public {
+		console.log("Calculating the minimum fee for:", _msgSender());
+
+		Subscription storage newSubscription = addressSubscriptionMap[
+			_msgSender()
+		];
+
+		newSubscription.payingAddress = _msgSender();
+		newSubscription.startDate = block.timestamp;
+		newSubscription.feePerYear = usdMinFeePerYer;
+		newSubscription.feeThousandagePerYear = feeThousandagePerYear;
+	}
+
+	// temporary override
+	function proxiableUUID() public view override returns (bytes32) {
+		bytes32 variable;
+		return variable;
+	}
 }

@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Heritage: {
-      address: "0x322813Fd9A801c5507c9de605d63CEA4f2CE6c44",
+      address: "0x7bc06c482DEAd17c0e297aFbC32f6e63d3846650",
       abi: [
         {
           inputs: [
@@ -148,10 +148,60 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          name: "addressSubscriptionMap",
+          outputs: [
+            {
+              internalType: "address",
+              name: "payingAddress",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "startDate",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "feePerYear",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "feeThousandagePerYear",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "payCount",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "lastYearPaid",
+              type: "bool",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [],
-          name: "dummyFunc",
-          outputs: [],
-          stateMutability: "nonpayable",
+          name: "feeThousandagePerYear",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -160,6 +210,16 @@ const deployedContracts = {
               internalType: "address",
               name: "owner",
               type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "_usdMinFeePerYer",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_feeThousandagePerYear",
+              type: "uint256",
             },
           ],
           name: "initialize",
@@ -201,6 +261,13 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "subscribe",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "address",
@@ -231,10 +298,23 @@ const deployedContracts = {
           stateMutability: "payable",
           type: "function",
         },
+        {
+          inputs: [],
+          name: "usdMinFeePerYer",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
       ],
     },
     YourContract: {
-      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [

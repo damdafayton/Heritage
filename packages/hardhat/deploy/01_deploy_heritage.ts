@@ -1,20 +1,7 @@
-// import fs from "fs";
-// import path from "path";
-import { HardhatRuntimeEnvironment } from "hardhat/types";
-import {
-  ABI,
-  // ArtifactData,
-  DeployFunction,
-  // DeployOptions,
-  // Deployment,
-  DeploymentSubmission,
-  // DeploymentsExtension,
-  // ExtendedArtifact,
-} from "hardhat-deploy/types";
+import { Artifact, HardhatRuntimeEnvironment } from "hardhat/types";
+import { DeployFunction, DeploymentSubmission } from "hardhat-deploy/types";
 import { DeploymentsManager } from "hardhat-deploy/dist/src/DeploymentsManager";
-import { mergeABIs } from "hardhat-deploy/dist/src/utils";
 import { Contract } from "ethers";
-import eip173Proxy from "hardhat-deploy/extendedArtifacts/EIP173Proxy.json";
 import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 /**
@@ -37,24 +24,15 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { getNamedAccounts, ethers, upgrades } = hre;
 
   const { deployer } = await getNamedAccounts();
-
-  // const { deploy } = hre.deployments;
-
-  // await deploy("Heritage", {
-  //   from: deployer,
-  //   // Contract constructor arguments
-  //   log: true,
-  //   // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-  //   // automatically mining the contract deployment transaction. There is no effect on live networks.
-  //   autoMine: true,
-  //   proxy: { owner: deployer, methodName: "initialize", proxyArgs: [deployer] },
-  // });
-
+  const rainbowAccount = "0xb6b5ee4ab2566f3e0ff14af9318342ddae160fe3";
   const contractName = "Heritage";
 
   const Heritage = await ethers.getContractFactory(contractName);
 
-  const proxy = await upgrades.deployProxy(Heritage, [deployer], {
+  const minFeeUsd = 5;
+  const feeThousandage = 1;
+
+  const proxy = await upgrades.deployProxy(Heritage, [rainbowAccount, minFeeUsd, feeThousandage], {
     initializer: "initialize",
     kind: "uups",
   });
@@ -80,22 +58,13 @@ async function saveDeployment(
 
   const deploymentsManager = new DeploymentsManager(hre, hre.network);
 
-  // const proxyArtifactPath = path.join(__dirname, `../artifacts/contracts/${contractName}.sol/${contractName}.json`);
-
-  // let proxyContract: ExtendedArtifact = JSON.parse(fs.readFileSync(proxyArtifactPath, "utf-8"));
-
-  const proxyArtifact = await hre.deployments.getArtifact(contractName);
-  const mergedABI: ABI = mergeABIs([proxyArtifact.abi, eip173Proxy.abi], {
-    check: true, // TODO options for custom proxy ?
-    skipSupportsInterface: true, // TODO options for custom proxy ?
-  }).filter(v => v.type !== "constructor");
+  const proxyArtifact: Artifact = await hre.deployments.getArtifact(contractName);
 
   const proxiedDeployment: DeploymentSubmission = {
-    ...eip173Proxy,
+    ...proxyArtifact,
     address: proxy.target as string,
     implementation: implementationAddress,
     receipt: proxy.deploymentTransaction() as unknown as undefined,
-    abi: mergedABI,
     // execute: updateMethod
     //   ? {
     //       methodName: updateMethod,

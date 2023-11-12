@@ -1,28 +1,49 @@
 import { expect } from "chai";
-import { ethers } from "hardhat";
-import { Proxy } from "../typechain-types";
+import { ethers, upgrades } from "hardhat";
+import { Heritage } from "../typechain-types";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
-describe("YourContract", function () {
+describe("Heritage", function () {
   // We define a fixture to reuse the same setup in every test.
 
-  let yourContract: Proxy;
+  let heritageContract: Heritage;
+  let owner: SignerWithAddress;
+
   before(async () => {
-    const [owner] = await ethers.getSigners();
-    const yourContractFactory = await ethers.getContractFactory("Proxy");
-    yourContract = (await yourContractFactory.deploy(owner.address)) as YourContract;
-    await yourContract.deployed();
+    // const [owner] = await ethers.getSigners();
+    // const heritageFactory = await ethers.getContractFactory("Heritage");
+    // const proxy = await upgrades.deployProxy(heritageFactory, [owner.address], {
+    //   initializer: "initialize",
+    //   kind: "uups",
+    // });
+    // await proxy.waitForDeployment();
   });
 
   describe("Deployment", function () {
-    it("Should have the right message on deploy", async function () {
-      expect(await yourContract.greeting()).to.equal("Building Unstoppable Apps!!!");
+    it("deploys", async () => {
+      const [_] = await ethers.getSigners();
+      owner = _;
+      const heritageFactory = await ethers.getContractFactory("Heritage");
+
+      heritageContract = (await upgrades.deployProxy(heritageFactory, [owner.address], {
+        initializer: "initialize",
+        kind: "uups",
+      })) as unknown as Heritage;
+
+      await heritageContract.waitForDeployment();
+
+      console.log(`Test contract deployed to: ${heritageContract.target} by: ${owner.address}`);
     });
 
-    it("Should allow setting a new message", async function () {
-      const newGreeting = "Learn Scaffold-ETH 2! :)";
-
-      await yourContract.setGreeting(newGreeting);
-      expect(await yourContract.greeting()).to.equal(newGreeting);
+    it("Should have the right owner on deploy", async function () {
+      expect(await heritageContract.owner()).to.equal(owner.address);
     });
+
+    // it("Should allow setting a new message", async function () {
+    //   const newGreeting = "Learn Scaffold-ETH 2! :)";
+
+    //   await heritageContract.setGreeting(newGreeting);
+    //   expect(await heritageContract.greeting()).to.equal(newGreeting);
+    // });
   });
 });
