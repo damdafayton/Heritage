@@ -4,6 +4,9 @@ import { DeploymentsManager } from "hardhat-deploy/dist/src/DeploymentsManager";
 import { Contract } from "ethers";
 import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
+import { localConfig } from "../local-config";
+const { RainbowAccountAddress } = localConfig;
+
 /**
  * Deploys a contract named "YourContract" using the deployer account and
  * constructor arguments set to the deployer address
@@ -24,7 +27,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const { getNamedAccounts, ethers, upgrades } = hre;
 
   const { deployer } = await getNamedAccounts();
-  const rainbowAccount = "0xb6b5ee4ab2566f3e0ff14af9318342ddae160fe3";
+  const owner = RainbowAccountAddress;
   const contractName = "Heritage";
 
   const Heritage = await ethers.getContractFactory(contractName);
@@ -32,7 +35,7 @@ const deployYourContract: DeployFunction = async function (hre: HardhatRuntimeEn
   const minFeeUsd = 5;
   const feeThousandage = 1;
 
-  const proxy = await upgrades.deployProxy(Heritage, [rainbowAccount, minFeeUsd, feeThousandage], {
+  const proxy = await upgrades.deployProxy(Heritage, [owner, minFeeUsd, feeThousandage], {
     initializer: "initialize",
     kind: "uups",
   });
