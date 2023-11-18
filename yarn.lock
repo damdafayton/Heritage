@@ -4466,6 +4466,7 @@ __metadata:
     "@types/mocha": ^9.1.1
     "@types/prettier": ^2
     "@types/qrcode": ^1
+    "@types/semver": ^7
     "@typescript-eslint/eslint-plugin": latest
     "@typescript-eslint/parser": latest
     chai: ^4.3.6
@@ -4478,8 +4479,10 @@ __metadata:
     hardhat: ^2.17.3
     hardhat-deploy: ^0.11.26
     hardhat-gas-reporter: ^1.0.9
+    postinstall-postinstall: ^2.1.0
     prettier: ^2.8.4
     qrcode: ^1.5.1
+    semver: 7.5.4
     solidity-coverage: ^0.8.2
     ts-node: ^10.9.1
     typechain: ^8.1.0
@@ -5636,6 +5639,13 @@ __metadata:
   dependencies:
     "@types/node": "*"
   checksum: 1bd10b9afa724084b655dc81b7b315def3d2d0e272014ef16009fa76e17537411c07c0695fdea412bc7b36d2a02687f5fea33522d55b8ef29eda42992f812913
+  languageName: node
+  linkType: hard
+
+"@types/semver@npm:^7":
+  version: 7.5.5
+  resolution: "@types/semver@npm:7.5.5"
+  checksum: 533e6c93d1262d65f449423d94a445f7f3db0672e7429f21b6a1636d6051dbab3a2989ddcda9b79c69bb37830931d09fc958a65305a891357f5cea3257c297f5
   languageName: node
   linkType: hard
 
@@ -18162,6 +18172,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postinstall-postinstall@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "postinstall-postinstall@npm:2.1.0"
+  checksum: e1d34252cf8d2c5641c7d2db7426ec96e3d7a975f01c174c68f09ef5b8327bc8d5a9aa2001a45e693db2cdbf69577094d3fe6597b564ad2d2202b65fba76134b
+  languageName: node
+  linkType: hard
+
 "preact@npm:^10.12.0":
   version: 10.15.1
   resolution: "preact@npm:10.15.1"
@@ -19697,74 +19714,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:6.1.1":
-  version: 6.1.1
-  resolution: "semver@npm:6.1.1"
-  bin:
-    semver: ./bin/semver
-  checksum: 630e7d8a087d8f143c320dc381b2d9ca279295d2daa6ab4b707e6c9342ba0f25bd0b817530fe0eeb9ca62c24d7ad6d9eb660066818eee5554a1d5392f16e4ea0
-  languageName: node
-  linkType: hard
-
-"semver@npm:^5.5.0, semver@npm:^5.7.0":
-  version: 5.7.1
-  resolution: "semver@npm:5.7.1"
-  bin:
-    semver: ./bin/semver
-  checksum: 57fd0acfd0bac382ee87cd52cd0aaa5af086a7dc8d60379dfe65fea491fb2489b6016400813930ecd61fd0952dae75c115287a1b16c234b1550887117744dfaf
-  languageName: node
-  linkType: hard
-
-"semver@npm:^5.6.0":
-  version: 5.7.2
-  resolution: "semver@npm:5.7.2"
-  bin:
-    semver: bin/semver
-  checksum: fb4ab5e0dd1c22ce0c937ea390b4a822147a9c53dbd2a9a0132f12fe382902beef4fbf12cf51bb955248d8d15874ce8cd89532569756384f994309825f10b686
-  languageName: node
-  linkType: hard
-
-"semver@npm:^6.0.0, semver@npm:^6.3.0":
-  version: 6.3.0
-  resolution: "semver@npm:6.3.0"
-  bin:
-    semver: ./bin/semver.js
-  checksum: 1b26ecf6db9e8292dd90df4e781d91875c0dcc1b1909e70f5d12959a23c7eebb8f01ea581c00783bbee72ceeaad9505797c381756326073850dc36ed284b21b9
-  languageName: node
-  linkType: hard
-
-"semver@npm:^6.3.1":
-  version: 6.3.1
-  resolution: "semver@npm:6.3.1"
-  bin:
-    semver: bin/semver.js
-  checksum: ae47d06de28836adb9d3e25f22a92943477371292d9b665fb023fae278d345d508ca1958232af086d85e0155aee22e313e100971898bbb8d5d89b8b1d4054ca2
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.4, semver@npm:^7.3.5, semver@npm:^7.3.7":
-  version: 7.3.7
-  resolution: "semver@npm:7.3.7"
-  dependencies:
-    lru-cache: ^6.0.0
-  bin:
-    semver: bin/semver.js
-  checksum: 2fa3e877568cd6ce769c75c211beaed1f9fce80b28338cadd9d0b6c40f2e2862bafd62c19a6cff42f3d54292b7c623277bcab8816a2b5521cf15210d43e75232
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.3.8":
-  version: 7.5.2
-  resolution: "semver@npm:7.5.2"
-  dependencies:
-    lru-cache: ^6.0.0
-  bin:
-    semver: bin/semver.js
-  checksum: 3fdf5d1e6f170fe8bcc41669e31787649af91af7f54f05c71d0865bb7aa27e8b92f68b3e6b582483e2c1c648008bc84249d2cd86301771fe5cbf7621d1fe5375
-  languageName: node
-  linkType: hard
-
-"semver@npm:^7.5.2, semver@npm:^7.5.3, semver@npm:^7.5.4":
+"semver@npm:7.5.4":
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
   dependencies:
@@ -19772,6 +19722,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 12d8ad952fa353b0995bf180cdac205a4068b759a140e5d3c608317098b3575ac2f1e09182206bf2eb26120e1c0ed8fb92c48c592f6099680de56bb071423ca3
+  languageName: node
+  linkType: hard
+
+"semver@patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch::locator=se-2%40workspace%3A.":
+  version: 7.5.4
+  resolution: "semver@patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch::version=7.5.4&hash=c7d8d0&locator=se-2%40workspace%3A."
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: 09b9dd5148aaf1d01f1e81e3b3ac35b3334701d380db8ff1fc853fad82fc98b6705d92a88b154af8c2d6916c6b8e55039bfc88b5f48c9902d3cd06493e419e77
   languageName: node
   linkType: hard
 
