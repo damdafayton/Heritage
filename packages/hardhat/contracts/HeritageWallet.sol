@@ -27,7 +27,7 @@ contract HeritageWallet is Ownable {
 	}
 	// event for deposit and for withdraw
 	event Deposit(address _sender, address addressToDeposit, uint amount);
-	event Withdraw(address _sender, uint amount, address _beneficiary);
+	event SendFunds(address _sender, uint amount, address _beneficiary);
 
 	// set the owner as soon as the wallet is created
 	constructor(address _owner, address _ethUsdPriceFeed) Ownable(_owner) {
@@ -51,6 +51,8 @@ contract HeritageWallet is Ownable {
 		subscriptionData.deposited += msg.value;
 
 		emit Deposit(msg.sender, addressToDeposit, msg.value);
+
+		console.log("trigger compile");
 	}
 
 	function sendFunds(
@@ -67,7 +69,7 @@ contract HeritageWallet is Ownable {
 
 		receiver.transfer(amount);
 
-		emit Withdraw(msg.sender, amount, receiver);
+		emit SendFunds(msg.sender, amount, receiver);
 	}
 
 	function payOutstandingFees(address _address) public returns (bool) {
@@ -149,6 +151,7 @@ contract HeritageWallet is Ownable {
 		return 100 - consumedInheritancePercent;
 	}
 
+	// Choses the higher val of fixed fee vs thousandage fee and returns the result in WEI
 	function calculateFeeToPay(address _address) public view returns (uint) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
@@ -184,6 +187,7 @@ contract HeritageWallet is Ownable {
 		newSubscription.startTimestamp = block.timestamp;
 		newSubscription.minFeePerYear = minFeePerYear;
 		newSubscription.feeThousandagePerYear = feeThousandagePerYear;
+		newSubscription.canModify = true;
 	}
 
 	function getEthPrice() public view returns (uint, uint) {
@@ -211,7 +215,6 @@ contract HeritageWallet is Ownable {
 		uint missingDecimalCountInPrice = _numDigits(int(ethPrice)) - decimal;
 		// Match price digits to ethPrice digits
 		uint priceStandardized = price * 10 ** missingDecimalCountInPrice;
-		console.log(priceStandardized);
 
 		uint priceInWei = (1 ether * priceStandardized) / ethPrice;
 
@@ -249,7 +252,6 @@ contract HeritageWallet is Ownable {
 		return true;
 	}
 
-	//
 	function _findYearsBetweenTimestamps(
 		uint startTimestamp,
 		uint endTimestamp

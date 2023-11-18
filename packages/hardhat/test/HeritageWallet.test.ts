@@ -1,5 +1,3 @@
-// yarn test --grep "HeritageWallet"
-
 import { expect } from "chai";
 import { ethers } from "hardhat";
 import { HeritageWallet, ExposedHeritageWallet, Mock_AggregatorV3Interface } from "../typechain-types";
@@ -10,6 +8,7 @@ describe("HeritageWallet", function () {
 
   let heritageWallet: HeritageWallet;
   let exposedHeritageWallet: ExposedHeritageWallet;
+  let ownerAddress: string;
 
   before(async () => {
     const ethUsdFeedAddress = await deployEthUsdFeedMock();
@@ -17,24 +16,80 @@ describe("HeritageWallet", function () {
     const [owner] = await ethers.getSigners();
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
-    heritageWallet = (await heritageWalletFactory.deploy(
-      owner.address,
-      ethUsdFeedAddress,
-    )) as unknown as HeritageWallet;
+    ownerAddress = owner.address;
+
+    heritageWallet = (await heritageWalletFactory.deploy(ownerAddress, ethUsdFeedAddress)) as unknown as HeritageWallet;
 
     await heritageWallet.waitForDeployment();
 
     const exposedHeritageWalletFactory = await ethers.getContractFactory("ExposedHeritageWallet");
 
     exposedHeritageWallet = (await exposedHeritageWalletFactory.deploy(
-      owner.address,
+      ownerAddress,
       ethUsdFeedAddress,
     )) as unknown as ExposedHeritageWallet;
 
     await exposedHeritageWallet.waitForDeployment();
   });
 
-  describe("Functions", function () {
+  describe("Subscription", function () {
+    let subscriberAddr: string;
+
+    it("registerSubscriber() registers a new inheritance record", async () => {
+      // eslint-disable-next-line
+      const [_, secondAddr] = await ethers.getSigners();
+      subscriberAddr = secondAddr.address;
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(secondAddr.address, minFeeUsd, feeThousandage, { from: ownerAddress });
+
+      // eslint-disable-next-line
+      const [timestamp, ...subscriptonDataOfUser] = await heritageWallet.addressSubscriptionMap(subscriberAddr);
+
+      expect(subscriptonDataOfUser).to.eql([7n, 1n, 0n, false, 0n, true]);
+    });
+
+    it("calculateFeeToPay() calculates a fee to pay in WEI", async () => {
+      const fee = await heritageWallet.calculateFeeToPay(subscriberAddr);
+
+      expect(fee).to.eql(354534952299n);
+    });
+
+    it("payOutstandingFees()");
+
+    it("distributeHeritage()");
+
+    it("addInheritant()");
+
+    it("getRemainingInheritancePercentage()");
+  });
+
+  describe("Wallet functionalities", function () {
+    // it("deposit() deposits to sender if address arg. is not given", async () => {
+    //   const [_, secondAddr] = await ethers.getSigners();
+
+    //   //@ts-ignore
+    //   await heritageWallet.deposit(_, {
+    //     from: secondAddr.address,
+    //     gasLimit: 3000000,
+    //     value: ethers.parseUnits("1.0", "wei"),
+    //   });
+    // });
+
+    it("deposit() deposits to given address if address arg. is given");
+
+    it("deposit() emits event when there is a new deposit");
+
+    it("sendFunds()");
+
+    it("sendFunds() emits event");
+  });
+
+  describe("Utilities", function () {
+    // Reduce decimals from 13 to 10
+    const jsToSolTime = (jsTime: number) => parseInt((jsTime / 1000).toFixed());
+
     it("getEthPrice() should return ETH-USD price and decimals", async function () {
       expect(await heritageWallet.getEthPrice()).to.eql([BigInt(197441746000), BigInt(8)]);
     });
@@ -51,9 +106,11 @@ describe("HeritageWallet", function () {
 
     it("_findYearsBetweenTimestamps() calculates 1 for count of subscription fees", async () => {
       const startTime = Date.now();
-      const endTime = startTime + 1;
 
-      const years = await exposedHeritageWallet.findYearsBetweenTimestamps(startTime, endTime);
+      const years = await exposedHeritageWallet.findYearsBetweenTimestamps(
+        jsToSolTime(startTime),
+        jsToSolTime(startTime) + 1,
+      );
 
       expect(years).to.eql(1n);
     });
@@ -63,14 +120,27 @@ describe("HeritageWallet", function () {
       const startTime = date.setFullYear(2022);
       const endTime = date.setFullYear(2023);
 
-      const years = await exposedHeritageWallet.findYearsBetweenTimestamps(startTime, endTime);
+      const years = await exposedHeritageWallet.findYearsBetweenTimestamps(
+        jsToSolTime(startTime),
+        jsToSolTime(endTime),
+      );
 
       expect(years).to.eql(2n);
     });
+  });
 
-    it("calculateFeeToPay() calculates the last year's fee to pay for a given address", async function () {
-      expect(1).to.eql(1);
-    });
+  describe("Security", () => {
+    // testing the inherited Ownable contract but just for once
+    it("only owner can withdrawCollectedFees()");
+
+    it(
+      "registerSubscriber() doesnt overwrite the existing deposit of the account if it has deposited before registering",
+    );
+
+    // its important not to distribute more than existing deposits
+    it("while addInheritant() can not make any other operation for the given account");
+
+    it("while payOutstandingFees() can not make any other operation for the given account");
   });
 });
 
