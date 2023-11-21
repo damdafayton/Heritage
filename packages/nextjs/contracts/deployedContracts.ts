@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Heritage: {
-      address: "0x9A9f2CCfdE556A7E9Ff0848998Aa4a0CFD8863AE",
+      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
       abi: [
         {
           inputs: [
@@ -314,7 +314,7 @@ const deployedContracts = {
       ],
     },
     HeritageWallet: {
-      address: "0x959922bE3CAee4b8Cd9a407cc3ac1C251C2007B1",
+      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
       abi: [
         {
           inputs: [
@@ -420,7 +420,7 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "Withdraw",
+          name: "SendFunds",
           type: "event",
         },
         {
@@ -449,7 +449,7 @@ const deployedContracts = {
               type: "address",
             },
           ],
-          name: "addressSubscriptionDataMap",
+          name: "addressSubscriptionMap",
           outputs: [
             {
               internalType: "uint256",
@@ -501,41 +501,12 @@ const deployedContracts = {
           name: "calculateFeeToPay",
           outputs: [
             {
-              internalType: "int256",
-              name: "",
-              type: "int256",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "price",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "ethPrice",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "decimal",
-              type: "uint256",
-            },
-          ],
-          name: "convertPriceToWei",
-          outputs: [
-            {
               internalType: "uint256",
               name: "",
               type: "uint256",
             },
           ],
-          stateMutability: "pure",
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -624,6 +595,29 @@ const deployedContracts = {
               type: "bool",
             },
           ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_address",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "minFeePerYear",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "feeThousandagePerYear",
+              type: "uint256",
+            },
+          ],
+          name: "registerSubscriber",
+          outputs: [],
           stateMutability: "nonpayable",
           type: "function",
         },

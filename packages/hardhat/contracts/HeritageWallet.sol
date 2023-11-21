@@ -39,18 +39,12 @@ contract HeritageWallet is Ownable {
 	 * @param _addressToDeposit address
 	 */
 	function deposit(address _addressToDeposit) public payable {
-		address addressToDeposit = _addressToDeposit;
-
-		if (_addressToDeposit == address(0)) {
-			addressToDeposit = msg.sender;
-		}
-
 		Subscription storage subscriptionData = addressSubscriptionMap[
-			addressToDeposit
+			_addressToDeposit
 		];
 		subscriptionData.deposited += msg.value;
 
-		emit Deposit(msg.sender, addressToDeposit, msg.value);
+		emit Deposit(msg.sender, _addressToDeposit, msg.value);
 
 		console.log("trigger compile");
 	}

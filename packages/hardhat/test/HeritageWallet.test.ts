@@ -66,20 +66,34 @@ describe("HeritageWallet", function () {
   });
 
   describe("Wallet functionalities", function () {
-    // it("deposit() deposits to sender if address arg. is not given", async () => {
-    //   const [_, secondAddr] = await ethers.getSigners();
+    it("deposit() deposits to given address", async () => {
+      const [, secondAddr] = await ethers.getSigners();
 
-    //   //@ts-ignore
-    //   await heritageWallet.deposit(_, {
-    //     from: secondAddr.address,
-    //     gasLimit: 3000000,
-    //     value: ethers.parseUnits("1.0", "wei"),
-    //   });
-    // });
+      await heritageWallet.deposit(secondAddr.address, {
+        // from: secondAddr.address,
+        gasLimit: 3000000,
+        value: ethers.parseUnits("1.0", "wei"),
+      });
 
-    it("deposit() deposits to given address if address arg. is given");
+      const data = await heritageWallet.addressSubscriptionMap(secondAddr.address);
 
-    it("deposit() emits event when there is a new deposit");
+      expect(data.deposited).to.eql(1n);
+    });
+
+    it("deposit() emits event when there is a new deposit", async () => {
+      const [from, secondAddr] = await ethers.getSigners();
+
+      const eventEmitter = () =>
+        heritageWallet.deposit(secondAddr.address, {
+          // from: secondAddr.address,
+          gasLimit: 3000000,
+          value: ethers.parseUnits("1.0", "wei"),
+        });
+
+      expect(await eventEmitter())
+        .to.emit(heritageWallet, "Deposit")
+        .withArgs(from.address, secondAddr.address, 1n);
+    });
 
     it("sendFunds()");
 
