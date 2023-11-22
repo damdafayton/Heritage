@@ -100,7 +100,7 @@ describe("HeritageWallet", function () {
 
       await heritageWallet.payOutstandingFees(second.address);
 
-      //@ts-ignore
+      //@ts-expect-error: might be version conflict of ethers
       await heritageWallet.connect(second).sendFunds(ethers.parseEther("0.00345"), third.address);
 
       //10000 ether comes from hardhat
@@ -193,7 +193,7 @@ describe("HeritageWallet", function () {
         value: ethers.parseUnits("1.0", "wei"),
       });
 
-      //@ts-ignore
+      //@ts-expect-error: might be version conflict of ethers
       await expect(heritageWallet.connect(second).sendFunds(1, third.address)).to.be.revertedWith(
         "Sender has outstanding fee to pay.",
       );
@@ -210,7 +210,7 @@ describe("HeritageWallet", function () {
       const secondsDeposit = (await heritageWallet.addressSubscriptionMap(second.address)).deposited;
 
       await expect(
-        //@ts-ignore
+        //@ts-expect-error: might be version conflict of ethers
         heritageWallet.connect(second).sendFunds(secondsDeposit + BigInt(1), third.address),
       ).to.be.revertedWith("Sender doesnt have enough balance.");
     });
