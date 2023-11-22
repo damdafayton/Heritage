@@ -9,11 +9,13 @@ describe("HeritageWallet", function () {
   let heritageWallet: HeritageWallet;
   let exposedHeritageWallet: ExposedHeritageWallet;
   let ownerAddress: string;
+  let ethUsdFeedAddress: string | Addressable;
 
   before(async () => {
-    const ethUsdFeedAddress = await deployEthUsdFeedMock();
+    ethUsdFeedAddress = await deployEthUsdFeedMock();
 
     const [owner] = await ethers.getSigners();
+
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
     ownerAddress = owner.address;
@@ -70,14 +72,13 @@ describe("HeritageWallet", function () {
       const [, secondAddr] = await ethers.getSigners();
 
       await heritageWallet.deposit(secondAddr.address, {
-        // from: secondAddr.address,
         gasLimit: 3000000,
-        value: ethers.parseUnits("1.0", "wei"),
+        value: ethers.parseEther("0.235"),
       });
 
       const data = await heritageWallet.addressSubscriptionMap(secondAddr.address);
 
-      expect(data.deposited).to.eql(1n);
+      expect(data[5]).to.eql(ethers.parseEther("0.235"));
     });
 
     it("deposit() emits event when there is a new deposit", async () => {
@@ -85,7 +86,6 @@ describe("HeritageWallet", function () {
 
       const eventEmitter = () =>
         heritageWallet.deposit(secondAddr.address, {
-          // from: secondAddr.address,
           gasLimit: 3000000,
           value: ethers.parseUnits("1.0", "wei"),
         });
@@ -95,7 +95,17 @@ describe("HeritageWallet", function () {
         .withArgs(from.address, secondAddr.address, 1n);
     });
 
-    it("sendFunds()");
+    it("sendFunds() sends funds to the address given in the amount given", async () => {
+      const [, second, third] = await ethers.getSigners();
+
+      await heritageWallet.payOutstandingFees(second.address);
+
+      //@ts-ignore
+      await heritageWallet.connect(second).sendFunds(ethers.parseEther("0.00345"), third.address);
+
+      //10000 ether comes from hardhat
+      expect(await ethers.provider.getBalance(third.address)).to.eql(ethers.parseEther("10000.00345"));
+    });
 
     it("sendFunds() emits event");
   });
@@ -144,6 +154,27 @@ describe("HeritageWallet", function () {
   });
 
   describe("Security", () => {
+    // re-deploy the contract to reset subscription data
+    before(async () => {
+      const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
+
+      heritageWallet = (await heritageWalletFactory.deploy(
+        ownerAddress,
+        ethUsdFeedAddress,
+      )) as unknown as HeritageWallet;
+
+      await heritageWallet.waitForDeployment();
+
+      const exposedHeritageWalletFactory = await ethers.getContractFactory("ExposedHeritageWallet");
+
+      exposedHeritageWallet = (await exposedHeritageWalletFactory.deploy(
+        ownerAddress,
+        ethUsdFeedAddress,
+      )) as unknown as ExposedHeritageWallet;
+
+      await exposedHeritageWallet.waitForDeployment();
+    });
+
     // testing the inherited Ownable contract but just for once
     it("only owner can withdrawCollectedFees()");
 
@@ -154,7 +185,37 @@ describe("HeritageWallet", function () {
     // its important not to distribute more than existing deposits
     it("while addInheritant() can not make any other operation for the given account");
 
-    it("while payOutstandingFees() can not make any other operation for the given account");
+    it("_isFeePaid() throws if account has missing subscription payments", async () => {
+      const [, second, third] = await ethers.getSigners();
+
+      await heritageWallet.deposit(second.address, {
+        gasLimit: 3000000,
+        value: ethers.parseUnits("1.0", "wei"),
+      });
+
+      //@ts-ignore
+      await expect(heritageWallet.connect(second).sendFunds(1, third.address)).to.be.revertedWith(
+        "Sender has outstanding fee to pay.",
+      );
+    });
+
+    it("modifier _isAllowedToSend() throws if deposited amount is lower than the requested transfer", async () => {
+      const [, second, third] = await ethers.getSigners();
+
+      await heritageWallet.deposit(second.address, {
+        gasLimit: 3000000,
+        value: ethers.parseUnits("1.0", "wei"),
+      });
+
+      const secondsDeposit = (await heritageWallet.addressSubscriptionMap(second.address)).deposited;
+
+      await expect(
+        //@ts-ignore
+        heritageWallet.connect(second).sendFunds(secondsDeposit + BigInt(1), third.address),
+      ).to.be.revertedWith("Sender doesnt have enough balance.");
+    });
+
+    it("payOutstandingFees() throws if deposited amount is less than fee");
   });
 });
 

@@ -45,8 +45,6 @@ contract HeritageWallet is Ownable {
 		subscriptionData.deposited += msg.value;
 
 		emit Deposit(msg.sender, _addressToDeposit, msg.value);
-
-		console.log("trigger compile");
 	}
 
 	function sendFunds(
@@ -81,8 +79,18 @@ contract HeritageWallet is Ownable {
 		uint leftYearsToPay = requiredPaymentCount -
 			subscriptionData.paidFeeCount;
 
-		for (uint i = 0; i < leftYearsToPay; i++) {}
+		for (uint i = 0; i < leftYearsToPay; i++) {
+			uint fee = calculateFeeToPay(_address);
+			require(
+				subscriptionData.deposited >= fee,
+				"Not enough deposit to pay fees."
+			);
+			subscriptionData.deposited -= fee;
+			subscriptionData.paidFeeCount++;
+			collectedFees += fee;
+		}
 
+		subscriptionData.lastYearPaid = true;
 		_changeCanModify(_address, true);
 
 		return true;
@@ -271,7 +279,7 @@ contract HeritageWallet is Ownable {
 		];
 
 		require(
-			subscriptionData.deposited > _amount,
+			subscriptionData.deposited >= _amount,
 			"Sender doesnt have enough balance."
 		);
 
