@@ -60,7 +60,9 @@
     "semver@^5.7.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
     "semver@^7.3.8": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
     "semver@^5.5.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "semver@^5.6.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch"
+    "semver@^5.6.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
+    "@nomiclabs/hardhat-ethers/ethers": "ethers@5.3.0",
+    "@nomiclabs/hardhat-ethers@^2.2.3": "patch:@nomiclabs/hardhat-ethers@npm%3A2.2.3#./.yarn/patches/@nomiclabs-hardhat-ethers-npm-2.2.3-7206da2782.patch"
   },
   "dependencies": {
     "@chainlink/contracts": "^0.8.0"

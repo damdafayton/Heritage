@@ -5,6 +5,7 @@ import * as dotenv from "dotenv";
 dotenv.config();
 import { HardhatUserConfig } from "hardhat/config";
 import "@nomicfoundation/hardhat-toolbox";
+import "@nomicfoundation/hardhat-chai-matchers";
 import "hardhat-deploy";
 import "@matterlabs/hardhat-zksync-solc";
 // import "@matterlabs/hardhat-zksync-verify"; // Works with ethers 5.7.1

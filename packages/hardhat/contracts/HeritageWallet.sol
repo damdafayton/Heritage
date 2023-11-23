@@ -27,7 +27,7 @@ contract HeritageWallet is Ownable {
 	}
 	// event for deposit and for withdraw
 	event Deposit(address _sender, address addressToDeposit, uint amount);
-	event SendFunds(address _sender, uint amount, address _beneficiary);
+	event SendFunds(address _sender, address _beneficiary, uint amount);
 
 	// set the owner as soon as the wallet is created
 	constructor(address _owner, address _ethUsdPriceFeed) Ownable(_owner) {
@@ -61,7 +61,7 @@ contract HeritageWallet is Ownable {
 
 		receiver.transfer(amount);
 
-		emit SendFunds(msg.sender, amount, receiver);
+		emit SendFunds(msg.sender, receiver, amount);
 	}
 
 	function payOutstandingFees(address _address) public returns (bool) {

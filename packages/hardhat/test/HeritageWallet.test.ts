@@ -90,9 +90,7 @@ describe("HeritageWallet", function () {
           value: ethers.parseUnits("1.0", "wei"),
         });
 
-      expect(await eventEmitter())
-        .to.emit(heritageWallet, "Deposit")
-        .withArgs(from.address, secondAddr.address, 1n);
+      await expect(eventEmitter()).to.emit(heritageWallet, "Deposit").withArgs(from.address, secondAddr.address, 1n);
     });
 
     it("sendFunds() sends funds to the address given in the amount given", async () => {
@@ -100,14 +98,23 @@ describe("HeritageWallet", function () {
 
       await heritageWallet.payOutstandingFees(second.address);
 
-      //@ts-expect-error: might be version conflict of ethers
       await heritageWallet.connect(second).sendFunds(ethers.parseEther("0.00345"), third.address);
 
       //10000 ether comes from hardhat
       expect(await ethers.provider.getBalance(third.address)).to.eql(ethers.parseEther("10000.00345"));
     });
 
-    it("sendFunds() emits event");
+    it("sendFunds() emits event", async () => {
+      const [first, second] = await ethers.getSigners();
+
+      const eventEmitter = () => {
+        return heritageWallet.connect(second).sendFunds(ethers.parseEther("0.0012"), first.address);
+      };
+
+      await expect(eventEmitter())
+        .to.emit(heritageWallet, "SendFunds")
+        .withArgs(second.address, first.address, ethers.parseEther("0.0012"));
+    });
   });
 
   describe("Utilities", function () {
@@ -193,7 +200,6 @@ describe("HeritageWallet", function () {
         value: ethers.parseUnits("1.0", "wei"),
       });
 
-      //@ts-expect-error: might be version conflict of ethers
       await expect(heritageWallet.connect(second).sendFunds(1, third.address)).to.be.revertedWith(
         "Sender has outstanding fee to pay.",
       );
@@ -210,7 +216,6 @@ describe("HeritageWallet", function () {
       const secondsDeposit = (await heritageWallet.addressSubscriptionMap(second.address)).deposited;
 
       await expect(
-        //@ts-expect-error: might be version conflict of ethers
         heritageWallet.connect(second).sendFunds(secondsDeposit + BigInt(1), third.address),
       ).to.be.revertedWith("Sender doesnt have enough balance.");
     });
@@ -225,6 +230,7 @@ async function deployEthUsdFeedMock(): Promise<string | Addressable> {
   const priceFeedMockFactory = await ethers.getContractFactory("Mock_AggregatorV3Interface");
 
   const priceFeedMock = (await priceFeedMockFactory.deploy()) as unknown as Mock_AggregatorV3Interface;
+  console.log({ priceFeedMock });
 
   await priceFeedMock.waitForDeployment();
 
