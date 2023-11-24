@@ -81,6 +81,7 @@ contract HeritageWallet is Ownable {
 
 		for (uint i = 0; i < leftYearsToPay; i++) {
 			uint fee = calculateFeeToPay(_address);
+
 			require(
 				subscriptionData.deposited >= fee,
 				"Not enough deposit to pay fees."

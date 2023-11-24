@@ -15,14 +15,17 @@ describe("HeritageWallet", function () {
     ethUsdFeedAddress = await deployEthUsdFeedMock();
 
     const [owner] = await ethers.getSigners();
-
-    const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
-
     ownerAddress = owner.address;
+  });
+
+  async function deployContractWithExposed(): Promise<[HeritageWallet, ExposedHeritageWallet]> {
+    const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
     heritageWallet = (await heritageWalletFactory.deploy(ownerAddress, ethUsdFeedAddress)) as unknown as HeritageWallet;
 
     await heritageWallet.waitForDeployment();
+
+    console.info(`HeritageWallet is deployed at: ${heritageWallet.target}`);
 
     const exposedHeritageWalletFactory = await ethers.getContractFactory("ExposedHeritageWallet");
 
@@ -32,9 +35,17 @@ describe("HeritageWallet", function () {
     )) as unknown as ExposedHeritageWallet;
 
     await exposedHeritageWallet.waitForDeployment();
-  });
+
+    return [heritageWallet, exposedHeritageWallet];
+  }
 
   describe("Subscription", function () {
+    before(async () => {
+      const [_heritageWallet, _exposedHeritageWallet] = await deployContractWithExposed();
+      heritageWallet = _heritageWallet;
+      exposedHeritageWallet = _exposedHeritageWallet;
+    });
+
     let subscriberAddr: string;
 
     it("registerSubscriber() registers a new inheritance record", async () => {
@@ -44,7 +55,7 @@ describe("HeritageWallet", function () {
       const minFeeUsd = 7;
       const feeThousandage = 1;
 
-      await heritageWallet.registerSubscriber(secondAddr.address, minFeeUsd, feeThousandage, { from: ownerAddress });
+      await heritageWallet.registerSubscriber(secondAddr.address, minFeeUsd, feeThousandage);
 
       // eslint-disable-next-line
       const [timestamp, ...subscriptonDataOfUser] = await heritageWallet.addressSubscriptionMap(subscriberAddr);
@@ -58,7 +69,24 @@ describe("HeritageWallet", function () {
       expect(fee).to.eql(354534952299n);
     });
 
-    it("payOutstandingFees()");
+    it("payOutstandingFees()", async () => {
+      const [, second] = await ethers.getSigners();
+
+      let subscriptionData = await heritageWallet.addressSubscriptionMap(second.address);
+
+      expect(subscriptionData.lastYearPaid).to.eql(false);
+
+      await heritageWallet.deposit(second.address, {
+        gasLimit: 3000000,
+        value: ethers.parseEther("0.0045"),
+      });
+
+      await heritageWallet.payOutstandingFees(second.address);
+
+      subscriptionData = await heritageWallet.addressSubscriptionMap(second.address);
+
+      expect(subscriptionData.lastYearPaid).to.eql(true);
+    });
 
     it("distributeHeritage()");
 
@@ -68,6 +96,12 @@ describe("HeritageWallet", function () {
   });
 
   describe("Wallet functionalities", function () {
+    before(async () => {
+      const [_heritageWallet, _exposedHeritageWallet] = await deployContractWithExposed();
+      heritageWallet = _heritageWallet;
+      exposedHeritageWallet = _exposedHeritageWallet;
+    });
+
     it("deposit() deposits to given address", async () => {
       const [, secondAddr] = await ethers.getSigners();
 
@@ -162,24 +196,10 @@ describe("HeritageWallet", function () {
 
   describe("Security", () => {
     // re-deploy the contract to reset subscription data
-    before(async () => {
-      const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
-
-      heritageWallet = (await heritageWalletFactory.deploy(
-        ownerAddress,
-        ethUsdFeedAddress,
-      )) as unknown as HeritageWallet;
-
-      await heritageWallet.waitForDeployment();
-
-      const exposedHeritageWalletFactory = await ethers.getContractFactory("ExposedHeritageWallet");
-
-      exposedHeritageWallet = (await exposedHeritageWalletFactory.deploy(
-        ownerAddress,
-        ethUsdFeedAddress,
-      )) as unknown as ExposedHeritageWallet;
-
-      await exposedHeritageWallet.waitForDeployment();
+    beforeEach(async () => {
+      const [_heritageWallet, _exposedHeritageWallet] = await deployContractWithExposed();
+      heritageWallet = _heritageWallet;
+      exposedHeritageWallet = _exposedHeritageWallet;
     });
 
     // testing the inherited Ownable contract but just for once
@@ -220,7 +240,22 @@ describe("HeritageWallet", function () {
       ).to.be.revertedWith("Sender doesnt have enough balance.");
     });
 
-    it("payOutstandingFees() throws if deposited amount is less than fee");
+    it("payOutstandingFees() reverts if the deposited amount is less than fee", async () => {
+      const [, second] = await ethers.getSigners();
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(second.address, minFeeUsd, feeThousandage);
+
+      await expect(heritageWallet.payOutstandingFees(second.address)).to.revertedWith(
+        "Not enough deposit to pay fees.",
+      );
+
+      const subscriptionData = await heritageWallet.addressSubscriptionMap(second.address);
+
+      expect(subscriptionData.canModify).to.eql(true);
+      expect(subscriptionData.lastYearPaid).to.eql(false);
+    });
   });
 });
 
@@ -230,7 +265,6 @@ async function deployEthUsdFeedMock(): Promise<string | Addressable> {
   const priceFeedMockFactory = await ethers.getContractFactory("Mock_AggregatorV3Interface");
 
   const priceFeedMock = (await priceFeedMockFactory.deploy()) as unknown as Mock_AggregatorV3Interface;
-  console.log({ priceFeedMock });
 
   await priceFeedMock.waitForDeployment();
 
