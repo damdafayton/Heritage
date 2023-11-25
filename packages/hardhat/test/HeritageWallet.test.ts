@@ -40,59 +40,95 @@ describe("HeritageWallet", function () {
   }
 
   describe("Subscription", function () {
-    before(async () => {
+    beforeEach(async () => {
       const [_heritageWallet, _exposedHeritageWallet] = await deployContractWithExposed();
       heritageWallet = _heritageWallet;
       exposedHeritageWallet = _exposedHeritageWallet;
     });
 
-    let subscriberAddr: string;
-
     it("registerSubscriber() registers a new inheritance record", async () => {
-      // eslint-disable-next-line
-      const [_, secondAddr] = await ethers.getSigners();
-      subscriberAddr = secondAddr.address;
+      const [, subscriber] = await ethers.getSigners();
       const minFeeUsd = 7;
       const feeThousandage = 1;
 
-      await heritageWallet.registerSubscriber(secondAddr.address, minFeeUsd, feeThousandage);
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
 
       // eslint-disable-next-line
-      const [timestamp, ...subscriptonDataOfUser] = await heritageWallet.addressSubscriptionMap(subscriberAddr);
+      const [timestamp, ...subscriptonDataOfUser] = await heritageWallet.addressSubscriptionMap(subscriber.address);
 
       expect(subscriptonDataOfUser).to.eql([7n, 1n, 0n, false, 0n, true]);
     });
 
     it("calculateFeeToPay() calculates a fee to pay in WEI", async () => {
-      const fee = await heritageWallet.calculateFeeToPay(subscriberAddr);
+      const [, subscriber] = await ethers.getSigners();
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      const fee = await heritageWallet.calculateFeeToPay(subscriber.address);
 
       expect(fee).to.eql(354534952299n);
     });
 
-    it("payOutstandingFees()", async () => {
-      const [, second] = await ethers.getSigners();
+    it("payOutstandingFees() pays default transfer commission if subscriber is not yet registered", async () => {
+      const [, subscriber] = await ethers.getSigners();
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
 
-      let subscriptionData = await heritageWallet.addressSubscriptionMap(second.address);
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      let subscriptionData = await heritageWallet.addressSubscriptionMap(subscriber.address);
 
       expect(subscriptionData.lastYearPaid).to.eql(false);
+      expect(subscriptionData.deposited).to.eql(0n);
 
-      await heritageWallet.deposit(second.address, {
+      await heritageWallet.deposit(subscriber.address, {
         gasLimit: 3000000,
         value: ethers.parseEther("0.0045"),
       });
 
-      await heritageWallet.payOutstandingFees(second.address);
+      await heritageWallet.payOutstandingFees(subscriber.address);
 
-      subscriptionData = await heritageWallet.addressSubscriptionMap(second.address);
+      subscriptionData = await heritageWallet.addressSubscriptionMap(subscriber.address);
 
       expect(subscriptionData.lastYearPaid).to.eql(true);
+      expect(subscriptionData.deposited).to.eql(4491004500000000n);
+    });
+
+    it("addInheritant()", async () => {
+      const [, subscriber, inheritant] = await ethers.getSigners();
+
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant.address, 15);
+
+      const inheritant0 = await heritageWallet.addrInheritantListMap(subscriber.address, 0);
+
+      expect(inheritant0).to.eql(["0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", 15n]);
+    });
+
+    it("getRemainingInheritancePercentage()", async () => {
+      const [, subscriber, inheritant1, inheritant2] = await ethers.getSigners();
+
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 15);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 5);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant2.address, 20);
+
+      const remainingPercent = await heritageWallet.getRemainingInheritancePercentage(subscriber.address);
+
+      expect(remainingPercent).to.eql(60n);
     });
 
     it("distributeHeritage()");
-
-    it("addInheritant()");
-
-    it("getRemainingInheritancePercentage()");
   });
 
   describe("Wallet functionalities", function () {
@@ -152,6 +188,12 @@ describe("HeritageWallet", function () {
   });
 
   describe("Utilities", function () {
+    before(async () => {
+      const [_heritageWallet, _exposedHeritageWallet] = await deployContractWithExposed();
+      heritageWallet = _heritageWallet;
+      exposedHeritageWallet = _exposedHeritageWallet;
+    });
+
     // Reduce decimals from 13 to 10
     const jsToSolTime = (jsTime: number) => parseInt((jsTime / 1000).toFixed());
 
@@ -211,6 +253,12 @@ describe("HeritageWallet", function () {
 
     // its important not to distribute more than existing deposits
     it("while addInheritant() can not make any other operation for the given account");
+
+    it("addInheritant() reverts if sender address is not registered yet.", async () => {
+      const [, , inheritant] = await ethers.getSigners();
+
+      await expect(heritageWallet.addInheritant(inheritant.address, 15)).to.revertedWith("Address is not registered.");
+    });
 
     it("_isFeePaid() throws if account has missing subscription payments", async () => {
       const [, second, third] = await ethers.getSigners();

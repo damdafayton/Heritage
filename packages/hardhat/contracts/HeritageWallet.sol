@@ -10,17 +10,18 @@ import "hardhat/console.sol";
 contract HeritageWallet is Ownable {
 	uint collectedFees;
 	address ethUsdPriceFeed;
+	uint defaultTransferPercentForNonRegistered = 1;
 	struct Subscription {
 		uint startTimestamp;
 		uint minFeePerYear;
 		uint feeThousandagePerYear;
 		uint paidFeeCount;
 		bool lastYearPaid;
-		Inheritant[] inheritantList;
 		uint deposited;
 		bool canModify;
 	}
 	mapping(address => Subscription) public addressSubscriptionMap;
+	mapping(address => Inheritant[]) public addrInheritantListMap;
 	struct Inheritant {
 		address to;
 		uint percentToHeritage;
@@ -125,13 +126,11 @@ contract HeritageWallet is Ownable {
 			"Remaining inheritance amount is not enough for target percentage. Please set a lower percentage."
 		);
 
+		Inheritant[] storage inheritants = addrInheritantListMap[msg.sender];
+
 		Inheritant memory newInheritant = Inheritant(receiver, percentage);
 
-		Subscription storage subscriptionData = addressSubscriptionMap[
-			msg.sender
-		];
-
-		subscriptionData.inheritantList.push(newInheritant);
+		inheritants.push(newInheritant);
 
 		_changeCanModify(msg.sender, true);
 	}
@@ -139,16 +138,12 @@ contract HeritageWallet is Ownable {
 	function getRemainingInheritancePercentage(
 		address _address
 	) public view returns (uint) {
-		Subscription storage subscriptionData = addressSubscriptionMap[
-			_address
-		];
+		Inheritant[] storage inheritants = addrInheritantListMap[_address];
 
 		uint consumedInheritancePercent = 0;
 
-		for (uint i = 0; i < subscriptionData.inheritantList.length; i++) {
-			consumedInheritancePercent += subscriptionData
-				.inheritantList[i]
-				.percentToHeritage;
+		for (uint i = 0; i < inheritants.length; i++) {
+			consumedInheritancePercent += inheritants[i].percentToHeritage;
 		}
 
 		return 100 - consumedInheritancePercent;
@@ -291,6 +286,11 @@ contract HeritageWallet is Ownable {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
+
+		require(
+			subscriptionData.startTimestamp != 0,
+			"Address is not registered."
+		);
 
 		require(
 			subscriptionData.canModify == true,
