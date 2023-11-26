@@ -23,7 +23,7 @@ contract HeritageWallet is Ownable {
 	mapping(address => Subscription) public addressSubscriptionMap;
 	mapping(address => Inheritant[]) public addrInheritantListMap;
 	struct Inheritant {
-		address to;
+		address payable to;
 		uint percentToHeritage;
 	}
 	// event for deposit and for withdraw
@@ -51,9 +51,7 @@ contract HeritageWallet is Ownable {
 	function sendFunds(
 		uint amount,
 		address payable receiver
-	) public isAllowedToSend(msg.sender, amount) {
-		_isFeePaid(msg.sender);
-
+	) public isAllowedToSend(msg.sender, amount) _isFeePaid(msg.sender) {
 		Subscription storage subsciptionData = addressSubscriptionMap[
 			msg.sender
 		];
@@ -104,25 +102,42 @@ contract HeritageWallet is Ownable {
 		ownerAddress.transfer(collectedFees);
 	}
 
-	function distributeHeritage() public onlyOwner {
-		if (!_isFeePaid(msg.sender)) {
-			require(
-				payOutstandingFees(msg.sender),
-				"Fees can not be paid. Please try later."
-			);
-		}
+	function distributeHeritage(
+		address addr
+	) public onlyOwner _isFeePaid(addr) {
+		_changeCanModify(msg.sender, false);
 
 		// Distribute here
+		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
+		Subscription storage subscription = addressSubscriptionMap[addr];
+		uint amountToDistribute = subscription.deposited;
+
+		for (uint i = 0; i < inheritantArr.length; i++) {
+			uint percent = inheritantArr[i].percentToHeritage;
+			address payable to = inheritantArr[i].to;
+
+			to.transfer((amountToDistribute * percent) / 100);
+		}
+
+		subscription.deposited = 0;
+
+		_changeCanModify(msg.sender, true);
 	}
 
 	function addInheritant(
-		address receiver,
+		address payable receiver,
 		uint percentage
 	) public isAllowedToModify(msg.sender) {
 		_changeCanModify(msg.sender, false);
 
+		(
+			uint available,
+			bool existing,
+			uint existingIdx
+		) = getRemainingInheritancePercentage(msg.sender, receiver);
+
 		require(
-			getRemainingInheritancePercentage(msg.sender) >= percentage,
+			available >= percentage,
 			"Remaining inheritance amount is not enough for target percentage. Please set a lower percentage."
 		);
 
@@ -130,23 +145,40 @@ contract HeritageWallet is Ownable {
 
 		Inheritant memory newInheritant = Inheritant(receiver, percentage);
 
-		inheritants.push(newInheritant);
+		if (existing) {
+			Inheritant storage inheritant = inheritants[existingIdx];
+			inheritant.percentToHeritage = percentage;
+		} else {
+			inheritants.push(newInheritant);
+		}
 
 		_changeCanModify(msg.sender, true);
 	}
 
 	function getRemainingInheritancePercentage(
-		address _address
-	) public view returns (uint) {
-		Inheritant[] storage inheritants = addrInheritantListMap[_address];
+		address subscriber,
+		address receiver
+	) public view returns (uint, bool, uint) {
+		Inheritant[] storage inheritants = addrInheritantListMap[subscriber];
 
 		uint consumedInheritancePercent = 0;
 
+		bool existing = false;
+		uint existingIdx = 0;
+
 		for (uint i = 0; i < inheritants.length; i++) {
+			if (inheritants[i].to == receiver) {
+				existing = true;
+				existingIdx = i;
+				continue;
+			}
+
 			consumedInheritancePercent += inheritants[i].percentToHeritage;
 		}
 
-		return 100 - consumedInheritancePercent;
+		uint available = 100 - consumedInheritancePercent;
+
+		return (available, existing, existingIdx);
 	}
 
 	// Choses the higher val of fixed fee vs thousandage fee and returns the result in WEI
@@ -178,14 +210,14 @@ contract HeritageWallet is Ownable {
 		uint minFeePerYear,
 		uint feeThousandagePerYear
 	) public onlyOwner {
-		Subscription storage newSubscription = addressSubscriptionMap[_address];
+		Subscription storage subscription = addressSubscriptionMap[_address];
 
-		require(newSubscription.startTimestamp == 0, "Already registered.");
+		require(subscription.startTimestamp == 0, "Already registered.");
 
-		newSubscription.startTimestamp = block.timestamp;
-		newSubscription.minFeePerYear = minFeePerYear;
-		newSubscription.feeThousandagePerYear = feeThousandagePerYear;
-		newSubscription.canModify = true;
+		subscription.startTimestamp = block.timestamp;
+		subscription.minFeePerYear = minFeePerYear;
+		subscription.feeThousandagePerYear = feeThousandagePerYear;
+		subscription.canModify = true;
 	}
 
 	function getEthPrice() public view returns (uint, uint) {
@@ -237,7 +269,7 @@ contract HeritageWallet is Ownable {
 		subscriptionData.canModify = newStatus;
 	}
 
-	function _isFeePaid(address _address) internal view returns (bool) {
+	modifier _isFeePaid(address _address) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
@@ -247,7 +279,7 @@ contract HeritageWallet is Ownable {
 			"Sender has outstanding fee to pay."
 		);
 
-		return true;
+		_;
 	}
 
 	function _findYearsBetweenTimestamps(

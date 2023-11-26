@@ -111,7 +111,39 @@ describe("HeritageWallet", function () {
       expect(inheritant0).to.eql(["0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", 15n]);
     });
 
+    it("addInheritant() overwrites existing inheritant", async () => {
+      const [, subscriber, inheritant] = await ethers.getSigners();
+
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant.address, 60);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant.address, 90);
+
+      const inheritant0 = await heritageWallet.addrInheritantListMap(subscriber.address, 0);
+
+      expect(inheritant0).to.eql(["0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", 90n]);
+    });
+
     it("getRemainingInheritancePercentage()", async () => {
+      const [, subscriber, inheritant1, inheritant2, inheritant3] = await ethers.getSigners();
+
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 15);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant2.address, 20);
+
+      const [remainingPercent] = await heritageWallet.getRemainingInheritancePercentage(subscriber, inheritant3);
+
+      expect(remainingPercent).to.eql(65n);
+    });
+
+    it("getRemainingInheritancePercentage() ignores percent of existing inheritant", async () => {
       const [, subscriber, inheritant1, inheritant2] = await ethers.getSigners();
 
       const minFeeUsd = 7;
@@ -120,15 +152,34 @@ describe("HeritageWallet", function () {
       await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
 
       await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 15);
-      await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 5);
       await heritageWallet.connect(subscriber).addInheritant(inheritant2.address, 20);
 
-      const remainingPercent = await heritageWallet.getRemainingInheritancePercentage(subscriber.address);
+      const [remainingPercent] = await heritageWallet.getRemainingInheritancePercentage(subscriber, inheritant1);
 
-      expect(remainingPercent).to.eql(60n);
+      expect(remainingPercent).to.eql(80n);
     });
 
-    it("distributeHeritage()");
+    it("distributeHeritage()", async () => {
+      const [, subscriber, inheritant1, inheritant2] = await ethers.getSigners();
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+      await heritageWallet.deposit(subscriber, { value: ethers.parseEther("1.80") });
+      await heritageWallet.payOutstandingFees(subscriber);
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 40);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant2.address, 60);
+
+      await heritageWallet.distributeHeritage(subscriber.address);
+
+      expect(await ethers.provider.getBalance(inheritant1)).to.eql(10000718560720000000000n);
+      expect(await ethers.provider.getBalance(inheritant2)).to.eql(10001077841080000000000n);
+
+      const [, , , , , deposited] = await heritageWallet.addressSubscriptionMap(subscriber);
+
+      expect(deposited).to.eql(0n);
+    });
   });
 
   describe("Wallet functionalities", function () {
@@ -171,7 +222,7 @@ describe("HeritageWallet", function () {
       await heritageWallet.connect(second).sendFunds(ethers.parseEther("0.00345"), third.address);
 
       //10000 ether comes from hardhat
-      expect(await ethers.provider.getBalance(third.address)).to.eql(ethers.parseEther("10000.00345"));
+      expect(await ethers.provider.getBalance(third.address)).to.eql(10000722010720000000000n);
     });
 
     it("sendFunds() emits event", async () => {
@@ -245,14 +296,28 @@ describe("HeritageWallet", function () {
     });
 
     // testing the inherited Ownable contract but just for once
-    it("only owner can withdrawCollectedFees()");
+    it("only owner can withdrawCollectedFees()", async () => {
+      const [, notOwner] = await ethers.getSigners();
 
-    it(
-      "registerSubscriber() doesnt overwrite the existing deposit of the account if it has deposited before registering",
-    );
+      await expect(heritageWallet.connect(notOwner).withdrawCollectedFees()).to.revertedWithCustomError(
+        heritageWallet,
+        "OwnableUnauthorizedAccount",
+      );
+    });
 
-    // its important not to distribute more than existing deposits
-    it("while addInheritant() can not make any other operation for the given account");
+    it("registerSubscriber() doesnt overwrite the existing deposit of the account if it has deposited before registering", async () => {
+      const [, subscriber] = await ethers.getSigners();
+      const minFeeUsd = 7;
+      const feeThousandage = 1;
+
+      await heritageWallet.deposit(subscriber, { value: ethers.parseEther("0.5") });
+
+      await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+      const [, , , , , deposited] = await heritageWallet.addressSubscriptionMap(subscriber);
+
+      expect(deposited).to.eql(500000000000000000n);
+    });
 
     it("addInheritant() reverts if sender address is not registered yet.", async () => {
       const [, , inheritant] = await ethers.getSigners();
@@ -304,6 +369,29 @@ describe("HeritageWallet", function () {
       expect(subscriptionData.canModify).to.eql(true);
       expect(subscriptionData.lastYearPaid).to.eql(false);
     });
+
+    it("distributeHeritage() reverts if fees are not paid", async () => {
+      const [, subscriber] = await ethers.getSigners();
+
+      await expect(heritageWallet.distributeHeritage(subscriber)).to.revertedWith("Sender has outstanding fee to pay.");
+    });
+
+    // its important not to distribute more than existing deposits
+    // can not test now due to local chain limitations?
+    // it("while addInheritant() can not make any other operation for the given account", async () => {
+    //   const [, subscriber, inheritant1, inheritant2] = await ethers.getSigners();
+    //   const minFeeUsd = 7;
+    //   const feeThousandage = 1;
+
+    //   await heritageWallet.registerSubscriber(subscriber.address, minFeeUsd, feeThousandage);
+
+    //   const fn = () => {
+    //     heritageWallet.connect(subscriber).addInheritant(inheritant1, 50);
+    //     heritageWallet.connect(subscriber).addInheritant(inheritant2, 50);
+    //   };
+
+    //   await expect(fn()).to.revertedWith("");
+    // });
   });
 });
 
