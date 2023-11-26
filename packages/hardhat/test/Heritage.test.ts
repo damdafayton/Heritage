@@ -1,13 +1,12 @@
 // import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { Heritage } from "../typechain-types";
-import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
 
 describe("Heritage", function () {
   // We define a fixture to reuse the same setup in every test.
 
   let heritageContract: Heritage;
-  let owner: SignerWithAddress;
+  let owner;
 
   before(async () => {
     // const [owner] = await ethers.getSigners();

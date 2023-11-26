@@ -35,10 +35,6 @@ contract HeritageWallet is Ownable {
 		ethUsdPriceFeed = _ethUsdPriceFeed;
 	}
 
-	/**
-	 * Deposit to address in the args or to sender itself.
-	 * @param _addressToDeposit address
-	 */
 	function deposit(address _addressToDeposit) public payable {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_addressToDeposit
