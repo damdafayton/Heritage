@@ -3,13 +3,15 @@ pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "./HeritageWalletInterface.sol";
 
 // Useful for debugging. Remove when deploying to a live network.
 import "hardhat/console.sol";
 
-contract HeritageWallet is Ownable {
+contract HeritageWallet is HeritageWalletInterface, Ownable {
 	uint collectedFees;
 	address ethUsdPriceFeed;
+	// In case outsiders want to use the contract as a wallet.
 	uint defaultTransferPercentForNonRegistered = 1;
 	struct Subscription {
 		uint startTimestamp;
@@ -47,7 +49,7 @@ contract HeritageWallet is Ownable {
 	function sendFunds(
 		uint amount,
 		address payable receiver
-	) public isAllowedToSend(msg.sender, amount) _isFeePaid(msg.sender) {
+	) public _isAllowedToSend(msg.sender, amount) _isFeePaid(msg.sender) {
 		Subscription storage subsciptionData = addressSubscriptionMap[
 			msg.sender
 		];
@@ -123,7 +125,7 @@ contract HeritageWallet is Ownable {
 	function addInheritant(
 		address payable receiver,
 		uint percentage
-	) public isAllowedToModify(msg.sender) {
+	) public _isAllowedToModify(msg.sender) {
 		_changeCanModify(msg.sender, false);
 
 		(
@@ -297,7 +299,7 @@ contract HeritageWallet is Ownable {
 		return yearsPassedSinceSubscription;
 	}
 
-	modifier isAllowedToSend(address _address, uint _amount) {
+	modifier _isAllowedToSend(address _address, uint _amount) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
@@ -310,7 +312,7 @@ contract HeritageWallet is Ownable {
 		_;
 	}
 
-	modifier isAllowedToModify(address _address) {
+	modifier _isAllowedToModify(address _address) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];

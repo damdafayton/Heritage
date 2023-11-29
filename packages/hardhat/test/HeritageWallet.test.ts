@@ -18,6 +18,20 @@ describe("HeritageWallet", function () {
     ownerAddress = owner.address;
   });
 
+  async function deployEthUsdFeedMock(): Promise<string | Addressable> {
+    console.info(`Deploying eth-Usd price feed mock.`);
+
+    const priceFeedMockFactory = await ethers.getContractFactory("Mock_AggregatorV3Interface");
+
+    const priceFeedMock = (await priceFeedMockFactory.deploy()) as unknown as Mock_AggregatorV3Interface;
+
+    await priceFeedMock.waitForDeployment();
+
+    console.info(`Eth-Usd price feed mock deployed to ${priceFeedMock.target}.`);
+
+    return priceFeedMock.target;
+  }
+
   async function deployContractWithExposed(): Promise<[HeritageWallet, ExposedHeritageWallet]> {
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
@@ -394,17 +408,3 @@ describe("HeritageWallet", function () {
     // });
   });
 });
-
-async function deployEthUsdFeedMock(): Promise<string | Addressable> {
-  console.info(`Deploying eth-Usd price feed mock.`);
-
-  const priceFeedMockFactory = await ethers.getContractFactory("Mock_AggregatorV3Interface");
-
-  const priceFeedMock = (await priceFeedMockFactory.deploy()) as unknown as Mock_AggregatorV3Interface;
-
-  await priceFeedMock.waitForDeployment();
-
-  console.info(`Eth-Usd price feed mock deployed to ${priceFeedMock.target}.`);
-
-  return priceFeedMock.target;
-}
