@@ -1,6 +1,6 @@
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { Heritage, HeritageWallet, Mock_AggregatorV3Interface } from "../typechain-types";
+import { Heritage, HeritageWallet, Mock_AggregatorV3Interface, HeritageV2 } from "../typechain-types";
 import { Addressable } from "ethers";
 import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
@@ -52,11 +52,11 @@ describe("HeritageContract", function () {
       },
     )) as unknown as Heritage;
 
-    console.log(`Heritage Proxy contract deployed to: ${heritageContract.target}.`);
+    console.info(`Heritage Proxy contract deployed to: ${heritageContract.target}.`);
 
     const currentImplAddress = await getImplementationAddress(ethers.provider, heritageContract.target as string);
 
-    console.log(`Heritage Implementation contract deployed to: ${currentImplAddress}.`);
+    console.info(`Heritage Implementation contract deployed to: ${currentImplAddress}.`);
 
     heritageProxy = heritageContract;
   }
@@ -81,11 +81,56 @@ describe("HeritageContract", function () {
       expect(await heritageProxy.owner()).to.equal(ownerAddress);
     });
 
-    // it("Should allow setting a new message", async function () {
-    //   const newGreeting = "Learn Scaffold-ETH 2! :)";
+    it("upgrades the contract", async () => {
+      const heritageFactoryV2 = await ethers.getContractFactory("HeritageV2");
 
-    //   await heritageContract.setGreeting(newGreeting);
-    //   expect(await heritageContract.greeting()).to.equal(newGreeting);
-    // });
+      heritageProxy = (await upgrades.upgradeProxy(heritageProxy.target, heritageFactoryV2)) as unknown as HeritageV2;
+
+      console.info("Heritage upgraded.");
+
+      const currentImplAddress = await getImplementationAddress(ethers.provider, heritageProxy.target as string);
+
+      console.info(`Heritage Implementation contract deployed to: ${currentImplAddress}.`);
+
+      const proxyAfterUpgrade = heritageProxy as HeritageV2;
+
+      expect(await proxyAfterUpgrade.foo()).to.eql(5n);
+    });
+  });
+
+  describe("Functions", () => {
+    const usdMinFee = 7;
+    const feeThousandage = 3;
+
+    before(async () => {
+      await deployHeritage(usdMinFee, feeThousandage);
+    });
+
+    it("registerSubscriber throws if called by not manager", async () => {
+      const [, user] = await ethers.getSigners();
+
+      await expect(heritageProxy.registerSubscriber(user)).rejectedWith(
+        'OwnableUnauthorizedAccount("0x0165878A594ca255338adfa4d48449f69242Eb8F")',
+      );
+    });
+
+    it("manager registers new user with default fee values", async () => {
+      const [owner, user] = await ethers.getSigners();
+
+      const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
+      const heritageWallet = new ethers.Contract(heritageWalletAddr as string, heritageWalletFactory.interface, owner);
+
+      await heritageWallet.transferOwnership(heritageProxy.target);
+
+      await heritageProxy.registerSubscriber(user);
+
+      const [, ...subscription] = await heritageWallet.addressSubscriptionMap(user);
+
+      expect(subscription).to.eql([7n, 3n, 0n, false, 0n, true]);
+    });
+
+    it("only manager can update default fees");
+
+    it("only manager and owner withdraws fees and sends them to owner");
   });
 });

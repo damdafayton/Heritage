@@ -19,7 +19,8 @@ contract Heritage is
 	// Cant change the order or type of the variables down
 	address heritageWalletAddr;
 	address ethUsdPriceFeed;
-	uint public usdMinFeePerYer;
+	address manager;
+	uint public minFeePerYearInUsd;
 	uint public feeThousandagePerYear;
 
 	// /// @custom:oz-upgrades-unsafe-allow constructor
@@ -27,12 +28,12 @@ contract Heritage is
 
 	function initialize(
 		address _heritageWalletAddr,
-		uint _usdMinFeePerYer,
+		uint _minFeePerYearInUsd,
 		uint _feeThousandagePerYear
 	) public initializer {
 		__Ownable_init(msg.sender);
 		heritageWalletAddr = _heritageWalletAddr;
-		usdMinFeePerYer = _usdMinFeePerYer;
+		minFeePerYearInUsd = _minFeePerYearInUsd;
 		feeThousandagePerYear = _feeThousandagePerYear;
 	}
 
@@ -44,9 +45,45 @@ contract Heritage is
 	}
 
 	// temporary override
-	function proxiableUUID() public view override returns (bytes32) {
-		bytes32 variable;
-		return variable;
+	// function proxiableUUID() public view override returns (bytes32) {
+	// 	bytes32 variable;
+	// 	return variable;
+	// }
+
+	function updateFeeThousandage(uint newFee) public onlyOwner {
+		feeThousandagePerYear = newFee;
+	}
+
+	function updateMinFee(uint newFee) public onlyOwner {
+		minFeePerYearInUsd = newFee;
+	}
+
+	/**
+	 * manager
+	 */
+	function registerSubscriber(address _address) external {
+		_getHeritageWallet().registerSubscriber(
+			_address,
+			minFeePerYearInUsd,
+			feeThousandagePerYear
+		);
+	}
+
+	//  Interface functions
+
+	/**
+	 * onlyOwner
+	 * manager
+	 */
+	function withdrawCollectedFees() external {
+		_getHeritageWallet().withdrawCollectedFees();
+	}
+
+	/**
+	 * manager
+	 */
+	function distributeHeritage(address addr) external {
+		_getHeritageWallet().distributeHeritage(addr);
 	}
 
 	function deposit(address _addressToDeposit) external payable {
@@ -59,14 +96,6 @@ contract Heritage is
 
 	function payOutstandingFees(address _address) external returns (bool) {
 		return _getHeritageWallet().payOutstandingFees(_address);
-	}
-
-	function withdrawCollectedFees() external {
-		_getHeritageWallet().withdrawCollectedFees();
-	}
-
-	function distributeHeritage(address addr) external {
-		_getHeritageWallet().distributeHeritage(addr);
 	}
 
 	function addInheritant(address payable receiver, uint percentage) external {
@@ -86,18 +115,6 @@ contract Heritage is
 
 	function calculateFeeToPay(address _address) external view returns (uint) {
 		return _getHeritageWallet().calculateFeeToPay(_address);
-	}
-
-	function registerSubscriber(
-		address _address,
-		uint _minFeePerYear,
-		uint _feeThousandagePerYear
-	) external {
-		_getHeritageWallet().registerSubscriber(
-			_address,
-			_minFeePerYear,
-			_feeThousandagePerYear
-		);
 	}
 
 	function getEthPrice() external view returns (uint, uint) {

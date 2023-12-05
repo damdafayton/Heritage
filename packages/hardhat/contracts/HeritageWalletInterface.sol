@@ -21,11 +21,5 @@ interface HeritageWalletInterface {
 
 	function calculateFeeToPay(address _address) external view returns (uint);
 
-	function registerSubscriber(
-		address _address,
-		uint minFeePerYear,
-		uint feeThousandagePerYear
-	) external;
-
 	function getEthPrice() external view returns (uint, uint);
 }
