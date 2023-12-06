@@ -58,10 +58,19 @@ contract Heritage is
 		minFeePerYearInUsd = newFee;
 	}
 
-	/**
-	 * manager
-	 */
-	function registerSubscriber(address _address) external {
+	function updateManager(address _manager) public onlyOwner {
+		manager = _manager;
+	}
+
+	modifier _onlyManager() {
+		require(
+			msg.sender == manager,
+			"Only manager can access this functionality."
+		);
+		_;
+	}
+
+	function registerSubscriber(address _address) external _onlyManager {
 		_getHeritageWallet().registerSubscriber(
 			_address,
 			minFeePerYearInUsd,
@@ -71,23 +80,18 @@ contract Heritage is
 
 	//  Interface functions
 
-	/**
-	 * onlyOwner
-	 * manager
-	 */
-	function withdrawCollectedFees() external {
-		_getHeritageWallet().withdrawCollectedFees();
+	function withdrawCollectedFees(
+		address payable feeCollector
+	) external onlyOwner {
+		_getHeritageWallet().withdrawCollectedFees(feeCollector);
 	}
 
-	/**
-	 * manager
-	 */
-	function distributeHeritage(address addr) external {
+	function distributeHeritage(address addr) external _onlyManager {
 		_getHeritageWallet().distributeHeritage(addr);
 	}
 
 	function deposit(address _addressToDeposit) external payable {
-		_getHeritageWallet().deposit(_addressToDeposit);
+		_getHeritageWallet().deposit{ value: msg.value }(_addressToDeposit);
 	}
 
 	function sendFunds(uint amount, address payable receiver) external {

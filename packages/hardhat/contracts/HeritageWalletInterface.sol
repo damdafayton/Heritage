@@ -8,7 +8,7 @@ interface HeritageWalletInterface {
 
 	function payOutstandingFees(address _address) external returns (bool);
 
-	function withdrawCollectedFees() external;
+	function withdrawCollectedFees(address payable feeCollector) external;
 
 	function distributeHeritage(address addr) external;
 

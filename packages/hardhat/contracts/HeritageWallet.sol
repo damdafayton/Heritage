@@ -94,10 +94,10 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return true;
 	}
 
-	function withdrawCollectedFees() public onlyOwner {
-		address payable ownerAddress = payable(owner());
-
-		ownerAddress.transfer(collectedFees);
+	function withdrawCollectedFees(
+		address payable feeCollector
+	) public onlyOwner {
+		feeCollector.transfer(collectedFees);
 	}
 
 	function distributeHeritage(

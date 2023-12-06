@@ -311,9 +311,9 @@ describe("HeritageWallet", function () {
 
     // testing the inherited Ownable contract but just for once
     it("only owner can withdrawCollectedFees()", async () => {
-      const [, notOwner] = await ethers.getSigners();
+      const [, notOwner, feeCollector] = await ethers.getSigners();
 
-      await expect(heritageWallet.connect(notOwner).withdrawCollectedFees()).to.revertedWithCustomError(
+      await expect(heritageWallet.connect(notOwner).withdrawCollectedFees(feeCollector)).to.revertedWithCustomError(
         heritageWallet,
         "OwnableUnauthorizedAccount",
       );

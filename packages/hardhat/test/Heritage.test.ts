@@ -61,6 +61,15 @@ describe("HeritageContract", function () {
     heritageProxy = heritageContract;
   }
 
+  async function getHeritageWalletContract() {
+    const [owner] = await ethers.getSigners();
+
+    const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
+    const heritageWallet = new ethers.Contract(heritageWalletAddr as string, heritageWalletFactory.interface, owner);
+
+    return heritageWallet;
+  }
+
   before(async () => {
     const [owner] = await ethers.getSigners();
     ownerAddress = owner.address;
@@ -102,6 +111,52 @@ describe("HeritageContract", function () {
     const usdMinFee = 7;
     const feeThousandage = 3;
 
+    beforeEach(async () => {
+      await deployHeritageWallet();
+      await deployHeritage(usdMinFee, feeThousandage);
+    });
+
+    it("manager registers new user with default fee values", async () => {
+      const [, manager, user] = await ethers.getSigners();
+
+      const heritageWallet = await getHeritageWalletContract();
+
+      await heritageWallet.transferOwnership(heritageProxy.target);
+      await heritageProxy.updateManager(manager);
+
+      await heritageProxy.connect(manager).registerSubscriber(user);
+
+      const [, ...subscription] = await heritageWallet.addressSubscriptionMap(user);
+
+      expect(subscription).to.eql([7n, 3n, 0n, false, 0n, true]);
+    });
+
+    it("owner can withdraw collected fees", async () => {
+      const [owner, manager, user] = await ethers.getSigners();
+
+      const heritageWallet = await getHeritageWalletContract();
+
+      await heritageWallet.transferOwnership(heritageProxy.target);
+
+      await heritageProxy.updateManager(manager);
+      await heritageProxy.connect(manager).registerSubscriber(user);
+      await heritageProxy.connect(user).deposit(user, { value: 5000000000000000000000n });
+      await heritageProxy.payOutstandingFees(user);
+      await heritageProxy.connect(manager).distributeHeritage(user);
+
+      const ownerInitialBalance = await ethers.provider.getBalance(owner);
+      await heritageProxy.withdrawCollectedFees(owner);
+      const ownerBalanceWithFees = await ethers.provider.getBalance(owner);
+
+      // Eth value of min fee
+      expect(ownerBalanceWithFees - ownerInitialBalance).to.be.above(20054950277054178906n);
+    });
+  });
+
+  describe("Security", () => {
+    const usdMinFee = 6;
+    const feeThousandage = 2;
+
     before(async () => {
       await deployHeritage(usdMinFee, feeThousandage);
     });
@@ -109,28 +164,15 @@ describe("HeritageContract", function () {
     it("registerSubscriber throws if called by not manager", async () => {
       const [, user] = await ethers.getSigners();
 
-      await expect(heritageProxy.registerSubscriber(user)).rejectedWith(
-        'OwnableUnauthorizedAccount("0x0165878A594ca255338adfa4d48449f69242Eb8F")',
+      await expect(heritageProxy.registerSubscriber(user)).rejectedWith("Only manager can access this functionality.");
+    });
+
+    it("only owner can update default fees", async () => {
+      const [, manager] = await ethers.getSigners();
+
+      await expect(heritageProxy.connect(manager).updateMinFee(7n)).rejectedWith(
+        'OwnableUnauthorizedAccount("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")',
       );
     });
-
-    it("manager registers new user with default fee values", async () => {
-      const [owner, user] = await ethers.getSigners();
-
-      const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
-      const heritageWallet = new ethers.Contract(heritageWalletAddr as string, heritageWalletFactory.interface, owner);
-
-      await heritageWallet.transferOwnership(heritageProxy.target);
-
-      await heritageProxy.registerSubscriber(user);
-
-      const [, ...subscription] = await heritageWallet.addressSubscriptionMap(user);
-
-      expect(subscription).to.eql([7n, 3n, 0n, false, 0n, true]);
-    });
-
-    it("only manager can update default fees");
-
-    it("only manager and owner withdraws fees and sends them to owner");
   });
 });
