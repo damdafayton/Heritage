@@ -140,7 +140,7 @@ describe("HeritageContract", function () {
 
       await heritageProxy.updateManager(manager);
       await heritageProxy.connect(manager).registerSubscriber(user);
-      await heritageProxy.connect(user).deposit(user, { value: 5000000000000000000000n });
+      await heritageProxy.connect(user).deposit(user, { value: ethers.parseEther("50") });
       await heritageProxy.payOutstandingFees(user);
       await heritageProxy.connect(manager).distributeHeritage(user);
 
@@ -149,7 +149,7 @@ describe("HeritageContract", function () {
       const ownerBalanceWithFees = await ethers.provider.getBalance(owner);
 
       // Eth value of min fee
-      expect(ownerBalanceWithFees - ownerInitialBalance).to.be.above(20054950277054178906n);
+      expect(ownerBalanceWithFees - ownerInitialBalance).to.be.above(200500277054178906n);
     });
   });
 
