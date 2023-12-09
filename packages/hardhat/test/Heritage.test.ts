@@ -65,7 +65,11 @@ describe("HeritageContract", function () {
     const [owner] = await ethers.getSigners();
 
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
-    const heritageWallet = new ethers.Contract(heritageWalletAddr as string, heritageWalletFactory.interface, owner);
+    const heritageWallet = new ethers.Contract(
+      heritageWalletAddr as string,
+      heritageWalletFactory.interface,
+      owner,
+    ) as unknown as HeritageWallet;
 
     return heritageWallet;
   }
@@ -104,6 +108,23 @@ describe("HeritageContract", function () {
       const proxyAfterUpgrade = heritageProxy as HeritageV2;
 
       expect(await proxyAfterUpgrade.foo()).to.eql(5n);
+    });
+
+    it("transferHeritageWalletOwner() transfers ownership of the HeritageWallet", async () => {
+      const [owner, , user] = await ethers.getSigners();
+
+      const heritageWallet = await getHeritageWalletContract();
+      const initalOwner = await heritageWallet.owner();
+
+      expect(initalOwner).to.equal(owner.address);
+
+      await heritageWallet.transferOwnership(heritageProxy.target);
+
+      await heritageProxy.transferHeritageWalletOwner(user);
+
+      const newOwner = await (await getHeritageWalletContract()).owner();
+
+      expect(newOwner).to.equal(user.address);
     });
   });
 

@@ -7,7 +7,7 @@ import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 const deployedContracts = {
   31337: {
     Heritage: {
-      address: "0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9",
+      address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
           inputs: [
@@ -150,45 +150,64 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "address payable",
+              name: "receiver",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "percentage",
+              type: "uint256",
+            },
+          ],
+          name: "addInheritant",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "address",
-              name: "",
+              name: "_address",
               type: "address",
             },
           ],
-          name: "addressSubscriptionMap",
+          name: "calculateFeeToPay",
           outputs: [
             {
-              internalType: "address",
-              name: "payingAddress",
-              type: "address",
-            },
-            {
               internalType: "uint256",
-              name: "startDate",
+              name: "",
               type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "feePerYear",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "feeThousandagePerYear",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "payCount",
-              type: "uint256",
-            },
-            {
-              internalType: "bool",
-              name: "lastYearPaid",
-              type: "bool",
             },
           ],
           stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_addressToDeposit",
+              type: "address",
+            },
+          ],
+          name: "deposit",
+          outputs: [],
+          stateMutability: "payable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "addr",
+              type: "address",
+            },
+          ],
+          name: "distributeHeritage",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -205,15 +224,67 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [],
+          name: "getEthPrice",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
           inputs: [
             {
               internalType: "address",
-              name: "owner",
+              name: "subscriber",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "receiver",
+              type: "address",
+            },
+          ],
+          name: "getRemainingInheritancePercentage",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_heritageWalletAddr",
               type: "address",
             },
             {
               internalType: "uint256",
-              name: "_usdMinFeePerYer",
+              name: "_minFeePerYearInUsd",
               type: "uint256",
             },
             {
@@ -225,6 +296,32 @@ const deployedContracts = {
           name: "initialize",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "manager",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "minFeePerYearInUsd",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -241,6 +338,25 @@ const deployedContracts = {
           type: "function",
         },
         {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_address",
+              type: "address",
+            },
+          ],
+          name: "payOutstandingFees",
+          outputs: [
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
+          ],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
           inputs: [],
           name: "proxiableUUID",
           outputs: [
@@ -250,7 +366,20 @@ const deployedContracts = {
               type: "bytes32",
             },
           ],
-          stateMutability: "view",
+          stateMutability: "pure",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_address",
+              type: "address",
+            },
+          ],
+          name: "registerSubscriber",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
         {
@@ -261,8 +390,32 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
-          name: "subscribe",
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
+            },
+            {
+              internalType: "address payable",
+              name: "receiver",
+              type: "address",
+            },
+          ],
+          name: "sendFunds",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "newOwner",
+              type: "address",
+            },
+          ],
+          name: "transferHeritageWalletOwner",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -276,6 +429,45 @@ const deployedContracts = {
             },
           ],
           name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "newFee",
+              type: "uint256",
+            },
+          ],
+          name: "updateFeeThousandage",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "_manager",
+              type: "address",
+            },
+          ],
+          name: "updateManager",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "newFee",
+              type: "uint256",
+            },
+          ],
+          name: "updateMinFee",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -299,22 +491,22 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
-          name: "usdMinFeePerYer",
-          outputs: [
+          inputs: [
             {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
+              internalType: "address payable",
+              name: "feeCollector",
+              type: "address",
             },
           ],
-          stateMutability: "view",
+          name: "withdrawCollectedFees",
+          outputs: [],
+          stateMutability: "nonpayable",
           type: "function",
         },
       ],
     },
     HeritageWallet: {
-      address: "0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0",
+      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
       abi: [
         {
           inputs: [
@@ -409,15 +601,15 @@ const deployedContracts = {
             },
             {
               indexed: false,
-              internalType: "uint256",
-              name: "amount",
-              type: "uint256",
-            },
-            {
-              indexed: false,
               internalType: "address",
               name: "_beneficiary",
               type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "amount",
+              type: "uint256",
             },
           ],
           name: "SendFunds",
@@ -426,7 +618,7 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "address",
+              internalType: "address payable",
               name: "receiver",
               type: "address",
             },
@@ -439,6 +631,35 @@ const deployedContracts = {
           name: "addInheritant",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          name: "addrInheritantListMap",
+          outputs: [
+            {
+              internalType: "address payable",
+              name: "to",
+              type: "address",
+            },
+            {
+              internalType: "uint256",
+              name: "percentToHeritage",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -523,7 +744,13 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
+          inputs: [
+            {
+              internalType: "address",
+              name: "addr",
+              type: "address",
+            },
+          ],
           name: "distributeHeritage",
           outputs: [],
           stateMutability: "nonpayable",
@@ -551,12 +778,27 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "_address",
+              name: "subscriber",
+              type: "address",
+            },
+            {
+              internalType: "address",
+              name: "receiver",
               type: "address",
             },
           ],
           name: "getRemainingInheritancePercentage",
           outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+            {
+              internalType: "bool",
+              name: "",
+              type: "bool",
+            },
             {
               internalType: "uint256",
               name: "",
@@ -660,7 +902,13 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
+          inputs: [
+            {
+              internalType: "address payable",
+              name: "feeCollector",
+              type: "address",
+            },
+          ],
           name: "withdrawCollectedFees",
           outputs: [],
           stateMutability: "nonpayable",
@@ -669,7 +917,7 @@ const deployedContracts = {
       ],
     },
     Mock_AggregatorV3Interface: {
-      address: "0xe7f1725E7734CE288F8367e1Bb143E90bb3F0512",
+      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
       abi: [
         {
           inputs: [],
@@ -716,148 +964,6 @@ const deployedContracts = {
           ],
           stateMutability: "pure",
           type: "function",
-        },
-      ],
-    },
-    YourContract: {
-      address: "0x5FbDB2315678afecb367f032d93F642f64180aa3",
-      abi: [
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_owner",
-              type: "address",
-            },
-          ],
-          stateMutability: "nonpayable",
-          type: "constructor",
-        },
-        {
-          anonymous: false,
-          inputs: [
-            {
-              indexed: true,
-              internalType: "address",
-              name: "greetingSetter",
-              type: "address",
-            },
-            {
-              indexed: false,
-              internalType: "string",
-              name: "newGreeting",
-              type: "string",
-            },
-            {
-              indexed: false,
-              internalType: "bool",
-              name: "premium",
-              type: "bool",
-            },
-            {
-              indexed: false,
-              internalType: "uint256",
-              name: "value",
-              type: "uint256",
-            },
-          ],
-          name: "GreetingChange",
-          type: "event",
-        },
-        {
-          inputs: [],
-          name: "greeting",
-          outputs: [
-            {
-              internalType: "string",
-              name: "",
-              type: "string",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "owner",
-          outputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "premium",
-          outputs: [
-            {
-              internalType: "bool",
-              name: "",
-              type: "bool",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "string",
-              name: "_newGreeting",
-              type: "string",
-            },
-          ],
-          name: "setGreeting",
-          outputs: [],
-          stateMutability: "payable",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "totalCounter",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "address",
-              name: "",
-              type: "address",
-            },
-          ],
-          name: "userGreetingCounter",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "withdraw",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          stateMutability: "payable",
-          type: "receive",
         },
       ],
     },

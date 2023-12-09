@@ -19,7 +19,7 @@ contract Heritage is
 	// Cant change the order or type of the variables down
 	address heritageWalletAddr;
 	address ethUsdPriceFeed;
-	address manager;
+	address public manager;
 	uint public minFeePerYearInUsd;
 	uint public feeThousandagePerYear;
 
@@ -44,11 +44,10 @@ contract Heritage is
 		console.log("New implementation address:", newImplementation);
 	}
 
-	// temporary override
-	// function proxiableUUID() public view override returns (bytes32) {
-	// 	bytes32 variable;
-	// 	return variable;
-	// }
+	// temporary override for frontend
+	function proxiableUUID() public pure override returns (bytes32) {
+		return ERC1967Utils.IMPLEMENTATION_SLOT;
+	}
 
 	function updateFeeThousandage(uint newFee) public onlyOwner {
 		feeThousandagePerYear = newFee;
@@ -56,6 +55,10 @@ contract Heritage is
 
 	function updateMinFee(uint newFee) public onlyOwner {
 		minFeePerYearInUsd = newFee;
+	}
+
+	function transferHeritageWalletOwner(address newOwner) public onlyOwner {
+		_getHeritageWallet().transferOwnership(newOwner);
 	}
 
 	function updateManager(address _manager) public onlyOwner {
