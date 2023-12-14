@@ -17,6 +17,9 @@ import {
   useColorScheme,
   View,
 } from 'react-native';
+import {W3mButton} from '@web3modal/wagmi-react-native';
+
+// import {ConnectButton} from '@rainbow-me/rainbowkit';
 
 // import {
 //   Colors,
@@ -70,6 +73,9 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
+      {/* <ConnectButton /> */}
+      {/* <div>sag</div> */}
+      <W3mButton />
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
@@ -79,9 +85,9 @@ const App = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Section title="Step One">
+          <Section title="Step OneE">
             Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits.
+            screen and then come back to see your edits. HI
           </Section>
           <Section title="See Your Changes">
             {/* <ReloadInstructions /> */}

@@ -30,13 +30,13 @@
     "precommit": "lint-staged",
     "vercel": "yarn workspace @se-2/nextjs vercel",
     "vercel:yolo": "yarn workspace @se-2/nextjs vercel:yolo",
-    "android": "yarn workspace @se-2/react-native android",
-    "ios": "yarn workspace @se-2/react-native ios",
-    "lint": "yarn workspace @se-2/react-native lint .",
-    "rn:start": "yarn workspace @se-2/react-native start",
-    "rn:test": "yarn workspace @se-2/react-native test",
-    "web": "yarn workspace @se-2/react-native web",
-    "build:web": "yarn workspace @se-2/react-native build:web"
+    "android": "yarn workspace @se-2/rn android",
+    "ios": "yarn workspace @se-2/rn ios",
+    "lint": "yarn workspace @se-2/rn lint .",
+    "rn:start": "yarn workspace @se-2/rn start",
+    "rn:test": "yarn workspace @se-2/rn test",
+    "web": "yarn workspace @se-2/rn web",
+    "build:web": "yarn workspace @se-2/rn build:web"
   },
   "packageManager": "yarn@3.2.3",
   "devDependencies": {
