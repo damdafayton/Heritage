@@ -20,8 +20,30 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<!-- <key>CFBundleURLName</key>
+			<string>com.walletconnect.web3modal.rnsample</string> -->
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>heritagenative</string>
+			</array>
+		</dict>
+	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>metamask</string>
+	<string>trust</string>
+	<string>safe</string>
+	<string>rainbow</string>
+	<string>uniswap</string>
+	<!-- Add other wallet schemes names here -->
+	</array>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSAppTransportSecurity</key>

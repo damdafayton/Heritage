@@ -75,7 +75,7 @@ const App = () => {
     <SafeAreaView style={backgroundStyle}>
       {/* <ConnectButton /> */}
       {/* <div>sag</div> */}
-      <W3mButton />
+      <W3mButton balance="show" />
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"

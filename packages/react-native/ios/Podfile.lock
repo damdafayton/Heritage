@@ -382,6 +382,10 @@ PODS:
     - React-Core
   - react-native-netinfo (11.2.1):
     - React-Core
+  - react-native-randombytes (3.6.1):
+    - React-Core
+  - react-native-udp (2.7.0):
+    - React
   - React-NativeModulesApple (0.72.6):
     - hermes-engine
     - React-callinvoker
@@ -494,9 +498,13 @@ PODS:
     - React-perflogger (= 0.72.6)
   - RNCAsyncStorage (1.21.0):
     - React-Core
+  - RNOS (1.2.6):
+    - React
   - RNSVG (14.1.0):
     - React-Core
   - SocketRocket (0.6.1)
+  - TcpSockets (3.3.2):
+    - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -550,6 +558,8 @@ DEPENDENCIES:
   - "react-native-compat (from `../node_modules/@walletconnect/react-native-compat`)"
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
+  - react-native-randombytes (from `../node_modules/react-native-randombytes`)
+  - react-native-udp (from `../node_modules/react-native-udp`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../node_modules/react-native/ReactCommon/reactperflogger`)
   - React-RCTActionSheet (from `../node_modules/react-native/Libraries/ActionSheetIOS`)
@@ -568,7 +578,9 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - RNOS (from `../node_modules/react-native-os`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -638,6 +650,10 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-get-random-values"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
+  react-native-randombytes:
+    :path: "../node_modules/react-native-randombytes"
+  react-native-udp:
+    :path: "../node_modules/react-native-udp"
   React-NativeModulesApple:
     :path: "../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios"
   React-perflogger:
@@ -674,8 +690,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNOS:
+    :path: "../node_modules/react-native-os"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  TcpSockets:
+    :path: "../node_modules/react-native-tcp"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -716,6 +736,8 @@ SPEC CHECKSUMS:
   react-native-compat: 93e985034a6b30e74781b5e0986b130fc7c63acc
   react-native-get-random-values: 384787fd76976f5aec9465aff6fa9e9129af1e74
   react-native-netinfo: 8a7fd3f7130ef4ad2fb4276d5c9f8d3f28d2df3d
+  react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
+  react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
   React-NativeModulesApple: 02e35e9a51e10c6422f04f5e4076a7c02243fff2
   React-perflogger: e3596db7e753f51766bceadc061936ef1472edc3
   React-RCTActionSheet: 17ab132c748b4471012abbcdcf5befe860660485
@@ -734,8 +756,10 @@ SPEC CHECKSUMS:
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
+  RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
+  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 

@@ -1,22 +1,34 @@
-import {configureChains, createConfig} from 'wagmi';
+import {Connector, configureChains, createConfig} from 'wagmi';
 import {alchemyProvider} from 'wagmi/providers/alchemy';
 import {publicProvider} from 'wagmi/providers/public';
-import {mainnet, polygon, optimism, arbitrum, base, zora} from 'wagmi/chains';
-// import {connectorsForWallets, getDefaultWallets} from '@rainbow-me/rainbowkit';
-
-import {appConfig} from '../../app.config';
+import {
+  mainnet,
+  polygon,
+  optimism,
+  arbitrum,
+  base,
+  zora,
+  hardhat,
+} from 'wagmi/chains';
 import {defaultWagmiConfig} from '@web3modal/wagmi-react-native';
+import {w3mConnectors} from '@web3modal/ethereum';
+
+import {getTargetNetwork} from '../helpers/network';
+import {appConfig} from '../../app.config';
+import {burnerWalletConfig} from './wagmi-burner/burnerWalletConfig';
+import {connectorsForWallets} from '@rainbow-me/rainbowkit';
 
 const {chains, publicClient} = configureChains(
-  [mainnet, polygon, optimism, arbitrum, base, zora],
+  [hardhat, mainnet, polygon, optimism, arbitrum, base, zora],
   [alchemyProvider({apiKey: appConfig.alchemyApiKey}), publicProvider()],
 );
 
-// const {connectors} = getDefaultWallets({
-//   appName: 'My RainbowKit App',
-//   projectId: 'YOUR_PROJECT_ID',
-//   chains,
-// });
+const configuredNetwork = getTargetNetwork();
+
+const burnerWallet =
+  configuredNetwork.id === hardhat.id
+    ? [burnerWalletConfig({chains: [chains[0]]})]
+    : [];
 
 // const wagmiConfig = createConfig({
 //   autoConnect: true,
@@ -31,15 +43,33 @@ const metadata = {
   url: 'https://web3modal.com',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
   redirect: {
-    native: 'YOUR_APP_SCHEME://',
-    universal: 'YOUR_APP_UNIVERSAL_LINK.com',
+    native: 'heritagenative://',
+    // universal: 'YOUR_APP_UNIVERSAL_LINK.com',
   },
 };
 
-const wagmiConfig = defaultWagmiConfig({
-  chains,
-  projectId: appConfig.walletConnectProjectId,
-  metadata,
+/**
+ * wagmi connectors for the wagmi context
+ */
+export const connectors = connectorsForWallets([
+  {
+    groupName: 'Supported Wallets',
+    wallets: [burnerWalletConfig({chains: [chains[0]]})],
+  },
+]);
+
+const wagmiConfig = createConfig({
+  connectors: connectors || [
+    ...w3mConnectors({chains, projectId: appConfig.walletConnectProjectId}),
+    burnerWalletConfig({chains: [chains[0]]}).createConnector(),
+  ],
+  publicClient,
 });
+
+// const wagmiConfig = defaultWagmiConfig({
+//   chains,
+//   projectId: appConfig.walletConnectProjectId,
+//   // metadata,
+// });
 
 export {wagmiConfig, chains};

@@ -1,7 +1,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <queries>
+      <package android:name="io.metamask"/>
+      <package android:name="com.wallet.crypto.trustapp"/>
+      <package android:name="io.gnosis.safe"/>
+      <package android:name="me.rainbow"/>
+      <!-- Add other wallet package names here -->
+    </queries>
     <application
       android:name=".MainApplication"
       android:label="@string/app_name"
@@ -17,6 +23,7 @@
         android:windowSoftInputMode="adjustResize"
         android:exported="true">
         <intent-filter>
+            <data android:scheme="heritagenative" />
             <action android:name="android.intent.action.MAIN" />
             <category android:name="android.intent.category.LAUNCHER" />
         </intent-filter>

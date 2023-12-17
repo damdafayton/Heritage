@@ -1,7 +1,9 @@
 import * as chains from 'viem/chains';
 
 export type ScaffoldConfig = {
+  devNetwork: chains.Chain;
   targetNetwork: chains.Chain;
+  devPublicAddress: string;
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;
@@ -11,6 +13,8 @@ export type ScaffoldConfig = {
 
 export const appConfig = {
   // The network where your DApp lives in
+  devNetwork: chains.hardhat,
+  devPublicAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
   targetNetwork: chains.hardhat,
 
   // The interval at which your front-end polls the RPC servers for new data

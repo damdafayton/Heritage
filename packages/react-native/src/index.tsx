@@ -4,6 +4,7 @@ import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
 
+import './shim';
 import App from './App';
 import {wagmiConfig, chains} from './services/wagmiConfig';
 import {appConfig} from '../app.config';
@@ -13,6 +14,13 @@ createWeb3Modal({
   projectId: appConfig.walletConnectProjectId,
   chains,
   wagmiConfig,
+
+  // defaultChain: appConfig.devNetwork,
+  // tokens: {
+  //   [appConfig.devNetwork.id]: {
+  //     address: appConfig.devPublicAddress,
+  //   },
+  // },
 });
 
 export const index = () => {
