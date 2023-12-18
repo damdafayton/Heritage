@@ -10,8 +10,9 @@
     "test": "jest",
     "web": "webpack serve -d source-map --mode development --config \"./web/webpack.config.js\" --color --hot",
     "build:web": "webpack --mode production --config \"./web/webpack.config.js\"",
-    "pod-clean": "cd ios && rm -rf Pods && rm -rf Podfile.lock && pod install && cd ..",
-    "pod-i": "cd ios && pod install && cd .."
+    "pod:clean": "cd ios && rm -rf Pods && rm -rf Podfile.lock && pod install && cd ..",
+    "pod": "cd ios && pod install && cd ..",
+    "ios:clean": "rm -rf ~/Library/Developer/Xcode/DerivedData/"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",

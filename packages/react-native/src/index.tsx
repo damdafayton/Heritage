@@ -4,7 +4,7 @@ import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
 
-import './shim';
+import '../shim';
 import App from './App';
 import {wagmiConfig, chains} from './services/wagmiConfig';
 import {appConfig} from '../app.config';

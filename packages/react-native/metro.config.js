@@ -10,11 +10,11 @@ const config = {
   server: {
     // port: 8082,
   },
-  resolver: {
-    extraNodeModules: {
-      crypto: require('react-native-crypto'),
-    },
-  },
+  // resolver: {
+  //   extraNodeModules: {
+  //     crypto: require('react-native-crypto'),
+  //   },
+  // },
 };
 
 console.log(mergeConfig(getDefaultConfig(__dirname), config));
