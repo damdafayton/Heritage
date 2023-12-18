@@ -1194,6 +1194,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-private-methods@npm:^7.23.3":
+  version: 7.23.3
+  resolution: "@babel/plugin-transform-private-methods@npm:7.23.3"
+  dependencies:
+    "@babel/helper-create-class-features-plugin": ^7.22.15
+    "@babel/helper-plugin-utils": ^7.22.5
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: cedc1285c49b5a6d9a3d0e5e413b756ac40b3ac2f8f68bdfc3ae268bc8d27b00abd8bb0861c72756ff5dd8bf1eb77211b7feb5baf4fdae2ebbaabe49b9adc1d0
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-private-property-in-object@npm:^7.22.11":
   version: 7.22.11
   resolution: "@babel/plugin-transform-private-property-in-object@npm:7.22.11"
@@ -3265,6 +3277,7 @@ __metadata:
   resolution: "@se-2/rn@workspace:."
   dependencies:
     "@babel/core": ^7.20.0
+    "@babel/plugin-transform-private-methods": ^7.23.3
     "@babel/preset-env": ^7.20.0
     "@babel/runtime": ^7.20.0
     "@ethersproject/providers": ^5.7.2
@@ -3320,6 +3333,7 @@ __metadata:
     react-test-renderer: 18.2.0
     readable-stream: ^3.6.0
     rn-nodeify: ^10.3.0
+    stream: ^0.0.2
     stream-browserify: ^1.0.0
     string_decoder: ~0.10.25
     timers-browserify: ^1.4.2
@@ -7161,6 +7175,13 @@ __metadata:
     minimalistic-assert: ^1.0.1
     minimalistic-crypto-utils: ^1.0.1
   checksum: d56d21fd04e97869f7ffcc92e18903b9f67f2d4637a23c860492fbbff5a3155fd9ca0184ce0c865dd6eb2487d234ce9551335c021c376cd2d3b7cb749c7d10f4
+  languageName: node
+  linkType: hard
+
+"emitter-component@npm:^1.1.1":
+  version: 1.1.2
+  resolution: "emitter-component@npm:1.1.2"
+  checksum: caf43e59e8e3b03532553d5870433f771b75f88c9d3594dec7498f50b47e49c05ed9b308dea41251cc9349bb210094ddc9185a98fbc8db8264621a7d21cc0457
   languageName: node
   linkType: hard
 
@@ -14014,6 +14035,15 @@ __metadata:
   version: 1.0.1
   resolution: "stream-shift@npm:1.0.1"
   checksum: 59b82b44b29ec3699b5519a49b3cedcc6db58c72fb40c04e005525dfdcab1c75c4e0c180b923c380f204bed78211b9bad8faecc7b93dece4d004c3f6ec75737b
+  languageName: node
+  linkType: hard
+
+"stream@npm:^0.0.2":
+  version: 0.0.2
+  resolution: "stream@npm:0.0.2"
+  dependencies:
+    emitter-component: ^1.1.1
+  checksum: 43d89e176c282234d452754f9b55a82c74ea68345bf6176af32c4c213801f88df7984c83ec5a735457705dddf4668373edb9f0ec270a7491e1d881631a763978
   languageName: node
   linkType: hard
 

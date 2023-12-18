@@ -16,6 +16,7 @@
     "ios:clean": "rm -rf ~/Library/Developer/Xcode/DerivedData/"
   },
   "dependencies": {
+    "@babel/plugin-transform-private-methods": "^7.23.3",
     "@ethersproject/providers": "^5.7.2",
     "@rainbow-me/rainbowkit": "^1.3.1",
     "@react-native-async-storage/async-storage": "^1.21.0",
@@ -49,6 +50,7 @@
     "react-native-udp": "^2.7.0",
     "react-native-web": "^0.19.9",
     "readable-stream": "^3.6.0",
+    "stream": "^0.0.2",
     "stream-browserify": "^1.0.0",
     "string_decoder": "~0.10.25",
     "timers-browserify": "^1.4.2",

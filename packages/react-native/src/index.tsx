@@ -14,7 +14,6 @@ createWeb3Modal({
   projectId: appConfig.walletConnectProjectId,
   chains,
   wagmiConfig,
-
   // defaultChain: appConfig.devNetwork,
   // tokens: {
   //   [appConfig.devNetwork.id]: {

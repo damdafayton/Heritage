@@ -59,9 +59,9 @@ export const connectors = connectorsForWallets([
 ]);
 
 const wagmiConfig = createConfig({
-  connectors: connectors || [
+  connectors: [
     ...w3mConnectors({chains, projectId: appConfig.walletConnectProjectId}),
-    burnerWalletConfig({chains: [chains[0]]}).createConnector(),
+    // burnerWalletConfig({chains: [chains[0]]}).createConnector(),
   ],
   publicClient,
 });
