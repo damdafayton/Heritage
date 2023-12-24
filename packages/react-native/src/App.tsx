@@ -32,10 +32,8 @@ const App = () => {
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      {/* <ConnectButton /> */}
-      {/* <div>sag</div> */}
-      <Text>Chain: {chain?.name}</Text>
-      <Text>Address: {address}</Text>
+      {/* <Text>Chain: {chain?.name}</Text>
+      <Text>Address: {address}</Text> */}
       <W3mButton balance="show" />
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
@@ -46,6 +44,7 @@ const App = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
+          <Text style={styles.header}>HERITAGE</Text>
           <Section title="Step OneE">
             Edit <Text style={styles.highlight}>App.js</Text> to change this
             screen and then come back to see your edits. HI
@@ -115,6 +114,12 @@ const Section = ({children, title}: {children: any; title: string}) => {
 };
 
 const styles = StyleSheet.create({
+  header: {
+    fontWeight: '600',
+    fontSize: 24,
+    textAlign: 'center',
+    margin: 10,
+  },
   sectionContainer: {
     marginTop: 32,
     paddingHorizontal: 24,

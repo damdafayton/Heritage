@@ -60,11 +60,11 @@ export class BurnerConnector extends Connector<
   async getWalletClient(config?: {chainId?: number | undefined} | undefined) {
     const chain = this.getChainFromId(config?.chainId);
     if (!this.burnerWallet) {
-      const bunerAccount = privateKeyToAccount(loadBurnerSK());
+      const burnerAccount = privateKeyToAccount(loadBurnerSK());
 
       const client = createWalletClient({
         chain: chain,
-        account: bunerAccount,
+        account: burnerAccount,
         transport: http(),
       });
       this.burnerWallet = client;
@@ -116,8 +116,8 @@ export class BurnerConnector extends Connector<
   }
 
   async getAccount(): Promise<`0x${string}`> {
-    const bunerAccount = privateKeyToAccount(loadBurnerSK());
-    return bunerAccount.address as `0x${string}`;
+    const burnerAccount = privateKeyToAccount(loadBurnerSK());
+    return burnerAccount.address as `0x${string}`;
   }
 
   async getChainId(): Promise<number> {
@@ -144,11 +144,11 @@ export class BurnerConnector extends Connector<
   protected async onAccountsChanged() {
     const chainId = await this.getChainId();
     const chain = this.getChainFromId(chainId);
-    const bunerAccount = privateKeyToAccount(loadBurnerSK());
+    const burnerAccount = privateKeyToAccount(loadBurnerSK());
 
     const client = createWalletClient({
       chain: chain,
-      account: bunerAccount,
+      account: burnerAccount,
       transport: http(),
     });
     this.burnerWallet = client;
@@ -156,11 +156,11 @@ export class BurnerConnector extends Connector<
   protected async onChainChanged() {
     const chainId = await this.getChainId();
     const chain = this.getChainFromId(chainId);
-    const bunerAccount = privateKeyToAccount(loadBurnerSK());
+    const burnerAccount = privateKeyToAccount(loadBurnerSK());
 
     const client = createWalletClient({
       chain: chain,
-      account: bunerAccount,
+      account: burnerAccount,
       transport: http(),
     });
     this.burnerWallet = client;

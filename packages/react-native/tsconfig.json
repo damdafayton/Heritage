@@ -35,7 +35,10 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "sourceMap": true,
-    "outDir": "./dist/"
+    "outDir": "./dist/",
+    "paths": {
+      "~~/*": ["./*"]
+    }
   },
   "exclude": [
     "node_modules",

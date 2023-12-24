@@ -1,6 +1,7 @@
 import {Hex} from 'viem';
 
 import {generatePrivateKey} from 'viem/accounts';
+import {appConfig} from '../../app.config';
 
 const burnerStorageKey = 'scaffoldEth2.burnerWallet.sk';
 
@@ -17,7 +18,7 @@ const isValidSk = (pk: Hex | string | undefined | null): boolean => {
 /**
  * If no burner is found in localstorage, we will generate a random private key
  */
-const newDefaultPriaveKey = generatePrivateKey(); // '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'; //
+const newDefaultPriaveKey = appConfig.burnerPrivateKey || generatePrivateKey();
 
 /**
  * Save the current burner private key from storage

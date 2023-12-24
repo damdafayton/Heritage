@@ -1,9 +1,9 @@
+import {Hex} from 'viem';
 import * as chains from 'viem/chains';
 
 export type ScaffoldConfig = {
-  devNetwork: chains.Chain;
   targetNetwork: chains.Chain;
-  devPublicAddress: string;
+  burnerPrivateKey: Hex;
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;
@@ -13,9 +13,9 @@ export type ScaffoldConfig = {
 
 export const appConfig = {
   // The network where your DApp lives in
-  devNetwork: chains.hardhat,
-  devPublicAddress: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
   targetNetwork: chains.hardhat,
+  burnerPrivateKey:
+    '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
 
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect on the local network
