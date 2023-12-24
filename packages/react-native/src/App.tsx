@@ -18,6 +18,56 @@ import {
   View,
 } from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
+import {useNetwork, useAccount} from 'wagmi';
+
+const App = () => {
+  const isDarkMode = useColorScheme() === 'dark';
+
+  const backgroundStyle = {
+    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  };
+
+  const {chain, chains} = useNetwork();
+  const {address, isConnecting, isDisconnected} = useAccount();
+
+  return (
+    <SafeAreaView style={backgroundStyle}>
+      {/* <ConnectButton /> */}
+      {/* <div>sag</div> */}
+      <Text>Chain: {chain?.name}</Text>
+      <Text>Address: {address}</Text>
+      <W3mButton balance="show" />
+      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <ScrollView
+        contentInsetAdjustmentBehavior="automatic"
+        style={backgroundStyle}>
+        {/* <Header /> */}
+        <View
+          style={{
+            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+          }}>
+          <Section title="Step OneE">
+            Edit <Text style={styles.highlight}>App.js</Text> to change this
+            screen and then come back to see your edits. HI
+          </Section>
+          <Section title="See Your Changes">
+            {/* <ReloadInstructions /> */}
+            <Text>Reload Instruction</Text>
+          </Section>
+          <Section title="Debug">
+            {/* <DebugInstructions /> */}
+            <Text>Debug Instruction</Text>
+          </Section>
+          <Section title="Learn More">
+            Read the docs to discover what to do next:
+          </Section>
+          {/* <LearnMoreLinks /> */}
+          <Text>Learn More Links</Text>
+        </View>
+      </ScrollView>
+    </SafeAreaView>
+  );
+};
 
 // import {ConnectButton} from '@rainbow-me/rainbowkit';
 
@@ -61,50 +111,6 @@ const Section = ({children, title}: {children: any; title: string}) => {
         {children}
       </Text>
     </View>
-  );
-};
-
-const App = () => {
-  const isDarkMode = useColorScheme() === 'dark';
-
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
-
-  return (
-    <SafeAreaView style={backgroundStyle}>
-      {/* <ConnectButton /> */}
-      {/* <div>sag</div> */}
-      <W3mButton balance="show" />
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        {/* <Header /> */}
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
-          }}>
-          <Section title="Step OneE">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits. HI
-          </Section>
-          <Section title="See Your Changes">
-            {/* <ReloadInstructions /> */}
-            <Text>Reload Instruction</Text>
-          </Section>
-          <Section title="Debug">
-            {/* <DebugInstructions /> */}
-            <Text>Debug Instruction</Text>
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
-          </Section>
-          {/* <LearnMoreLinks /> */}
-          <Text>Learn More Links</Text>
-        </View>
-      </ScrollView>
-    </SafeAreaView>
   );
 };
 

@@ -498,6 +498,8 @@ PODS:
     - React-perflogger (= 0.72.6)
   - RNCAsyncStorage (1.21.0):
     - React-Core
+  - RNCClipboard (1.13.2):
+    - React-Core
   - RNOS (1.2.6):
     - React
   - RNSVG (14.1.0):
@@ -578,6 +580,7 @@ DEPENDENCIES:
   - React-utils (from `../node_modules/react-native/ReactCommon/react/utils`)
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - "RNCAsyncStorage (from `../node_modules/@react-native-async-storage/async-storage`)"
+  - "RNCClipboard (from `../node_modules/@react-native-clipboard/clipboard`)"
   - RNOS (from `../node_modules/react-native-os`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
@@ -690,6 +693,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon"
   RNCAsyncStorage:
     :path: "../node_modules/@react-native-async-storage/async-storage"
+  RNCClipboard:
+    :path: "../node_modules/@react-native-clipboard/clipboard"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNSVG:
@@ -756,6 +761,7 @@ SPEC CHECKSUMS:
   React-utils: fa59c9a3375fb6f4aeb66714fd3f7f76b43a9f16
   ReactCommon: dd03c17275c200496f346af93a7b94c53f3093a4
   RNCAsyncStorage: 618d03a5f52fbccb3d7010076bc54712844c18ef
+  RNCClipboard: 60fed4b71560d7bfe40e9d35dea9762b024da86d
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
