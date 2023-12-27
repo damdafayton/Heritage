@@ -4,6 +4,7 @@ import * as chains from 'viem/chains';
 export type ScaffoldConfig = {
   targetNetwork: chains.Chain;
   burnerPrivateKey: Hex;
+
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;

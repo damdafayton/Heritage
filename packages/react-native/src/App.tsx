@@ -18,7 +18,10 @@ import {
   View,
 } from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
-import {useNetwork, useAccount} from 'wagmi';
+import {useAccount} from 'wagmi';
+import {useHeritageContract} from './hooks/useHeritageContract';
+import {AbiFunction} from 'abitype';
+import {DisplayVariable} from './components/Contract/DiplayVariable';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -27,38 +30,57 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const {chain, chains} = useNetwork();
   const {address, isConnecting, isDisconnected} = useAccount();
+
+  const {address: heritageAddress, abi: heritageABI} = useHeritageContract();
+
+  const fnFeeThousandage = heritageABI?.find(part => {
+    const partAsFn = part as AbiFunction;
+    return partAsFn.name === 'feeThousandagePerYear';
+  }) as AbiFunction;
+  const fnMinFee = heritageABI?.find(part => {
+    const partAsFn = part as AbiFunction;
+    return partAsFn.name === 'minFeePerYearInUsd';
+  }) as AbiFunction;
+
+  console.log({heritageAddress});
+  const refreshDisplayVariables = true;
 
   return (
     <SafeAreaView style={backgroundStyle}>
-      {/* <Text>Chain: {chain?.name}</Text>
-      <Text>Address: {address}</Text> */}
       <W3mButton balance="show" />
       <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
       <ScrollView
         contentInsetAdjustmentBehavior="automatic"
         style={backgroundStyle}>
-        {/* <Header /> */}
         <View
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Text style={styles.header}>HERITAGE</Text>
+          {heritageAddress && (
+            <>
+              <DisplayVariable
+                abiFunction={fnFeeThousandage}
+                contractAddress={heritageAddress}
+                key={fnFeeThousandage.name}
+                name="Annual fee"
+                append="‰"
+                refreshDisplayVariables={refreshDisplayVariables}
+              />
+              <DisplayVariable
+                abiFunction={fnMinFee}
+                contractAddress={heritageAddress}
+                name="Minimum fee"
+                append="$"
+                key={fnMinFee.name}
+                refreshDisplayVariables={refreshDisplayVariables}
+              />
+            </>
+          )}
           <Section title="Step OneE">
             Edit <Text style={styles.highlight}>App.js</Text> to change this
             screen and then come back to see your edits. HI
-          </Section>
-          <Section title="See Your Changes">
-            {/* <ReloadInstructions /> */}
-            <Text>Reload Instruction</Text>
-          </Section>
-          <Section title="Debug">
-            {/* <DebugInstructions /> */}
-            <Text>Debug Instruction</Text>
-          </Section>
-          <Section title="Learn More">
-            Read the docs to discover what to do next:
           </Section>
           {/* <LearnMoreLinks /> */}
           <Text>Learn More Links</Text>
