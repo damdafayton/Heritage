@@ -3,6 +3,7 @@ import {Abi, AbiFunction} from 'abitype';
 import {Address} from 'viem';
 import {useContractRead} from 'wagmi';
 import {Text} from 'react-native';
+import {displayTxResult} from './utils';
 // import {ArrowPathIcon} from '@heroicons/react/24/outline';
 // import {displayTxResult} from '~~/components/scaffold-eth';
 // import {useAnimationConfig} from '~~/hooks/scaffold-eth';
@@ -45,7 +46,7 @@ export const DisplayVariable = ({
   return (
     <>
       <Text>{name}</Text>
-      <Text>{result ? String(result) + append : ''}</Text>
+      <Text>{result ? displayTxResult(result) + append : ''}</Text>
     </>
     // <div className="space-y-1 pb-2">
     //   <div className="flex items-center gap-2">
