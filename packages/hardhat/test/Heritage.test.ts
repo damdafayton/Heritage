@@ -172,6 +172,14 @@ describe("HeritageContract", function () {
       // Eth value of min fee
       expect(ownerBalanceWithFees - ownerInitialBalance).to.be.above(200500277054178906n);
     });
+
+    it("addressSubscriptionMap calls HeritageWallet for the data", async () => {
+      const [, , user] = await ethers.getSigners();
+
+      const subscriptionStatus = await heritageProxy.addressSubscriptionMap(user);
+
+      expect(subscriptionStatus).eql([0n, 0n, 0n, 0n, false, 0n, false]);
+    });
   });
 
   describe("Security", () => {

@@ -81,6 +81,12 @@ contract Heritage is
 		);
 	}
 
+	function addressSubscriptionMap(
+		address addr
+	) external view returns (uint, uint, uint, uint, bool, uint, bool) {
+		return _getHeritageWallet().addressSubscriptionMap(addr);
+	}
+
 	//  Interface functions
 
 	function withdrawCollectedFees(
