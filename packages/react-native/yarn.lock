@@ -3118,6 +3118,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-picker/picker@npm:^2.6.1":
+  version: 2.6.1
+  resolution: "@react-native-picker/picker@npm:2.6.1"
+  peerDependencies:
+    react: ">=16"
+    react-native: ">=0.57"
+  checksum: a8c58d5d945350b70fd8b5d66dfe97dd04641277db7c702912d8c41ae4da94cfef8b0b73bfa493adfdee8f089af6e0316872c3ee61a4efc18528e6e25a5452bc
+  languageName: node
+  linkType: hard
+
 "@react-native/assets-registry@npm:^0.72.0":
   version: 0.72.0
   resolution: "@react-native/assets-registry@npm:0.72.0"
@@ -3319,6 +3329,7 @@ __metadata:
     "@react-native-async-storage/async-storage": ^1.21.0
     "@react-native-clipboard/clipboard": ^1.13.2
     "@react-native-community/netinfo": ^11.2.1
+    "@react-native-picker/picker": ^2.6.1
     "@react-native/eslint-config": ^0.72.2
     "@react-native/metro-config": ^0.72.11
     "@tradle/react-native-http": ^2.0.1
@@ -12885,7 +12896,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-udp@npm:^2.7.0":
+"react-native-udp@npm:2.7.0":
   version: 2.7.0
   resolution: "react-native-udp@npm:2.7.0"
   dependencies:
@@ -12895,6 +12906,19 @@ __metadata:
     ip-regex: ^1.0.3
     util: ^0.10.3
   checksum: 84838ef3ccb037c81505c115a74e35be1f5ae8a0f6ccdf32e4240ad7f0892ffff96ff97e44345aeb0d6e75f88194d84350ee14e4391a8a9a763e33d4b5790d1e
+  languageName: node
+  linkType: hard
+
+"react-native-udp@patch:react-native-udp@npm%3A2.7.0#./.yarn/patches/react-native-udp-npm-2.7.0-f90f2ea2b5.patch::locator=%40se-2%2Frn%40workspace%3A.":
+  version: 2.7.0
+  resolution: "react-native-udp@patch:react-native-udp@npm%3A2.7.0#./.yarn/patches/react-native-udp-npm-2.7.0-f90f2ea2b5.patch::version=2.7.0&hash=944e5d&locator=%40se-2%2Frn%40workspace%3A."
+  dependencies:
+    base64-js: 0.0.8
+    events: ^1.0.2
+    inherits: ^2.0.1
+    ip-regex: ^1.0.3
+    util: ^0.10.3
+  checksum: 9b8aa6100e1924d7b40eae00dddb31e8d51e000eebb755dfcbd91c693013d0fc8957aedbe99ae8196d67e4a124ec89689a19e768b270b7d094d32edea217fe88
   languageName: node
   linkType: hard
 

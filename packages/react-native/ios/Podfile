@@ -1,3 +1,10 @@
+require("json")
+
+def logData(obj)
+  puts JSON.pretty_generate(JSON.parse(obj.to_json))
+  return
+end
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -27,7 +34,7 @@ end
 
 target 'AwesomeProject' do
   config = use_native_modules!
-
+  logData(config)
   # Flags change depending on the env values.
   flags = get_default_flags()
 

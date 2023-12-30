@@ -53,6 +53,7 @@ This is one way to run your app — you can also run it directly from within And
    - Go to Pods. Find the specific pod under 'targets'.
    - Go to 'Build Phases' > 'Compile Sources'
    - Remove the source which has duplicate somewhere else
+   - yarn patch is used for fixing one of these errors
 
 ## Step 3: Modifying your App
 
