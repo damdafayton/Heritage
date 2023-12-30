@@ -11,18 +11,14 @@ import {displayTxResult} from './utils';
 
 type DisplayVariableProps = {
   contractAddress: Address;
-  abiFunction: AbiFunction;
+  abiFunction: AbiFunction | undefined;
   refreshDisplayVariables: boolean;
-  name: string;
-  append: string;
 };
 
 export const DisplayVariable = ({
   contractAddress,
   abiFunction,
   refreshDisplayVariables,
-  name,
-  append,
 }: DisplayVariableProps) => {
   const {
     data: result,
@@ -30,7 +26,7 @@ export const DisplayVariable = ({
     refetch,
   } = useContractRead({
     address: contractAddress,
-    functionName: abiFunction.name,
+    functionName: abiFunction?.name,
     abi: [abiFunction] as Abi,
     // onError: error => {
     //   notification.error(error.message);
@@ -43,10 +39,11 @@ export const DisplayVariable = ({
     refetch();
   }, [refetch, refreshDisplayVariables]);
 
+  if (!abiFunction) return <></>;
+
   return (
     <>
-      <Text>{name}</Text>
-      <Text>{result ? displayTxResult(result) + append : ''}</Text>
+      <Text>{result ? displayTxResult(result) : ''}</Text>
     </>
     // <div className="space-y-1 pb-2">
     //   <div className="flex items-center gap-2">

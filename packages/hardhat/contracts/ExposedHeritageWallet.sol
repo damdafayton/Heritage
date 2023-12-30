@@ -12,14 +12,6 @@ contract ExposedHeritageWallet is HeritageWallet {
 		address ethUsdPriceFeed
 	) HeritageWallet(owner, ethUsdPriceFeed) {}
 
-	function convertPriceToWei(
-		uint price,
-		uint ethPrice,
-		uint decimal
-	) public pure returns (uint) {
-		return _convertPriceToWei(price, ethPrice, decimal);
-	}
-
 	function numDigits(int number) public pure returns (uint8) {
 		return _numDigits(number);
 	}

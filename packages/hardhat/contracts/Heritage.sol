@@ -73,9 +73,18 @@ contract Heritage is
 		_;
 	}
 
-	function registerSubscriber(address _address) external _onlyManager {
-		_getHeritageWallet().registerSubscriber(
-			_address,
+	function registerSubscriber() external payable {
+		uint minimumDepositInWei = _getHeritageWallet().convertUsdToWei(
+			minFeePerYearInUsd
+		);
+
+		require(
+			minimumDepositInWei <= msg.value,
+			"Minimum fee must be deposited to register a new user."
+		);
+
+		_getHeritageWallet().registerSubscriber{ value: msg.value }(
+			msg.sender,
 			minFeePerYearInUsd,
 			feeThousandagePerYear
 		);

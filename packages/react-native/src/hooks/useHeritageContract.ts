@@ -1,4 +1,5 @@
 import {useNetwork} from 'wagmi';
+import {AbiFunction} from 'abitype';
 
 import deployedContracts from '../../contracts/deployedContracts';
 import {GenericContractsDeclaration} from '../../types/hardhat';
@@ -15,5 +16,12 @@ export function useHeritageContract() {
   const address = heritage?.address;
   const abi = heritage?.abi;
 
-  return {address, abi};
+  const getHeritageFunction = (functionName: string) => {
+    return abi?.find(part => {
+      const partAsFn = part as AbiFunction;
+      return partAsFn.name === functionName;
+    }) as AbiFunction;
+  };
+
+  return {address, abi, getHeritageFunction};
 }

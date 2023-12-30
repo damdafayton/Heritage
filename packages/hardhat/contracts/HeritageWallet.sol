@@ -185,13 +185,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 			_address
 		];
 
-		(uint ethPrice, uint decimal) = getEthPrice();
-
-		uint userMinFee = _convertPriceToWei(
-			subscriptionData.minFeePerYear,
-			ethPrice,
-			decimal
-		);
+		uint userMinFee = convertUsdToWei(subscriptionData.minFeePerYear);
 
 		uint userFeeFromThousandage = (subscriptionData.deposited *
 			subscriptionData.feeThousandagePerYear) / 1000;
@@ -207,7 +201,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		address _address,
 		uint minFeePerYear,
 		uint feeThousandagePerYear
-	) public onlyOwner {
+	) public payable onlyOwner {
 		Subscription storage subscription = addressSubscriptionMap[_address];
 
 		require(subscription.startTimestamp == 0, "Already registered.");
@@ -216,6 +210,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		subscription.minFeePerYear = minFeePerYear;
 		subscription.feeThousandagePerYear = feeThousandagePerYear;
 		subscription.canModify = true;
+		subscription.deposited += msg.value;
 	}
 
 	function getEthPrice() public view returns (uint, uint) {
@@ -235,18 +230,16 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return (uint(answer), decimal);
 	}
 
-	function _convertPriceToWei(
-		uint price,
-		uint ethPrice,
-		uint decimal
-	) internal pure returns (uint) {
+	function convertUsdToWei(uint valueInUSD) public view returns (uint) {
+		(uint ethPrice, uint decimal) = getEthPrice();
+
 		uint missingDecimalCountInPrice = _numDigits(int(ethPrice)) - decimal;
 		// Match price digits to ethPrice digits
-		uint priceStandardized = price * 10 ** missingDecimalCountInPrice;
+		uint priceStandardized = valueInUSD * 10 ** missingDecimalCountInPrice;
 
-		uint priceInWei = (1 ether * priceStandardized) / ethPrice;
+		uint valueInWei = (1 ether * priceStandardized) / ethPrice;
 
-		return priceInWei;
+		return valueInWei;
 	}
 
 	function _numDigits(int number) internal pure returns (uint8) {

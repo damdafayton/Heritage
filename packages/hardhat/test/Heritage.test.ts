@@ -4,7 +4,7 @@ import { Heritage, HeritageWallet, Mock_AggregatorV3Interface, HeritageV2 } from
 import { Addressable } from "ethers";
 import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
-describe("HeritageContract", function () {
+describe("HeritageProxyContract", function () {
   // We define a fixture to reuse the same setup in every test.
   let heritageProxy: Heritage;
   let ownerAddress: string | Addressable;
@@ -137,19 +137,20 @@ describe("HeritageContract", function () {
       await deployHeritage(usdMinFee, feeThousandage);
     });
 
-    it("manager registers new user with default fee values", async () => {
-      const [, manager, user] = await ethers.getSigners();
+    it("new user is registered with default fee values", async () => {
+      const [, , user] = await ethers.getSigners();
 
       const heritageWallet = await getHeritageWalletContract();
 
       await heritageWallet.transferOwnership(heritageProxy.target);
-      await heritageProxy.updateManager(manager);
 
-      await heritageProxy.connect(manager).registerSubscriber(user);
+      await heritageProxy.connect(user).registerSubscriber({ value: ethers.parseEther("1") });
 
-      const [, ...subscription] = await heritageWallet.addressSubscriptionMap(user);
+      const [timestamp, minFee, thousandage] = await heritageWallet.addressSubscriptionMap(user);
 
-      expect(subscription).to.eql([7n, 3n, 0n, false, 0n, true]);
+      expect(Boolean(timestamp)).to.eql(true);
+      expect(BigInt(usdMinFee)).to.eql(minFee);
+      expect(BigInt(feeThousandage)).to.eql(thousandage);
     });
 
     it("owner can withdraw collected fees", async () => {
@@ -160,8 +161,8 @@ describe("HeritageContract", function () {
       await heritageWallet.transferOwnership(heritageProxy.target);
 
       await heritageProxy.updateManager(manager);
-      await heritageProxy.connect(manager).registerSubscriber(user);
-      await heritageProxy.connect(user).deposit(user, { value: ethers.parseEther("50") });
+      await heritageProxy.connect(user).registerSubscriber({ value: ethers.parseEther("50") });
+
       await heritageProxy.payOutstandingFees(user);
       await heritageProxy.connect(manager).distributeHeritage(user);
 
@@ -190,10 +191,12 @@ describe("HeritageContract", function () {
       await deployHeritage(usdMinFee, feeThousandage);
     });
 
-    it("registerSubscriber throws if called by not manager", async () => {
+    it("registerSubscriber throws if msg.value is not enough to cover minimum fee", async () => {
       const [, user] = await ethers.getSigners();
 
-      await expect(heritageProxy.registerSubscriber(user)).rejectedWith("Only manager can access this functionality.");
+      await expect(heritageProxy.connect(user).registerSubscriber()).rejectedWith(
+        "Minimum fee must be deposited to register a new user.",
+      );
     });
 
     it("only owner can update default fees", async () => {

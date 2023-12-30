@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 
 import {
   SafeAreaView,
@@ -18,10 +18,10 @@ import {
   View,
 } from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
-import {useAccount} from 'wagmi';
+import {useAccount, useContractRead} from 'wagmi';
 import {useHeritageContract} from './hooks/useHeritageContract';
-import {AbiFunction} from 'abitype';
 import {DisplayVariable} from './components/Contract/DiplayVariable';
+import {displayTxResult} from './components/Contract/utils';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -32,18 +32,39 @@ const App = () => {
 
   const {address, isConnecting, isDisconnected} = useAccount();
 
-  const {address: heritageAddress, abi: heritageABI} = useHeritageContract();
+  const {
+    address: heritageAddress,
+    abi: heritageABI,
+    getHeritageFunction,
+  } = useHeritageContract();
 
-  const fnFeeThousandage = heritageABI?.find(part => {
-    const partAsFn = part as AbiFunction;
-    return partAsFn.name === 'feeThousandagePerYear';
-  }) as AbiFunction;
-  const fnMinFee = heritageABI?.find(part => {
-    const partAsFn = part as AbiFunction;
-    return partAsFn.name === 'minFeePerYearInUsd';
-  }) as AbiFunction;
+  const fnFeeThousandage = getHeritageFunction?.('feeThousandagePerYear');
+  const fnMinFee = getHeritageFunction?.('minFeePerYearInUsd');
+  const addressSubscriptionMap = getHeritageFunction?.(
+    'addressSubscriptionMap',
+  );
 
-  console.log({heritageAddress});
+  const {
+    data: subscriptionData,
+    isFetching,
+    refetch,
+  } = useContractRead({
+    abi: [addressSubscriptionMap],
+    address: heritageAddress,
+    functionName: addressSubscriptionMap?.name,
+    args: [address],
+  });
+
+  const [isSubscribed, setIsSubscribed] = useState(false);
+
+  useEffect(() => {
+    if (isFetching) return;
+
+    const [timestamp] = subscriptionData as Array<any>;
+
+    setIsSubscribed(displayTxResult(timestamp) === 0 ? false : true);
+  }, [isFetching]);
+
   const refreshDisplayVariables = true;
 
   return (
@@ -60,30 +81,38 @@ const App = () => {
           <Text style={styles.header}>HERITAGE</Text>
           {heritageAddress && (
             <>
-              <DisplayVariable
-                abiFunction={fnFeeThousandage}
-                contractAddress={heritageAddress}
-                key={fnFeeThousandage.name}
-                name="Annual fee"
-                append="‰"
-                refreshDisplayVariables={refreshDisplayVariables}
-              />
-              <DisplayVariable
-                abiFunction={fnMinFee}
-                contractAddress={heritageAddress}
-                name="Minimum fee"
-                append="$"
-                key={fnMinFee.name}
-                refreshDisplayVariables={refreshDisplayVariables}
-              />
+              <View style={styles.contractData}>
+                <Text>Annual fee: </Text>
+                <DisplayVariable
+                  abiFunction={fnFeeThousandage}
+                  contractAddress={heritageAddress}
+                  refreshDisplayVariables={refreshDisplayVariables}
+                />
+                <Text>‰</Text>
+              </View>
+              <View style={styles.contractData}>
+                <Text>Minimum fee: </Text>
+                <DisplayVariable
+                  abiFunction={fnMinFee}
+                  contractAddress={heritageAddress}
+                  refreshDisplayVariables={refreshDisplayVariables}
+                />
+                <Text>$</Text>
+              </View>
             </>
           )}
-          <Section title="Step OneE">
-            Edit <Text style={styles.highlight}>App.js</Text> to change this
-            screen and then come back to see your edits. HI
-          </Section>
-          {/* <LearnMoreLinks /> */}
-          <Text>Learn More Links</Text>
+          {isSubscribed ? (
+            <>
+              <Section title="Step OneE">
+                Edit <Text style={styles.highlight}>App.js</Text> to change this
+                screen and then come back to see your edits. HI
+              </Section>
+
+              <Text>Learn More Links</Text>
+            </>
+          ) : (
+            <></>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -157,6 +186,10 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
+  },
+  contractData: {
+    flexDirection: 'row',
+    columnGap: 2,
   },
 });
 

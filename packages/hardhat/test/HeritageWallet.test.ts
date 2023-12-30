@@ -3,7 +3,7 @@ import { ethers } from "hardhat";
 import { HeritageWallet, ExposedHeritageWallet, Mock_AggregatorV3Interface } from "../typechain-types";
 import { Addressable } from "ethers";
 
-describe("HeritageWallet", function () {
+describe("HeritageWalletContract", function () {
   // We define a fixture to reuse the same setup in every test.
 
   let heritageWallet: HeritageWallet;
@@ -270,10 +270,10 @@ describe("HeritageWallet", function () {
       expect(await exposedHeritageWallet.numDigits(2000)).to.eql(4n);
     });
 
-    it("_convertPriceToWei() returns given price in WEI", async function () {
-      const priceInWei = await exposedHeritageWallet.convertPriceToWei(5, 20000, 5);
+    it("convertUsdToWei() returns given price in WEI", async function () {
+      const priceInWei = await heritageWallet.convertUsdToWei(5);
 
-      expect(priceInWei).to.eql(250000000000000n);
+      expect(priceInWei).to.eql(253239251642n);
     });
 
     it("_findYearsBetweenTimestamps() calculates 1 for count of subscription fees", async () => {
