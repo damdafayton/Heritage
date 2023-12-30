@@ -57,7 +57,6 @@ const connectors = [
   ...w3mConnectors({chains, projectId: appConfig.walletConnectProjectId}),
   ...burnerWalletConnector,
 ];
-console.log({connectors, burnerWalletConnector});
 
 const wagmiConfig = createConfig({
   autoConnect: true,

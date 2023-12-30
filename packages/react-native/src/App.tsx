@@ -22,6 +22,7 @@ import {useAccount, useContractRead} from 'wagmi';
 import {useHeritageContract} from './hooks/useHeritageContract';
 import {DisplayVariable} from './components/Contract/DiplayVariable';
 import {displayTxResult} from './components/Contract/utils';
+import {NotSubscribedView} from './components/NotSubscribedView';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -58,7 +59,7 @@ const App = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
-    if (isFetching) return;
+    if (isFetching || !subscriptionData) return;
 
     const [timestamp] = subscriptionData as Array<any>;
 
@@ -99,19 +100,19 @@ const App = () => {
                 />
                 <Text>$</Text>
               </View>
-            </>
-          )}
-          {isSubscribed ? (
-            <>
-              <Section title="Step OneE">
-                Edit <Text style={styles.highlight}>App.js</Text> to change this
-                screen and then come back to see your edits. HI
-              </Section>
+              {isSubscribed ? (
+                <>
+                  <Section title="Step OneE">
+                    Edit <Text style={styles.highlight}>App.js</Text> to change
+                    this screen and then come back to see your edits. HI
+                  </Section>
 
-              <Text>Learn More Links</Text>
+                  <Text>Learn More Links</Text>
+                </>
+              ) : (
+                <NotSubscribedView />
+              )}
             </>
-          ) : (
-            <></>
           )}
         </View>
       </ScrollView>
