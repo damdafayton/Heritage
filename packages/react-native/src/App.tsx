@@ -22,7 +22,7 @@ import {useAccount, useContractRead} from 'wagmi';
 import {useHeritageContract} from './hooks/useHeritageContract';
 import {DisplayVariable} from './components/Contract/DiplayVariable';
 import {displayTxResult} from './components/Contract/utils';
-import {NotSubscribedView} from './components/NotSubscribedView';
+import {NotSubscribed} from './components/NotSubscribed';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -110,7 +110,7 @@ const App = () => {
                   <Text>Learn More Links</Text>
                 </>
               ) : (
-                <NotSubscribedView />
+                <NotSubscribed />
               )}
             </>
           )}

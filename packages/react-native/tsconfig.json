@@ -32,6 +32,7 @@
     "jsx": "react-jsx",
     // "noEmit": true,
     "isolatedModules": true,
+    "noImplicitAny": false,
     "strict": true,
     "moduleResolution": "node",
     "resolveJsonModule": true,

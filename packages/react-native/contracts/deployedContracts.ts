@@ -236,6 +236,25 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "valInUSD",
+              type: "uint256",
+            },
+          ],
+          name: "convertUsdToWei",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "address",
               name: "_addressToDeposit",
               type: "address",
@@ -419,16 +438,10 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_address",
-              type: "address",
-            },
-          ],
+          inputs: [],
           name: "registerSubscriber",
           outputs: [],
-          stateMutability: "nonpayable",
+          stateMutability: "payable",
           type: "function",
         },
         {
@@ -782,6 +795,25 @@ const deployedContracts = {
         {
           inputs: [
             {
+              internalType: "uint256",
+              name: "valueInUSD",
+              type: "uint256",
+            },
+          ],
+          name: "convertUsdToWei",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
               internalType: "address",
               name: "_addressToDeposit",
               type: "address",
@@ -909,7 +941,7 @@ const deployedContracts = {
           ],
           name: "registerSubscriber",
           outputs: [],
-          stateMutability: "nonpayable",
+          stateMutability: "payable",
           type: "function",
         },
         {
