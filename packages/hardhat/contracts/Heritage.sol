@@ -74,9 +74,7 @@ contract Heritage is
 	}
 
 	function registerSubscriber() external payable {
-		uint minimumDepositInWei = _getHeritageWallet().convertUsdToWei(
-			minFeePerYearInUsd
-		);
+		uint minimumDepositInWei = convertUsdToWei(minFeePerYearInUsd);
 
 		require(
 			minimumDepositInWei <= msg.value,
@@ -97,6 +95,10 @@ contract Heritage is
 	}
 
 	//  Interface functions
+
+	function convertUsdToWei(uint valInUSD) public view returns (uint) {
+		return _getHeritageWallet().convertUsdToWei(valInUSD);
+	}
 
 	function withdrawCollectedFees(
 		address payable feeCollector

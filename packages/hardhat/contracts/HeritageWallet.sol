@@ -233,11 +233,10 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	function convertUsdToWei(uint valueInUSD) public view returns (uint) {
 		(uint ethPrice, uint decimal) = getEthPrice();
 
-		uint missingDecimalCountInPrice = _numDigits(int(ethPrice)) - decimal;
-		// Match price digits to ethPrice digits
-		uint priceStandardized = valueInUSD * 10 ** missingDecimalCountInPrice;
+		// Match value digits to ethPrice digits
+		uint valueStandardized = valueInUSD * 10 ** decimal;
 
-		uint valueInWei = (1 ether * priceStandardized) / ethPrice;
+		uint valueInWei = (1 ether * valueStandardized) / ethPrice;
 
 		return valueInWei;
 	}

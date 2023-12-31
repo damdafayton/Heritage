@@ -82,7 +82,7 @@ describe("HeritageWalletContract", function () {
 
       const fee = await heritageWallet.calculateFeeToPay(subscriber.address);
 
-      expect(fee).to.eql(354534952299n);
+      expect(fee).to.eql(3546099290780141n);
     });
 
     it("payOutstandingFees() pays default transfer commission if subscriber is not yet registered", async () => {
@@ -99,7 +99,7 @@ describe("HeritageWalletContract", function () {
 
       await heritageWallet.deposit(subscriber.address, {
         gasLimit: 3000000,
-        value: ethers.parseEther("0.0045"),
+        value: ethers.parseEther("0.45"),
       });
 
       await heritageWallet.payOutstandingFees(subscriber.address);
@@ -107,7 +107,7 @@ describe("HeritageWalletContract", function () {
       subscriptionData = await heritageWallet.addressSubscriptionMap(subscriber.address);
 
       expect(subscriptionData.lastYearPaid).to.eql(true);
-      expect(subscriptionData.deposited).to.eql(4491004500000000n);
+      expect(subscriptionData.deposited).to.eql(442907801418439718n);
     });
 
     it("addInheritant()", async () => {
@@ -187,8 +187,8 @@ describe("HeritageWalletContract", function () {
 
       await heritageWallet.distributeHeritage(subscriber.address);
 
-      expect(await ethers.provider.getBalance(inheritant1)).to.eql(10000718560720000000000n);
-      expect(await ethers.provider.getBalance(inheritant2)).to.eql(10001077841080000000000n);
+      expect(await ethers.provider.getBalance(inheritant1)).to.eql(10000717163120567375887n);
+      expect(await ethers.provider.getBalance(inheritant2)).to.eql(10001075744680851063830n);
 
       const [, , , , , deposited] = await heritageWallet.addressSubscriptionMap(subscriber);
 
@@ -236,7 +236,7 @@ describe("HeritageWalletContract", function () {
       await heritageWallet.connect(second).sendFunds(ethers.parseEther("0.00345"), third.address);
 
       //10000 ether comes from hardhat
-      expect(await ethers.provider.getBalance(third.address)).to.eql(10000722010720000000000n);
+      expect(await ethers.provider.getBalance(third.address)).to.eql(10000720613120567375887n);
     });
 
     it("sendFunds() emits event", async () => {
@@ -263,17 +263,17 @@ describe("HeritageWalletContract", function () {
     const jsToSolTime = (jsTime: number) => parseInt((jsTime / 1000).toFixed());
 
     it("getEthPrice() should return ETH-USD price and decimals", async function () {
-      expect(await heritageWallet.getEthPrice()).to.eql([BigInt(197441746000), BigInt(8)]);
+      expect(await heritageWallet.getEthPrice()).to.eql([BigInt(197400000000), BigInt(8)]);
     });
 
     it("_numDigits() returns given price in WEI", async function () {
       expect(await exposedHeritageWallet.numDigits(2000)).to.eql(4n);
     });
 
-    it("convertUsdToWei() returns given price in WEI", async function () {
-      const priceInWei = await heritageWallet.convertUsdToWei(5);
+    it("convertUsdToWei converts given USD value into WEI", async () => {
+      const weiVal = await heritageWallet.convertUsdToWei(1974);
 
-      expect(priceInWei).to.eql(253239251642n);
+      expect(weiVal).to.eql(ethers.parseEther("1"));
     });
 
     it("_findYearsBetweenTimestamps() calculates 1 for count of subscription fees", async () => {
