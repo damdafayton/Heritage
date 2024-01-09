@@ -17,8 +17,8 @@ contract Heritage is
 	OwnableUpgradeable
 {
 	// Cant change the order or type of the variables down
-	address heritageWalletAddr;
-	address ethUsdPriceFeed;
+	address public heritageWalletAddr;
+	address public ethUsdPriceFeed;
 	address public manager;
 	uint public minFeePerYearInUsd;
 	uint public feeThousandagePerYear;

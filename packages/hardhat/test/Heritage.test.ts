@@ -94,6 +94,10 @@ describe("HeritageProxyContract", function () {
       expect(await heritageProxy.owner()).to.equal(ownerAddress);
     });
 
+    it("should have correct Heritage Wallet being set", async () => {
+      expect(await heritageProxy.heritageWalletAddr()).to.equal(heritageWalletAddr);
+    });
+
     it("upgrades the contract", async () => {
       const heritageFactoryV2 = await ethers.getContractFactory("HeritageV2");
 
