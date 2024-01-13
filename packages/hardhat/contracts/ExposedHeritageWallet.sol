@@ -9,8 +9,17 @@ import "hardhat/console.sol";
 contract ExposedHeritageWallet is HeritageWallet {
 	constructor(
 		address owner,
-		address ethUsdPriceFeed
-	) HeritageWallet(owner, ethUsdPriceFeed) {}
+		address ethUsdPriceFeed,
+		uint minFeePerYearInUsd,
+		uint
+	)
+		HeritageWallet(
+			owner,
+			ethUsdPriceFeed,
+			minFeePerYearInUsd,
+			feeThousandagePerYear
+		)
+	{}
 
 	function numDigits(int number) public pure returns (uint8) {
 		return _numDigits(number);
@@ -21,5 +30,11 @@ contract ExposedHeritageWallet is HeritageWallet {
 		uint endTimestamp
 	) public pure returns (uint) {
 		return _findYearsBetweenTimestamps(startTimestamp, endTimestamp);
+	}
+
+	function __registerUser(
+		address userAddress
+	) public returns (Subscription memory) {
+		return _registerUser(userAddress);
 	}
 }

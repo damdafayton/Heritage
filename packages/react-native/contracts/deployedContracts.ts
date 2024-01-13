@@ -234,19 +234,6 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [],
-          name: "callme",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "pure",
-          type: "function",
-        },
-        {
           inputs: [
             {
               internalType: "uint256",

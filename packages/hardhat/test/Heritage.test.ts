@@ -1,3 +1,5 @@
+// $ yarn test --grep "HeritageProxyContract"
+
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
 import { Heritage, HeritageWallet, Mock_AggregatorV3Interface, HeritageV2 } from "../typechain-types";
@@ -25,12 +27,14 @@ describe("HeritageProxyContract", function () {
     ethUsdFeedAddr = priceFeedMock.target;
   }
 
-  async function deployHeritageWallet() {
+  async function deployHeritageWallet(usdMinFee = 5, feeThousandage = 1) {
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
     const heritageWallet = (await heritageWalletFactory.deploy(
       ownerAddress,
       ethUsdFeedAddr,
+      usdMinFee,
+      feeThousandage,
     )) as unknown as HeritageWallet;
 
     await heritageWallet.waitForDeployment();
@@ -40,17 +44,13 @@ describe("HeritageProxyContract", function () {
     heritageWalletAddr = heritageWallet.target;
   }
 
-  async function deployHeritage(usdMinFee = 5, feeThousandage = 1) {
+  async function deployHeritage() {
     const heritageFactory = await ethers.getContractFactory("Heritage");
 
-    const heritageContract = (await upgrades.deployProxy(
-      heritageFactory,
-      [heritageWalletAddr, usdMinFee, feeThousandage],
-      {
-        initializer: "initialize",
-        kind: "uups",
-      },
-    )) as unknown as Heritage;
+    const heritageContract = (await upgrades.deployProxy(heritageFactory, [heritageWalletAddr], {
+      initializer: "initialize",
+      kind: "uups",
+    })) as unknown as Heritage;
 
     console.info(`Heritage Proxy contract deployed to: ${heritageContract.target}.`);
 
@@ -84,10 +84,7 @@ describe("HeritageProxyContract", function () {
 
   describe("Deployment", function () {
     it("deploys", async () => {
-      const usdMinFee = 5;
-      const feeThousandage = 1;
-
-      expect(await deployHeritage(usdMinFee, feeThousandage)).to.eql(undefined);
+      expect(await deployHeritage()).to.eql(undefined);
     });
 
     it("should have the correct owner", async function () {
@@ -137,24 +134,8 @@ describe("HeritageProxyContract", function () {
     const feeThousandage = 3;
 
     beforeEach(async () => {
-      await deployHeritageWallet();
-      await deployHeritage(usdMinFee, feeThousandage);
-    });
-
-    it("new user is registered with default fee values", async () => {
-      const [, , user] = await ethers.getSigners();
-
-      const heritageWallet = await getHeritageWalletContract();
-
-      await heritageWallet.transferOwnership(heritageProxy.target);
-
-      await heritageProxy.connect(user).registerSubscriber({ value: ethers.parseEther("1") });
-
-      const [timestamp, minFee, thousandage] = await heritageWallet.addressSubscriptionMap(user);
-
-      expect(Boolean(timestamp)).to.eql(true);
-      expect(BigInt(usdMinFee)).to.eql(minFee);
-      expect(BigInt(feeThousandage)).to.eql(thousandage);
+      await deployHeritageWallet(usdMinFee, feeThousandage);
+      await deployHeritage();
     });
 
     it("owner can withdraw collected fees", async () => {
@@ -165,7 +146,7 @@ describe("HeritageProxyContract", function () {
       await heritageWallet.transferOwnership(heritageProxy.target);
 
       await heritageProxy.updateManager(manager);
-      await heritageProxy.connect(user).registerSubscriber({ value: ethers.parseEther("50") });
+      await heritageWallet.connect(user).registerSubscriber({ value: ethers.parseEther("50") });
 
       await heritageProxy.payOutstandingFees(user);
       await heritageProxy.connect(manager).distributeHeritage(user);
@@ -188,27 +169,8 @@ describe("HeritageProxyContract", function () {
   });
 
   describe("Security", () => {
-    const usdMinFee = 6;
-    const feeThousandage = 2;
-
     before(async () => {
-      await deployHeritage(usdMinFee, feeThousandage);
-    });
-
-    it("registerSubscriber throws if msg.value is not enough to cover minimum fee", async () => {
-      const [, user] = await ethers.getSigners();
-
-      await expect(heritageProxy.connect(user).registerSubscriber()).rejectedWith(
-        "Minimum fee must be deposited to register a new user.",
-      );
-    });
-
-    it("only owner can update default fees", async () => {
-      const [, manager] = await ethers.getSigners();
-
-      await expect(heritageProxy.connect(manager).updateMinFee(7n)).rejectedWith(
-        'OwnableUnauthorizedAccount("0x70997970C51812dc3A010C7d01b50e0d17dc79C8")',
-      );
+      await deployHeritage();
     });
   });
 });

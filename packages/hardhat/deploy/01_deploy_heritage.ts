@@ -61,17 +61,10 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
   const isDeploymentSame = heritageFactory.bytecode === deployment?.bytecode;
 
   if (!deployment) {
-    const usdMinFee = 5;
-    const feeThousandage = 1;
-
-    heritageProxyContract = (await upgrades.deployProxy(
-      heritageFactory,
-      [heritageWallet?.address, usdMinFee, feeThousandage],
-      {
-        initializer: "initialize",
-        kind: "uups",
-      },
-    )) as unknown as Heritage;
+    heritageProxyContract = (await upgrades.deployProxy(heritageFactory, [heritageWallet?.address], {
+      initializer: "initialize",
+      kind: "uups",
+    })) as unknown as Heritage;
 
     await heritageProxyContract.waitForDeployment();
 

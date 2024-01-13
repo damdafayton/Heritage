@@ -10,15 +10,17 @@ import {displayTxResult} from './utils';
 // import {notification} from '~~/utils/scaffold-eth';
 
 type DisplayVariableProps = {
-  contractAddress: Address;
-  abiFunction: AbiFunction | undefined;
-  refreshDisplayVariables: boolean;
+  contractAddress?: Address;
+  abiFunction?: AbiFunction | undefined;
+  refreshDisplayVariables?: boolean;
+  overrideValue?: any;
 };
 
 export const DisplayVariable = ({
   contractAddress,
   abiFunction,
   refreshDisplayVariables,
+  overrideValue,
 }: DisplayVariableProps) => {
   const {
     data: result,
@@ -28,6 +30,7 @@ export const DisplayVariable = ({
     address: contractAddress,
     functionName: abiFunction?.name,
     abi: [abiFunction] as Abi,
+    enabled: false,
     // onError: error => {
     //   notification.error(error.message);
     // },
@@ -38,6 +41,17 @@ export const DisplayVariable = ({
   useEffect(() => {
     refetch();
   }, [refetch, refreshDisplayVariables]);
+
+  useEffect(() => {
+    if (!overrideValue) refetch();
+  }, [overrideValue]);
+
+  if (overrideValue)
+    return (
+      <>
+        <Text>{displayTxResult(overrideValue)}</Text>
+      </>
+    );
 
   if (!abiFunction) return <></>;
 

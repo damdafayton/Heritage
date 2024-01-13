@@ -18,23 +18,14 @@ contract Heritage is
 {
 	// Cant change the order or type of the variables down
 	address public heritageWalletAddr;
-	address public ethUsdPriceFeed;
 	address public manager;
-	uint public minFeePerYearInUsd;
-	uint public feeThousandagePerYear;
 
 	// /// @custom:oz-upgrades-unsafe-allow constructor
 	// constructor() initializer {}
 
-	function initialize(
-		address _heritageWalletAddr,
-		uint _minFeePerYearInUsd,
-		uint _feeThousandagePerYear
-	) public initializer {
+	function initialize(address _heritageWalletAddr) public initializer {
 		__Ownable_init(msg.sender);
 		heritageWalletAddr = _heritageWalletAddr;
-		minFeePerYearInUsd = _minFeePerYearInUsd;
-		feeThousandagePerYear = _feeThousandagePerYear;
 	}
 
 	function _authorizeUpgrade(
@@ -47,14 +38,6 @@ contract Heritage is
 	// temporary override for frontend
 	function proxiableUUID() public pure override returns (bytes32) {
 		return ERC1967Utils.IMPLEMENTATION_SLOT;
-	}
-
-	function updateFeeThousandage(uint newFee) public onlyOwner {
-		feeThousandagePerYear = newFee;
-	}
-
-	function updateMinFee(uint newFee) public onlyOwner {
-		minFeePerYearInUsd = newFee;
 	}
 
 	function transferHeritageWalletOwner(address newOwner) public onlyOwner {
@@ -71,21 +54,6 @@ contract Heritage is
 			"Only manager can access this functionality."
 		);
 		_;
-	}
-
-	function registerSubscriber() external payable {
-		uint minimumDepositInWei = convertUsdToWei(minFeePerYearInUsd);
-
-		require(
-			minimumDepositInWei <= msg.value,
-			"Minimum fee must be deposited to register a new user."
-		);
-
-		_getHeritageWallet().registerSubscriber{ value: msg.value }(
-			msg.sender,
-			minFeePerYearInUsd,
-			feeThousandagePerYear
-		);
 	}
 
 	function addressSubscriptionMap(
@@ -120,10 +88,6 @@ contract Heritage is
 
 	function payOutstandingFees(address _address) external returns (bool) {
 		return _getHeritageWallet().payOutstandingFees(_address);
-	}
-
-	function addInheritant(address payable receiver, uint percentage) external {
-		_getHeritageWallet().addInheritant(receiver, percentage);
 	}
 
 	function getRemainingInheritancePercentage(

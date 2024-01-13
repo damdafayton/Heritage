@@ -14,8 +14,6 @@ interface HeritageWalletInterface {
 
 	function distributeHeritage(address addr) external;
 
-	function addInheritant(address payable receiver, uint percentage) external;
-
 	function getRemainingInheritancePercentage(
 		address subscriber,
 		address receiver

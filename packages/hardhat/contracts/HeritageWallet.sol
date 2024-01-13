@@ -10,9 +10,10 @@ import "hardhat/console.sol";
 
 contract HeritageWallet is HeritageWalletInterface, Ownable {
 	uint collectedFees;
-	address ethUsdPriceFeed;
-	// In case outsiders want to use the contract as a wallet.
-	uint defaultTransferPercentForNonRegistered = 1;
+	address public ethUsdPriceFeed;
+	uint public minFeePerYearInUsd;
+	uint public feeThousandagePerYear;
+	uint public minimumInheritancePercentage = 1;
 	struct Subscription {
 		uint startTimestamp;
 		uint minFeePerYear;
@@ -22,6 +23,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		uint deposited;
 		bool canModify;
 	}
+	address[] internal subscriberList;
 	mapping(address => Subscription) public addressSubscriptionMap;
 	mapping(address => Inheritant[]) public addrInheritantListMap;
 	struct Inheritant {
@@ -31,103 +33,51 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	// event for deposit and for withdraw
 	event Deposit(address _sender, address addressToDeposit, uint amount);
 	event SendFunds(address _sender, address _beneficiary, uint amount);
+	event PayFee(address inheritant, uint feeAmount);
 
 	// set the owner as soon as the wallet is created
-	constructor(address _owner, address _ethUsdPriceFeed) Ownable(_owner) {
+	constructor(
+		address _owner,
+		address _ethUsdPriceFeed,
+		uint _minFeePerYearInUsd,
+		uint _feeThousandagePerYear
+	) Ownable(_owner) {
 		ethUsdPriceFeed = _ethUsdPriceFeed;
+		minFeePerYearInUsd = _minFeePerYearInUsd;
+		feeThousandagePerYear = _feeThousandagePerYear;
 	}
 
-	function deposit(address _addressToDeposit) public payable {
-		Subscription storage subscriptionData = addressSubscriptionMap[
-			_addressToDeposit
-		];
-		subscriptionData.deposited += msg.value;
-
-		emit Deposit(msg.sender, _addressToDeposit, msg.value);
+	function updateFeeThousandage(uint newFee) public onlyOwner {
+		feeThousandagePerYear = newFee;
 	}
 
-	function sendFunds(
-		uint amount,
-		address payable receiver
-	) public _isAllowedToSend(msg.sender, amount) _isFeePaid(msg.sender) {
-		Subscription storage subsciptionData = addressSubscriptionMap[
-			msg.sender
-		];
-
-		subsciptionData.deposited -= amount;
-
-		receiver.transfer(amount);
-
-		emit SendFunds(msg.sender, receiver, amount);
+	function updateMinFee(uint newFee) public onlyOwner {
+		minFeePerYearInUsd = newFee;
 	}
 
-	function payOutstandingFees(address _address) public returns (bool) {
-		_changeCanModify(_address, false);
+	// User callable functions start
 
-		Subscription storage subscriptionData = addressSubscriptionMap[
-			_address
-		];
+	function registerSubscriber() public payable {
+		uint minimumDepositInWei = convertUsdToWei(minFeePerYearInUsd);
 
-		uint requiredPaymentCount = _findYearsBetweenTimestamps(
-			subscriptionData.startTimestamp,
-			block.timestamp
-		) + 1;
+		require(
+			minimumDepositInWei <= msg.value,
+			"Minimum fee must be deposited to register a new user."
+		);
 
-		uint leftYearsToPay = requiredPaymentCount -
-			subscriptionData.paidFeeCount;
+		_registerUser(msg.sender);
 
-		for (uint i = 0; i < leftYearsToPay; i++) {
-			uint fee = calculateFeeToPay(_address);
-
-			require(
-				subscriptionData.deposited >= fee,
-				"Not enough deposit to pay fees."
-			);
-			subscriptionData.deposited -= fee;
-			subscriptionData.paidFeeCount++;
-			collectedFees += fee;
-		}
-
-		subscriptionData.lastYearPaid = true;
-		_changeCanModify(_address, true);
-
-		return true;
+		payOutstandingFees(msg.sender);
 	}
 
-	function withdrawCollectedFees(
-		address payable feeCollector
-	) public onlyOwner {
-		feeCollector.transfer(collectedFees);
-	}
-
-	function distributeHeritage(
-		address addr
-	) public onlyOwner _isFeePaid(addr) {
-		_changeCanModify(msg.sender, false);
-
-		// Distribute here
-		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
-		Subscription storage subscription = addressSubscriptionMap[addr];
-		uint amountToDistribute = subscription.deposited;
-
-		for (uint i = 0; i < inheritantArr.length; i++) {
-			uint percent = inheritantArr[i].percentToHeritage;
-			address payable to = inheritantArr[i].to;
-
-			to.transfer((amountToDistribute * percent) / 100);
-		}
-
-		subscription.deposited = 0;
-
-		_changeCanModify(msg.sender, true);
-	}
-
+	/**
+	 * This must be only called by the user itself to ensure that only user can determine where his funds can be transferred.
+	 * By default it wont allow percentage to be set less than 1 and will limit inheritant count to maximum 100
+	 */
 	function addInheritant(
 		address payable receiver,
 		uint percentage
 	) public _isAllowedToModify(msg.sender) {
-		_changeCanModify(msg.sender, false);
-
 		(
 			uint available,
 			bool existing,
@@ -150,7 +100,110 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 			inheritants.push(newInheritant);
 		}
 
-		_changeCanModify(msg.sender, true);
+		_allowToModify(msg.sender);
+	}
+
+	// Wallet functionalities start
+
+	function deposit(address depositeeAddress) public payable {
+		Subscription storage subscriptionData = addressSubscriptionMap[
+			depositeeAddress
+		];
+
+		if (subscriptionData.startTimestamp == 0) {
+			_registerUser(depositeeAddress);
+		}
+
+		emit Deposit(msg.sender, depositeeAddress, msg.value);
+
+		if (subscriptionData.lastYearPaid == false) {
+			payOutstandingFees(depositeeAddress);
+		}
+	}
+
+	function sendFunds(
+		uint amount,
+		address payable receiver
+	) public _isAllowedToSend(msg.sender, amount) _isFeePaid(msg.sender) {
+		Subscription storage subsciptionData = addressSubscriptionMap[
+			msg.sender
+		];
+
+		subsciptionData.deposited -= amount;
+
+		receiver.transfer(amount);
+
+		emit SendFunds(msg.sender, receiver, amount);
+	}
+
+	// Wallet functionalities end
+
+	// User callable functions end
+
+	function payOutstandingFees(
+		address _address
+	) public _isAllowedToModify(_address) returns (bool) {
+		Subscription storage subscriptionData = addressSubscriptionMap[
+			_address
+		];
+
+		uint requiredPaymentCount = _findYearsBetweenTimestamps(
+			subscriptionData.startTimestamp,
+			block.timestamp
+		) + 1;
+
+		uint leftYearsToPay = requiredPaymentCount -
+			subscriptionData.paidFeeCount;
+
+		for (uint i = 0; i < leftYearsToPay; i++) {
+			uint fee = calculateFeeToPay(_address);
+
+			require(
+				subscriptionData.deposited >= fee,
+				"Not enough deposit to pay fees."
+			);
+			subscriptionData.deposited -= fee;
+			subscriptionData.paidFeeCount++;
+			collectedFees += fee;
+
+			emit PayFee(_address, fee);
+		}
+
+		subscriptionData.lastYearPaid = true;
+
+		_allowToModify(_address);
+
+		return true;
+	}
+
+	function withdrawCollectedFees(
+		address payable feeCollector
+	) public onlyOwner {
+		feeCollector.transfer(collectedFees);
+	}
+
+	function getCollectedFees() external view onlyOwner returns (uint) {
+		return collectedFees;
+	}
+
+	function distributeHeritage(
+		address addr
+	) public onlyOwner _isAllowedToModify(addr) _isFeePaid(addr) {
+		// Distribute here
+		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
+		Subscription storage subscription = addressSubscriptionMap[addr];
+		uint amountToDistribute = subscription.deposited;
+
+		for (uint i = 0; i < inheritantArr.length; i++) {
+			uint percent = inheritantArr[i].percentToHeritage;
+			address payable to = inheritantArr[i].to;
+
+			to.transfer((amountToDistribute * percent) / 100);
+		}
+
+		subscription.deposited = 0;
+
+		_allowToModify(msg.sender);
 	}
 
 	function getRemainingInheritancePercentage(
@@ -197,22 +250,6 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return userMinFee;
 	}
 
-	function registerSubscriber(
-		address _address,
-		uint minFeePerYear,
-		uint feeThousandagePerYear
-	) public payable onlyOwner {
-		Subscription storage subscription = addressSubscriptionMap[_address];
-
-		require(subscription.startTimestamp == 0, "Already registered.");
-
-		subscription.startTimestamp = block.timestamp;
-		subscription.minFeePerYear = minFeePerYear;
-		subscription.feeThousandagePerYear = feeThousandagePerYear;
-		subscription.canModify = true;
-		subscription.deposited += msg.value;
-	}
-
 	function getEthPrice() public view returns (uint, uint) {
 		AggregatorV3Interface dataFeed = AggregatorV3Interface(ethUsdPriceFeed);
 
@@ -241,6 +278,33 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return valueInWei;
 	}
 
+	function updateUnpaidFees() public {
+		for (uint i = 0; i < subscriberList.length; i++) {
+			address userAddress = subscriberList[0];
+			Subscription storage subscription = addressSubscriptionMap[
+				userAddress
+			];
+
+			uint requiredPaymentCount = _findYearsBetweenTimestamps(
+				subscription.startTimestamp,
+				block.timestamp
+			) + 1;
+
+			if (subscription.paidFeeCount < requiredPaymentCount) {
+				subscription.lastYearPaid = false;
+			}
+		}
+	}
+
+	function getSubscriberList()
+		public
+		view
+		onlyOwner
+		returns (address[] memory)
+	{
+		return subscriberList;
+	}
+
 	function _numDigits(int number) internal pure returns (uint8) {
 		uint8 digits = 0;
 		//if (number < 0) digits = 1; // enable this line if '-' counts as a digit
@@ -251,12 +315,12 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return digits;
 	}
 
-	function _changeCanModify(address _address, bool newStatus) internal {
+	function _allowToModify(address _address) internal {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
 
-		subscriptionData.canModify = newStatus;
+		subscriptionData.canModify = true;
 	}
 
 	modifier _isFeePaid(address _address) {
@@ -266,10 +330,27 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 		require(
 			subscriptionData.lastYearPaid,
-			"Sender has outstanding fee to pay."
+			"Inheritant has outstanding fee to pay."
 		);
 
 		_;
+	}
+
+	function _registerUser(
+		address userAddress
+	) internal returns (Subscription memory) {
+		Subscription storage subscription = addressSubscriptionMap[userAddress];
+
+		require(subscription.startTimestamp == 0, "Already registered.");
+		subscriberList.push(userAddress);
+
+		subscription.startTimestamp = block.timestamp;
+		subscription.minFeePerYear = minFeePerYearInUsd;
+		subscription.feeThousandagePerYear = feeThousandagePerYear;
+		subscription.canModify = true;
+		subscription.deposited += msg.value;
+
+		return subscription;
 	}
 
 	function _findYearsBetweenTimestamps(
@@ -318,6 +399,8 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 			subscriptionData.canModify == true,
 			"Address data can not be modified now. Wait for ongoing updates to finish."
 		);
+
+		subscriptionData.canModify = false;
 
 		_;
 	}

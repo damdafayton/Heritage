@@ -38,10 +38,12 @@ const deployHeritageWalletContract: DeployFunction = async function (hre: Hardha
   };
 
   const ethUsdFeedAddress = (await deployEthUsdFeedMock()).address;
+  const usdMinFee = 5;
+  const feeThousandage = 1;
 
   await deployments.deploy("HeritageWallet", {
     from: deployer,
-    args: [deployer, ethUsdFeedAddress],
+    args: [deployer, ethUsdFeedAddress, usdMinFee, feeThousandage],
     log: true,
     autoMine: true,
   });

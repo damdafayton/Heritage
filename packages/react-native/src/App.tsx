@@ -20,9 +20,10 @@ import {
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import {useHeritageContract} from './hooks/useHeritageContract';
-import {DisplayVariable} from './components/Contract/DiplayVariable';
 import {displayTxResult} from './components/Contract/utils';
 import {NotSubscribed} from './components/NotSubscribed';
+import {Subscribed} from './components/Subscribed';
+import {Header} from './components/Header';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -35,12 +36,10 @@ const App = () => {
 
   const {
     address: heritageAddress,
-    abi: heritageABI,
+    abi,
     getHeritageFunction,
   } = useHeritageContract();
 
-  const fnFeeThousandage = getHeritageFunction?.('feeThousandagePerYear');
-  const fnMinFee = getHeritageFunction?.('minFeePerYearInUsd');
   const addressSubscriptionMap = getHeritageFunction?.(
     'addressSubscriptionMap',
   );
@@ -48,7 +47,8 @@ const App = () => {
   const {
     data: subscriptionData,
     isFetching,
-    refetch,
+    isFetched,
+    refetch: refetchAddressSubscriptionMap,
   } = useContractRead({
     abi: [addressSubscriptionMap],
     address: heritageAddress,
@@ -59,14 +59,17 @@ const App = () => {
   const [isSubscribed, setIsSubscribed] = useState(false);
 
   useEffect(() => {
-    if (isFetching || !subscriptionData) return;
+    if (!subscriptionData) return;
 
     const [timestamp] = subscriptionData as Array<any>;
 
     setIsSubscribed(displayTxResult(timestamp) === 0 ? false : true);
-  }, [isFetching]);
+  }, [isFetched]);
 
-  const refreshDisplayVariables = true;
+  useEffect(() => {
+    if (isSubscribed) {
+    }
+  }, [isSubscribed]);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -80,40 +83,19 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Text style={styles.header}>HERITAGE</Text>
-          {heritageAddress && (
-            <>
-              <View style={styles.contractData}>
-                <Text>Annual fee: </Text>
-                <DisplayVariable
-                  abiFunction={fnFeeThousandage}
-                  contractAddress={heritageAddress}
-                  refreshDisplayVariables={refreshDisplayVariables}
-                />
-                <Text>‰</Text>
-              </View>
-              <View style={styles.contractData}>
-                <Text>Minimum fee: </Text>
-                <DisplayVariable
-                  abiFunction={fnMinFee}
-                  contractAddress={heritageAddress}
-                  refreshDisplayVariables={refreshDisplayVariables}
-                />
-                <Text>$</Text>
-              </View>
-              {isSubscribed ? (
-                <>
-                  <Section title="Step OneE">
-                    Edit <Text style={styles.highlight}>App.js</Text> to change
-                    this screen and then come back to see your edits. HI
-                  </Section>
-
-                  <Text>Learn More Links</Text>
-                </>
-              ) : (
-                <NotSubscribed />
-              )}
-            </>
-          )}
+          <>
+            <Header
+              subscriptionData={subscriptionData}
+              isSubscribed={isSubscribed}
+            />
+            {isSubscribed ? (
+              <Subscribed subscriptionData={subscriptionData} />
+            ) : (
+              <NotSubscribed
+                refetchAddressSubscriptionMap={refetchAddressSubscriptionMap}
+              />
+            )}
+          </>
         </View>
       </ScrollView>
     </SafeAreaView>
@@ -187,10 +169,6 @@ const styles = StyleSheet.create({
   },
   highlight: {
     fontWeight: '700',
-  },
-  contractData: {
-    flexDirection: 'row',
-    columnGap: 2,
   },
 });
 
