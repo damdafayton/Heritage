@@ -7,7 +7,9 @@ import "hardhat/console.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol";
 import "@openzeppelin/contracts-upgradeable/proxy/utils/UUPSUpgradeable.sol";
 import "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol";
-import "./HeritageWalletInterface.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+
+import "../interfaces/HeritageWalletInterface.sol";
 import "./HeritageWallet.sol";
 
 contract Heritage is
@@ -18,13 +20,18 @@ contract Heritage is
 {
 	// Cant change the order or type of the variables down
 	address public heritageWalletAddr;
+	address public ethUsdPriceFeed;
 	address public manager;
 
 	// /// @custom:oz-upgrades-unsafe-allow constructor
 	// constructor() initializer {}
 
-	function initialize(address _heritageWalletAddr) public initializer {
+	function initialize(
+		address _heritageWalletAddr,
+		address _ethUsdPriceFeed
+	) public initializer {
 		__Ownable_init(msg.sender);
+		ethUsdPriceFeed = _ethUsdPriceFeed;
 		heritageWalletAddr = _heritageWalletAddr;
 	}
 
@@ -56,6 +63,25 @@ contract Heritage is
 		_;
 	}
 
+	function getEthPrice() public view returns (uint, uint) {
+		AggregatorV3Interface dataFeed = AggregatorV3Interface(ethUsdPriceFeed);
+
+		// prettier-ignore
+		(
+            /* uint80 roundID */,
+            int answer,
+            /*uint startedAt*/,
+            /*uint timeStamp*/,
+            /*uint80 answeredInRound*/
+        ) = dataFeed.latestRoundData();
+
+		uint decimal = dataFeed.decimals();
+
+		return (uint(answer), decimal);
+	}
+
+	//  HeritageWallet functions
+
 	function addressSubscriptionMap(
 		address addr
 	) external view returns (uint, uint, uint, uint, bool, uint, bool) {
@@ -78,14 +104,6 @@ contract Heritage is
 		_getHeritageWallet().distributeHeritage(addr);
 	}
 
-	function deposit(address _addressToDeposit) external payable {
-		_getHeritageWallet().deposit{ value: msg.value }(_addressToDeposit);
-	}
-
-	function sendFunds(uint amount, address payable receiver) external {
-		_getHeritageWallet().sendFunds(amount, receiver);
-	}
-
 	function payOutstandingFees(address _address) external returns (bool) {
 		return _getHeritageWallet().payOutstandingFees(_address);
 	}
@@ -105,9 +123,17 @@ contract Heritage is
 		return _getHeritageWallet().calculateFeeToPay(_address);
 	}
 
-	function getEthPrice() external view returns (uint, uint) {
-		return _getHeritageWallet().getEthPrice();
+	// Not active currently starts here
+
+	function deposit(address _addressToDeposit) external payable {
+		_getHeritageWallet().deposit{ value: msg.value }(_addressToDeposit);
 	}
+
+	function sendFunds(uint amount, address payable receiver) external {
+		_getHeritageWallet().sendFunds(amount, receiver);
+	}
+
+	// Not active currently ends here
 
 	function _getHeritageWallet() internal view returns (HeritageWallet) {
 		HeritageWallet heritageWallet = HeritageWallet(heritageWalletAddr);

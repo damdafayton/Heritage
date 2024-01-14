@@ -1,4 +1,4 @@
-// $ yarn test --grep "HeritageProxyContract"
+// $ yarn test --grep "HeritageProxyContract Deployment deploys"
 
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
@@ -32,7 +32,6 @@ describe("HeritageProxyContract", function () {
 
     const heritageWallet = (await heritageWalletFactory.deploy(
       ownerAddress,
-      ethUsdFeedAddr,
       usdMinFee,
       feeThousandage,
     )) as unknown as HeritageWallet;
@@ -47,7 +46,7 @@ describe("HeritageProxyContract", function () {
   async function deployHeritage() {
     const heritageFactory = await ethers.getContractFactory("Heritage");
 
-    const heritageContract = (await upgrades.deployProxy(heritageFactory, [heritageWalletAddr], {
+    const heritageContract = (await upgrades.deployProxy(heritageFactory, [heritageWalletAddr, ethUsdFeedAddr], {
       initializer: "initialize",
       kind: "uups",
     })) as unknown as Heritage;
@@ -59,6 +58,11 @@ describe("HeritageProxyContract", function () {
     console.info(`Heritage Implementation contract deployed to: ${currentImplAddress}.`);
 
     heritageProxy = heritageContract;
+
+    const heritageWallet = await getHeritageWalletContract();
+
+    await heritageWallet.setHeritageProxyAddress(heritageProxy.target);
+    await heritageWallet.transferOwnership(heritageProxy.target);
   }
 
   async function getHeritageWalletContract() {
@@ -79,6 +83,7 @@ describe("HeritageProxyContract", function () {
     ownerAddress = owner.address;
 
     await deployEthUsdFeedMock();
+
     await deployHeritageWallet();
   });
 
@@ -112,14 +117,13 @@ describe("HeritageProxyContract", function () {
     });
 
     it("transferHeritageWalletOwner() transfers ownership of the HeritageWallet", async () => {
-      const [owner, , user] = await ethers.getSigners();
+      const [, , user] = await ethers.getSigners();
 
       const heritageWallet = await getHeritageWalletContract();
       const initalOwner = await heritageWallet.owner();
 
-      expect(initalOwner).to.equal(owner.address);
-
-      await heritageWallet.transferOwnership(heritageProxy.target);
+      // Set at deploy func
+      expect(initalOwner).to.equal(heritageProxy.target);
 
       await heritageProxy.transferHeritageWalletOwner(user);
 
@@ -142,8 +146,6 @@ describe("HeritageProxyContract", function () {
       const [owner, manager, user] = await ethers.getSigners();
 
       const heritageWallet = await getHeritageWalletContract();
-
-      await heritageWallet.transferOwnership(heritageProxy.target);
 
       await heritageProxy.updateManager(manager);
       await heritageWallet.connect(user).registerSubscriber({ value: ethers.parseEther("50") });

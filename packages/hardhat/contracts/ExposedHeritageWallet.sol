@@ -9,17 +9,9 @@ import "hardhat/console.sol";
 contract ExposedHeritageWallet is HeritageWallet {
 	constructor(
 		address owner,
-		address ethUsdPriceFeed,
 		uint minFeePerYearInUsd,
 		uint
-	)
-		HeritageWallet(
-			owner,
-			ethUsdPriceFeed,
-			minFeePerYearInUsd,
-			feeThousandagePerYear
-		)
-	{}
+	) HeritageWallet(owner, minFeePerYearInUsd, feeThousandagePerYear) {}
 
 	function numDigits(int number) public pure returns (uint8) {
 		return _numDigits(number);

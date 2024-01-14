@@ -2,15 +2,15 @@
 pragma solidity >=0.8.0 <0.9.0;
 
 import "@openzeppelin/contracts/access/Ownable.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "./HeritageWalletInterface.sol";
+
+import "../interfaces/HeritageWalletInterface.sol";
 
 // Useful for debugging. Remove when deploying to a live network.
 import "hardhat/console.sol";
 
 contract HeritageWallet is HeritageWalletInterface, Ownable {
 	uint collectedFees;
-	address public ethUsdPriceFeed;
+	address public heritageProxyAddr;
 	uint public minFeePerYearInUsd;
 	uint public feeThousandagePerYear;
 	uint public minimumInheritancePercentage = 1;
@@ -38,11 +38,9 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	// set the owner as soon as the wallet is created
 	constructor(
 		address _owner,
-		address _ethUsdPriceFeed,
 		uint _minFeePerYearInUsd,
 		uint _feeThousandagePerYear
 	) Ownable(_owner) {
-		ethUsdPriceFeed = _ethUsdPriceFeed;
 		minFeePerYearInUsd = _minFeePerYearInUsd;
 		feeThousandagePerYear = _feeThousandagePerYear;
 	}
@@ -250,21 +248,10 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return userMinFee;
 	}
 
+	// Utilities start here
+
 	function getEthPrice() public view returns (uint, uint) {
-		AggregatorV3Interface dataFeed = AggregatorV3Interface(ethUsdPriceFeed);
-
-		// prettier-ignore
-		(
-            /* uint80 roundID */,
-            int answer,
-            /*uint startedAt*/,
-            /*uint timeStamp*/,
-            /*uint80 answeredInRound*/
-        ) = dataFeed.latestRoundData();
-
-		uint decimal = dataFeed.decimals();
-
-		return (uint(answer), decimal);
+		return _getHeritageProxy().getEthPrice();
 	}
 
 	function convertUsdToWei(uint valueInUSD) public view returns (uint) {
@@ -315,25 +302,34 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return digits;
 	}
 
+	function setHeritageProxyAddress(
+		address _heritageProxyAddr
+	) external onlyOwner {
+		heritageProxyAddr = _heritageProxyAddr;
+	}
+
+	// Utilities end here
+
+	// Internal helpers start here
+
+	function _getHeritageProxy()
+		internal
+		view
+		returns (HeritageWalletInterface)
+	{
+		HeritageWalletInterface heritageProxy = HeritageWalletInterface(
+			heritageProxyAddr
+		);
+
+		return heritageProxy;
+	}
+
 	function _allowToModify(address _address) internal {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
 
 		subscriptionData.canModify = true;
-	}
-
-	modifier _isFeePaid(address _address) {
-		Subscription storage subscriptionData = addressSubscriptionMap[
-			_address
-		];
-
-		require(
-			subscriptionData.lastYearPaid,
-			"Inheritant has outstanding fee to pay."
-		);
-
-		_;
 	}
 
 	function _registerUser(
@@ -372,6 +368,10 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return yearsPassedSinceSubscription;
 	}
 
+	// Internal helpers end here
+
+	// Modifiers
+
 	modifier _isAllowedToSend(address _address, uint _amount) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
@@ -401,6 +401,19 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		);
 
 		subscriptionData.canModify = false;
+
+		_;
+	}
+
+	modifier _isFeePaid(address _address) {
+		Subscription storage subscriptionData = addressSubscriptionMap[
+			_address
+		];
+
+		require(
+			subscriptionData.lastYearPaid,
+			"Inheritant has outstanding fee to pay."
+		);
 
 		_;
 	}

@@ -2,50 +2,50 @@
 
 import { expect } from "chai";
 import { ethers } from "hardhat";
-import { HeritageWallet, ExposedHeritageWallet, Mock_AggregatorV3Interface } from "../typechain-types";
-import { Addressable } from "ethers";
+import { HeritageWallet, ExposedHeritageWallet, Mock_HeritageWalletInterface } from "../typechain-types";
 import { time } from "@nomicfoundation/hardhat-network-helpers";
 
 describe("HeritageWalletContract", function () {
   // We define a fixture to reuse the same setup in every test.
 
   let ownerAddress: string;
-  let ethUsdFeedAddress: string | Addressable;
+  let heritageProxyAddr: string;
   const usdMinFee = 7;
   const feeThousandage = 3;
 
   before(async () => {
-    ethUsdFeedAddress = await deployEthUsdFeedMock();
-
     const [owner] = await ethers.getSigners();
     ownerAddress = owner.address;
   });
 
-  async function deployEthUsdFeedMock(): Promise<string | Addressable> {
-    console.info(`Deploying eth-Usd price feed mock.`);
+  async function deployHeritageProxyMock() {
+    console.info(`Deploying Mock_HeritageWalletInterface.`);
 
-    const priceFeedMockFactory = await ethers.getContractFactory("Mock_AggregatorV3Interface");
+    const heritageFactory = await ethers.getContractFactory("Mock_HeritageWalletInterface");
 
-    const priceFeedMock = (await priceFeedMockFactory.deploy()) as unknown as Mock_AggregatorV3Interface;
+    const heritage = (await heritageFactory.deploy()) as unknown as Mock_HeritageWalletInterface;
 
-    await priceFeedMock.waitForDeployment();
+    await heritage.waitForDeployment();
 
-    console.info(`Eth-Usd price feed mock deployed to ${priceFeedMock.target}.`);
+    console.info(`ETH-USD price feed mock deployed to ${heritage.target}.`);
 
-    return priceFeedMock.target;
+    heritageProxyAddr = heritage.target as string;
   }
 
   async function deployContractWithExposed(): Promise<[HeritageWallet, ExposedHeritageWallet]> {
+    await deployHeritageProxyMock();
+
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
     const heritageWallet = (await heritageWalletFactory.deploy(
       ownerAddress,
-      ethUsdFeedAddress,
       usdMinFee,
       feeThousandage,
     )) as unknown as HeritageWallet;
 
     await heritageWallet.waitForDeployment();
+
+    await heritageWallet.setHeritageProxyAddress(heritageProxyAddr);
 
     console.info(`HeritageWallet is deployed at: ${heritageWallet.target}`);
 
@@ -53,12 +53,13 @@ describe("HeritageWalletContract", function () {
 
     const exposedHeritageWallet = (await exposedHeritageWalletFactory.deploy(
       ownerAddress,
-      ethUsdFeedAddress,
       usdMinFee,
       feeThousandage,
     )) as unknown as ExposedHeritageWallet;
 
     await exposedHeritageWallet.waitForDeployment();
+
+    await exposedHeritageWallet.setHeritageProxyAddress(heritageProxyAddr);
 
     return [heritageWallet, exposedHeritageWallet];
   }
