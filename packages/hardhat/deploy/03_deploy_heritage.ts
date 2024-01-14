@@ -37,6 +37,10 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
   const heritageFactory = await ethers.getContractFactory("Heritage");
   const deployment = await deployments.getOrNull("Heritage");
 
+  // ETH price feed mock address
+  const priceFeedMock = await deployments.getOrNull("Mock_AggregatorV3Interface");
+  const ethUsdPriceFeedAddr = priceFeedMock?.address;
+
   // Check if HeritageWallet was updated
   let heritageProxyContract =
     deployment &&
@@ -61,10 +65,14 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
   const isDeploymentSame = heritageFactory.bytecode === deployment?.bytecode;
 
   if (!deployment) {
-    heritageProxyContract = (await upgrades.deployProxy(heritageFactory, [heritageWallet?.address], {
-      initializer: "initialize",
-      kind: "uups",
-    })) as unknown as Heritage;
+    heritageProxyContract = (await upgrades.deployProxy(
+      heritageFactory,
+      [heritageWallet?.address, ethUsdPriceFeedAddr],
+      {
+        initializer: "initialize",
+        kind: "uups",
+      },
+    )) as unknown as Heritage;
 
     await heritageProxyContract.waitForDeployment();
 
@@ -72,7 +80,7 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
 
     await heritageProxyContract.updateManager(manager);
 
-    // Set owner on wallet contract
+    // Set owner on HeritageWallet
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
     const heritageWalletContract = new ethers.Contract(
       heritageWallet?.address as string,
@@ -80,6 +88,7 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
       owner,
     );
 
+    await heritageWalletContract.setHeritageProxyAddress(heritageProxyContract.target);
     await heritageWalletContract.transferOwnership(heritageProxyContract.target);
 
     currentImplementationAddress = await getImplementationAddress(

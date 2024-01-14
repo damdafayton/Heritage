@@ -1,5 +1,5 @@
 import { HardhatRuntimeEnvironment } from "hardhat/types";
-import { DeployFunction, DeployResult } from "hardhat-deploy/types";
+import { DeployFunction } from "hardhat-deploy/types";
 
 /**
  * Deploys a contract named "YourContract" using the deployer account and
@@ -25,25 +25,12 @@ const deployHeritageWalletContract: DeployFunction = async function (hre: Hardha
   console.info("Owner:", owner.address);
   console.info("Deployer:", deployer);
 
-  const deployEthUsdFeedMock = async (): Promise<DeployResult> => {
-    return await deployments.deploy("Mock_AggregatorV3Interface", {
-      from: deployer,
-      // Contract constructor arguments
-      args: [],
-      log: true,
-      // autoMine: can be passed to the deploy function to make the deployment process faster on local networks by
-      // automatically mining the contract deployment transaction. There is no effect on live networks.
-      autoMine: true,
-    });
-  };
-
-  const ethUsdFeedAddress = (await deployEthUsdFeedMock()).address;
   const usdMinFee = 5;
   const feeThousandage = 1;
 
   await deployments.deploy("HeritageWallet", {
     from: deployer,
-    args: [deployer, ethUsdFeedAddress, usdMinFee, feeThousandage],
+    args: [deployer, usdMinFee, feeThousandage],
     log: true,
     autoMine: true,
   });

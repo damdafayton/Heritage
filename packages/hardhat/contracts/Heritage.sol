@@ -21,7 +21,7 @@ contract Heritage is
 	// Cant change the order or type of the variables down
 	address public heritageWalletAddr;
 	address public ethUsdPriceFeed;
-	address public manager;
+	address public manager; // distributes heritage
 
 	// /// @custom:oz-upgrades-unsafe-allow constructor
 	// constructor() initializer {}

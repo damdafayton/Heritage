@@ -150,24 +150,6 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "address payable",
-              name: "receiver",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "percentage",
-              type: "uint256",
-            },
-          ],
-          name: "addInheritant",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
               internalType: "address",
               name: "addr",
               type: "address",
@@ -293,19 +275,6 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "feeThousandagePerYear",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
           name: "getEthPrice",
           outputs: [
             {
@@ -377,14 +346,9 @@ const deployedContracts = {
               type: "address",
             },
             {
-              internalType: "uint256",
-              name: "_minFeePerYearInUsd",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "_feeThousandagePerYear",
-              type: "uint256",
+              internalType: "address",
+              name: "_ethUsdPriceFeed",
+              type: "address",
             },
           ],
           name: "initialize",
@@ -400,19 +364,6 @@ const deployedContracts = {
               internalType: "address",
               name: "",
               type: "address",
-            },
-          ],
-          stateMutability: "view",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "minFeePerYearInUsd",
-          outputs: [
-            {
-              internalType: "uint256",
-              name: "",
-              type: "uint256",
             },
           ],
           stateMutability: "view",
@@ -461,13 +412,6 @@ const deployedContracts = {
             },
           ],
           stateMutability: "pure",
-          type: "function",
-        },
-        {
-          inputs: [],
-          name: "registerSubscriber",
-          outputs: [],
-          stateMutability: "payable",
           type: "function",
         },
         {
@@ -524,38 +468,12 @@ const deployedContracts = {
         {
           inputs: [
             {
-              internalType: "uint256",
-              name: "newFee",
-              type: "uint256",
-            },
-          ],
-          name: "updateFeeThousandage",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
               internalType: "address",
               name: "_manager",
               type: "address",
             },
           ],
           name: "updateManager",
-          outputs: [],
-          stateMutability: "nonpayable",
-          type: "function",
-        },
-        {
-          inputs: [
-            {
-              internalType: "uint256",
-              name: "newFee",
-              type: "uint256",
-            },
-          ],
-          name: "updateMinFee",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
@@ -604,9 +522,14 @@ const deployedContracts = {
               type: "address",
             },
             {
-              internalType: "address",
-              name: "_ethUsdPriceFeed",
-              type: "address",
+              internalType: "uint256",
+              name: "_minFeePerYearInUsd",
+              type: "uint256",
+            },
+            {
+              internalType: "uint256",
+              name: "_feeThousandagePerYear",
+              type: "uint256",
             },
           ],
           stateMutability: "nonpayable",
@@ -676,6 +599,25 @@ const deployedContracts = {
             },
           ],
           name: "OwnershipTransferred",
+          type: "event",
+        },
+        {
+          anonymous: false,
+          inputs: [
+            {
+              indexed: false,
+              internalType: "address",
+              name: "inheritant",
+              type: "address",
+            },
+            {
+              indexed: false,
+              internalType: "uint256",
+              name: "feeAmount",
+              type: "uint256",
+            },
+          ],
+          name: "PayFee",
           type: "event",
         },
         {
@@ -841,7 +783,7 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
-              name: "_addressToDeposit",
+              name: "depositeeAddress",
               type: "address",
             },
           ],
@@ -861,6 +803,32 @@ const deployedContracts = {
           name: "distributeHeritage",
           outputs: [],
           stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "feeThousandagePerYear",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "getCollectedFees",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
           type: "function",
         },
         {
@@ -917,6 +885,58 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "getSubscriberList",
+          outputs: [
+            {
+              internalType: "address[]",
+              name: "",
+              type: "address[]",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "heritageProxyAddr",
+          outputs: [
+            {
+              internalType: "address",
+              name: "",
+              type: "address",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "minFeePerYearInUsd",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "minimumInheritancePercentage",
+          outputs: [
+            {
+              internalType: "uint256",
+              name: "",
+              type: "uint256",
+            },
+          ],
+          stateMutability: "view",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "owner",
           outputs: [
             {
@@ -948,23 +968,7 @@ const deployedContracts = {
           type: "function",
         },
         {
-          inputs: [
-            {
-              internalType: "address",
-              name: "_address",
-              type: "address",
-            },
-            {
-              internalType: "uint256",
-              name: "minFeePerYear",
-              type: "uint256",
-            },
-            {
-              internalType: "uint256",
-              name: "feeThousandagePerYear",
-              type: "uint256",
-            },
-          ],
+          inputs: [],
           name: "registerSubscriber",
           outputs: [],
           stateMutability: "payable",
@@ -999,11 +1003,57 @@ const deployedContracts = {
           inputs: [
             {
               internalType: "address",
+              name: "_heritageProxyAddr",
+              type: "address",
+            },
+          ],
+          name: "setHeritageProxyAddress",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "address",
               name: "newOwner",
               type: "address",
             },
           ],
           name: "transferOwnership",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "newFee",
+              type: "uint256",
+            },
+          ],
+          name: "updateFeeThousandage",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [
+            {
+              internalType: "uint256",
+              name: "newFee",
+              type: "uint256",
+            },
+          ],
+          name: "updateMinFee",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
+          name: "updateUnpaidFees",
           outputs: [],
           stateMutability: "nonpayable",
           type: "function",
