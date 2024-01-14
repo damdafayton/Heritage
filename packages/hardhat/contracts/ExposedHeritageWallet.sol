@@ -29,4 +29,13 @@ contract ExposedHeritageWallet is HeritageWallet {
 	) public returns (Subscription memory) {
 		return _registerUser(userAddress);
 	}
+
+	// function __payFee(
+	// 	Subscription memory subscription,
+	// 	uint fee,
+	// 	bool isItNewSubscription,
+	// 	address _address
+	// ) public {
+	// 	_payFee(subscription, fee, isItNewSubscription, _address);
+	// }
 }

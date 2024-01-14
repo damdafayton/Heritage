@@ -13,7 +13,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	address public heritageProxyAddr;
 	uint public minFeePerYearInUsd;
 	uint public feeThousandagePerYear;
-	uint public minimumInheritancePercentage = 1;
+	uint public maxFeePercentagePerYear = 1;
 	struct Subscription {
 		uint startTimestamp;
 		uint minFeePerYear;
@@ -63,9 +63,12 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 			"Minimum fee must be deposited to register a new user."
 		);
 
-		_registerUser(msg.sender);
+		Subscription storage subscriptionData = _registerUser(msg.sender);
 
-		payOutstandingFees(msg.sender);
+		emit Deposit(msg.sender, msg.sender, msg.value);
+
+		uint fee = calculateFeeToPay(msg.sender);
+		_payFee(subscriptionData, fee, true, msg.sender);
 	}
 
 	/**
@@ -108,35 +111,68 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 			depositeeAddress
 		];
 
-		if (subscriptionData.startTimestamp == 0) {
+		bool isUserRegistered = subscriptionData.startTimestamp != 0;
+
+		if (!isUserRegistered) {
 			_registerUser(depositeeAddress);
-		}
 
-		emit Deposit(msg.sender, depositeeAddress, msg.value);
+			emit Deposit(msg.sender, depositeeAddress, msg.value);
 
-		if (subscriptionData.lastYearPaid == false) {
-			payOutstandingFees(depositeeAddress);
+			uint fee = calculateFeeToPay(depositeeAddress);
+			_payFee(subscriptionData, fee, true, depositeeAddress);
+		} else {
+			subscriptionData.deposited += msg.value;
+
+			emit Deposit(msg.sender, depositeeAddress, msg.value);
 		}
 	}
 
 	function sendFunds(
 		uint amount,
 		address payable receiver
-	) public _isAllowedToSend(msg.sender, amount) _isFeePaid(msg.sender) {
-		Subscription storage subsciptionData = addressSubscriptionMap[
+	)
+		public
+		_isAllowedToSend(msg.sender, amount)
+		_isAllowedToModify(msg.sender)
+	{
+		Subscription storage subscriptionData = addressSubscriptionMap[
 			msg.sender
 		];
 
-		subsciptionData.deposited -= amount;
+		if (subscriptionData.lastYearPaid == false) {
+			payOutstandingFees(msg.sender);
+		}
+
+		subscriptionData.deposited -= amount;
 
 		receiver.transfer(amount);
 
 		emit SendFunds(msg.sender, receiver, amount);
+
+		_allowToModify(msg.sender);
 	}
 
 	// Wallet functionalities end
 
 	// User callable functions end
+
+	function forcePaySingleFee() public _isAllowedToModify((msg.sender)) {
+		Subscription storage subscription = addressSubscriptionMap[msg.sender];
+
+		uint fee = calculateFeeToPay(msg.sender);
+
+		require(
+			subscription.deposited >= fee,
+			"Not enough deposit to pay fees."
+		);
+
+		subscription.deposited -= fee;
+		subscription.paidFeeCount++;
+
+		collectedFees += fee;
+
+		emit PayFee(msg.sender, fee);
+	}
 
 	function payOutstandingFees(
 		address _address
@@ -156,15 +192,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		for (uint i = 0; i < leftYearsToPay; i++) {
 			uint fee = calculateFeeToPay(_address);
 
-			require(
-				subscriptionData.deposited >= fee,
-				"Not enough deposit to pay fees."
-			);
-			subscriptionData.deposited -= fee;
-			subscriptionData.paidFeeCount++;
-			collectedFees += fee;
-
-			emit PayFee(_address, fee);
+			_payFee(subscriptionData, fee, false, _address);
 		}
 
 		subscriptionData.lastYearPaid = true;
@@ -172,6 +200,33 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		_allowToModify(_address);
 
 		return true;
+	}
+
+	function _payFee(
+		Subscription storage subscription,
+		uint fee,
+		bool isItNewSubscription,
+		address _address
+	) internal {
+		require(
+			subscription.deposited >= fee,
+			"Not enough deposit to pay fees."
+		);
+
+		if (!isItNewSubscription) {
+			require(
+				subscription.deposited / 100 >= fee,
+				"As a safe-guard, an address can not spend more than 1% of it's balance for a fee payment."
+			);
+		}
+
+		subscription.lastYearPaid = isItNewSubscription;
+		subscription.deposited -= fee;
+		subscription.paidFeeCount++;
+
+		collectedFees += fee;
+
+		emit PayFee(_address, fee);
 	}
 
 	function withdrawCollectedFees(
@@ -186,10 +241,16 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 	function distributeHeritage(
 		address addr
-	) public onlyOwner _isAllowedToModify(addr) _isFeePaid(addr) {
+	) public onlyOwner _isAllowedToModify(addr) {
+		Subscription storage subscription = addressSubscriptionMap[addr];
+
+		if (subscription.lastYearPaid == false) {
+			_allowToModify(addr);
+			payOutstandingFees(addr);
+		}
+
 		// Distribute here
 		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
-		Subscription storage subscription = addressSubscriptionMap[addr];
 		uint amountToDistribute = subscription.deposited;
 
 		for (uint i = 0; i < inheritantArr.length; i++) {
@@ -334,7 +395,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 	function _registerUser(
 		address userAddress
-	) internal returns (Subscription memory) {
+	) internal returns (Subscription storage) {
 		Subscription storage subscription = addressSubscriptionMap[userAddress];
 
 		require(subscription.startTimestamp == 0, "Already registered.");
@@ -401,19 +462,6 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		);
 
 		subscriptionData.canModify = false;
-
-		_;
-	}
-
-	modifier _isFeePaid(address _address) {
-		Subscription storage subscriptionData = addressSubscriptionMap[
-			_address
-		];
-
-		require(
-			subscriptionData.lastYearPaid,
-			"Inheritant has outstanding fee to pay."
-		);
 
 		_;
 	}

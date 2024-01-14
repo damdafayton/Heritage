@@ -185,6 +185,25 @@ describe("HeritageWalletContract", function () {
 
       await expect(eventEmitter()).to.emit(heritageWallet, "PayFee").withArgs(user.address, BigInt(3546099290780141));
     });
+
+    it("forcePaySingleFee() force pays the fee despite fee being more than 1% of the total deposits", async () => {
+      const [, user] = await ethers.getSigners();
+
+      await heritageWallet.connect(user).registerSubscriber({ value: ethers.parseEther("0.1") });
+      time.increase(3600 * 24 * 365);
+
+      await heritageWallet.updateUnpaidFees();
+
+      await expect(heritageWallet.payOutstandingFees(user)).to.revertedWith(
+        "As a safe-guard, an address can not spend more than 1% of it's balance for a fee payment.",
+      );
+
+      expect(await heritageWallet.getCollectedFees()).to.eql(3546099290780141n);
+
+      await heritageWallet.connect(user).forcePaySingleFee();
+
+      expect(await heritageWallet.getCollectedFees()).to.eql(7092198581560282n);
+    });
   });
 
   describe("Wallet functionalities", function () {
@@ -195,7 +214,7 @@ describe("HeritageWalletContract", function () {
       heritageWallet = _heritageWallet;
     });
 
-    it("deposit() deposits and pays the outstanding fees of the given address", async () => {
+    it("deposit() deposits and pays the outstanding fees of the a not registered user", async () => {
       const [, secondAddr] = await ethers.getSigners();
 
       await heritageWallet.deposit(secondAddr.address, {
@@ -206,6 +225,31 @@ describe("HeritageWalletContract", function () {
       const data = await heritageWallet.addressSubscriptionMap(secondAddr.address);
 
       expect(data[5]).to.eql(ethers.parseEther("0.231453900709219859"));
+    });
+
+    it("deposit() deposits to an existing user's account", async () => {
+      const [, newUser] = await ethers.getSigners();
+
+      await heritageWallet.deposit(newUser, {
+        value: ethers.parseEther("0.235"),
+      });
+
+      await heritageWallet.deposit(newUser, {
+        value: ethers.parseEther("0.235"),
+      });
+
+      const data = await heritageWallet.addressSubscriptionMap(newUser);
+      expect(data[5]).to.eql(ethers.parseEther("0.466453900709219859"));
+    });
+
+    it("deposit() automatically registers the user", async () => {
+      const [, subscriber] = await ethers.getSigners();
+
+      await heritageWallet.deposit(subscriber, { value: ethers.parseEther("0.5") });
+
+      await expect(
+        heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("1") }),
+      ).to.revertedWith("Already registered.");
     });
 
     it("deposit() emits event when there is a new deposit", async () => {
@@ -332,39 +376,10 @@ describe("HeritageWalletContract", function () {
       );
     });
 
-    it("registerSubscriber() doesnt overwrite the existing deposit of the account if it has deposited before registering", async () => {
-      const [, subscriber] = await ethers.getSigners();
-
-      await heritageWallet.deposit(subscriber, { value: ethers.parseEther("0.5") });
-
-      await heritageWallet.registerSubscriber({ value: ethers.parseEther("1") });
-
-      const [, , , , , deposited] = await heritageWallet.addressSubscriptionMap(subscriber);
-
-      expect(deposited).to.eql(496453900709219859n);
-    });
-
     it("addInheritant() reverts if sender address is not registered yet.", async () => {
       const [, , inheritant] = await ethers.getSigners();
 
       await expect(heritageWallet.addInheritant(inheritant.address, 15)).to.revertedWith("Address is not registered.");
-    });
-
-    it("_isFeePaid() throws if account has missing subscription payments", async () => {
-      const [, second, third] = await ethers.getSigners();
-
-      await heritageWallet.deposit(second.address, {
-        gasLimit: 3000000,
-        value: ethers.parseEther("0.5"),
-      });
-
-      time.increase(3600 * 24 * 365);
-
-      await heritageWallet.updateUnpaidFees();
-
-      await expect(heritageWallet.connect(second).sendFunds(1, third.address)).to.be.revertedWith(
-        "Inheritant has outstanding fee to pay.",
-      );
     });
 
     it("modifier _isAllowedToSend() throws if deposited amount is lower than the requested transfer", async () => {
@@ -400,17 +415,52 @@ describe("HeritageWalletContract", function () {
       expect(subscriptionData.canModify).to.eql(true);
     });
 
-    it("distributeHeritage() reverts if fees are not paid", async () => {
+    it("distributeHeritage() tries to pay the fees if fees are not paid", async () => {
       const [, subscriber] = await ethers.getSigners();
-      await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("1") });
+      await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("0.1") });
 
       time.increase(3600 * 24 * 365);
 
       await heritageWallet.updateUnpaidFees();
 
       await expect(heritageWallet.distributeHeritage(subscriber)).to.revertedWith(
-        "Inheritant has outstanding fee to pay.",
+        "As a safe-guard, an address can not spend more than 1% of it's balance for a fee payment.",
       );
+    });
+
+    it("payOutstandingFees() reverts if a fee of more than 1% of the total deposits is being tried to be paid", async () => {
+      const [, user] = await ethers.getSigners();
+
+      await heritageWallet.connect(user).registerSubscriber({ value: ethers.parseEther("0.1") });
+      time.increase(3600 * 24 * 365);
+
+      await heritageWallet.updateUnpaidFees();
+
+      await expect(heritageWallet.payOutstandingFees(user)).to.revertedWith(
+        "As a safe-guard, an address can not spend more than 1% of it's balance for a fee payment.",
+      );
+    });
+
+    it("sendFunds() throws if deposit amount is lower than the requested transfer", async () => {
+      const [, second, third] = await ethers.getSigners();
+
+      const minFee = await heritageWallet.minFeePerYearInUsd();
+      const minFeeInWei = await heritageWallet.convertUsdToWei(minFee);
+
+      await heritageWallet.deposit(second.address, {
+        gasLimit: 3000000,
+        value: minFeeInWei + BigInt(2),
+      });
+
+      time.increase(3600 * 24 * 365);
+
+      await heritageWallet.updateUnpaidFees();
+
+      const secondsDeposit = (await heritageWallet.addressSubscriptionMap(second.address)).deposited;
+
+      await expect(
+        heritageWallet.connect(second).sendFunds(secondsDeposit + BigInt(1), third.address),
+      ).to.be.revertedWith("Sender doesnt have enough balance.");
     });
 
     // its important not to distribute more than existing deposits
