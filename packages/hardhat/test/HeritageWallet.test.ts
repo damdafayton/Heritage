@@ -16,25 +16,23 @@ describe("HeritageWalletContract", function () {
   before(async () => {
     const [owner] = await ethers.getSigners();
     ownerAddress = owner.address;
+
+    await deployHeritageProxyMock();
   });
 
   async function deployHeritageProxyMock() {
-    console.info(`Deploying Mock_HeritageWalletInterface.`);
-
     const heritageFactory = await ethers.getContractFactory("Mock_HeritageWalletInterface");
 
     const heritage = (await heritageFactory.deploy()) as unknown as Mock_HeritageWalletInterface;
 
     await heritage.waitForDeployment();
 
-    console.info(`ETH-USD price feed mock deployed to ${heritage.target}.`);
+    console.info(`Mock_HeritageWalletInterface deployed to ${heritage.target}.`);
 
     heritageProxyAddr = heritage.target as string;
   }
 
   async function deployContractWithExposed(): Promise<[HeritageWallet, ExposedHeritageWallet]> {
-    await deployHeritageProxyMock();
-
     const heritageWalletFactory = await ethers.getContractFactory("HeritageWallet");
 
     const heritageWallet = (await heritageWalletFactory.deploy(
