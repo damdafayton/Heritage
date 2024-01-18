@@ -2,11 +2,18 @@ import {StyleSheet, Text, View} from 'react-native';
 
 import {DisplayVariable} from './Contract/DiplayVariable';
 import {isSubscribed} from '../helpers/isSubscribed';
+import {SubscriptionData} from '../hooks/useGetSubscriptionData';
+import {FindHeritageWalletFunction} from '../hooks/useHeritageWalletContract';
+import {Address} from 'viem';
 
 export function Header({
   subscriptionData,
   findContractFunction,
   heritageAddress,
+}: {
+  subscriptionData?: SubscriptionData;
+  findContractFunction?: FindHeritageWalletFunction;
+  heritageAddress?: Address;
 }) {
   const contractIsFound = !!heritageAddress;
 

@@ -11,7 +11,7 @@ export function Subscribed({
 }: {
   subscriptionData: SubscriptionData;
 }) {
-  const {deposited} = subscriptionData;
+  const {deposited, paidFeeCount, lastYearPaid} = subscriptionData;
 
   const handleFormSubmit = () => {};
 
@@ -22,10 +22,21 @@ export function Subscribed({
         <DisplayVariable overrideValue={deposited} />
         <Text>ETH</Text>
       </View>
+      <View style={styles.contractDataRow}>
+        <Text>Last year paid: </Text>
+        <DisplayVariable overrideValue={lastYearPaid} />
+      </View>
+      <View style={styles.contractDataRow}>
+        <Text>Total years paid: </Text>
+        <DisplayVariable overrideValue={paidFeeCount} />
+      </View>
       <View style={styles.buttonContainer}>
-        <Button title="Send" />
-        <Button title="Deposit" />
+        <Button title="Send funds" />
+        <Button title="Deposit funds" />
+      </View>
+      <View style={styles.buttonContainer}>
         <Button title="Add inheritant" />
+        <Button title="Pay 1 year fee" />
       </View>
       <Formik
         initialValues={{depositType: 'USD', depositAmount: ''}}

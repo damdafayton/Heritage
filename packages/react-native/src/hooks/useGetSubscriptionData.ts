@@ -50,7 +50,7 @@ export function useGetSubscriptionData(
       minFeePerYear: displayTxResult(minFeePerYear),
       feeThousandagePerYear: displayTxResult(feeThousandagePerYear),
       paidFeeCount: displayTxResult(paidFeeCount),
-      lastYearPaid: displayTxResult(lastYearPaid),
+      lastYearPaid: Boolean(displayTxResult(lastYearPaid)),
       deposited: deposited
         ? parseFloat(parseFloat(formatEther(deposited)).toFixed(4))
         : 0,
