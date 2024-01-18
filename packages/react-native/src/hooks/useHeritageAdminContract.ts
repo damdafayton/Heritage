@@ -6,22 +6,24 @@ import {GenericContractsDeclaration} from '../../types/hardhat';
 
 const contracts = deployedContracts as GenericContractsDeclaration;
 
-export function useHeritageContract() {
+export function useHeritageAdminContract() {
   const {chain, chains} = useNetwork();
 
   if (!chain?.id) return {};
 
-  const heritage = contracts[chain.id]?.Heritage;
+  const deployment = contracts[chain.id]?.['HeritageAdmin'];
 
-  const address = heritage?.address;
-  const abi = heritage?.abi;
+  const defaultABI = deployedContracts['31337']['HeritageAdmin'].abi;
 
-  const getHeritageFunction = (functionName: string) => {
+  const address = deployment?.address;
+  const abi = deployment?.abi as unknown as typeof defaultABI;
+
+  const findContractFunction = (functionName: string) => {
     return abi?.find(part => {
       const partAsFn = part as AbiFunction;
       return partAsFn.name === functionName;
     }) as AbiFunction;
   };
 
-  return {address, abi, getHeritageFunction};
+  return {address, abi, findContractFunction};
 }

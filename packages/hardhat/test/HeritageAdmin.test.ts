@@ -2,13 +2,13 @@
 
 import { expect } from "chai";
 import { ethers, upgrades } from "hardhat";
-import { Heritage, HeritageWallet, Mock_AggregatorV3Interface, HeritageV2 } from "../typechain-types";
+import { HeritageAdmin, HeritageWallet, Mock_AggregatorV3Interface, HeritageAdminV2 } from "../typechain-types";
 import { Addressable } from "ethers";
 import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 describe("HeritageProxyContract", function () {
   // We define a fixture to reuse the same setup in every test.
-  let heritageProxy: Heritage;
+  let heritageProxy: HeritageAdmin;
   let ownerAddress: string | Addressable;
   let heritageWalletAddr: string | Addressable;
   let ethUsdFeedAddr: string | Addressable;
@@ -44,12 +44,12 @@ describe("HeritageProxyContract", function () {
   }
 
   async function deployHeritage() {
-    const heritageFactory = await ethers.getContractFactory("Heritage");
+    const heritageFactory = await ethers.getContractFactory("HeritageAdmin");
 
     const heritageContract = (await upgrades.deployProxy(heritageFactory, [heritageWalletAddr, ethUsdFeedAddr], {
       initializer: "initialize",
       kind: "uups",
-    })) as unknown as Heritage;
+    })) as unknown as HeritageAdmin;
 
     console.info(`Heritage Proxy contract deployed to: ${heritageContract.target}.`);
 
@@ -101,9 +101,12 @@ describe("HeritageProxyContract", function () {
     });
 
     it("upgrades the contract", async () => {
-      const heritageFactoryV2 = await ethers.getContractFactory("HeritageV2");
+      const heritageFactoryV2 = await ethers.getContractFactory("HeritageAdminV2");
 
-      heritageProxy = (await upgrades.upgradeProxy(heritageProxy.target, heritageFactoryV2)) as unknown as HeritageV2;
+      heritageProxy = (await upgrades.upgradeProxy(
+        heritageProxy.target,
+        heritageFactoryV2,
+      )) as unknown as HeritageAdminV2;
 
       console.info("Heritage upgraded.");
 
@@ -111,7 +114,7 @@ describe("HeritageProxyContract", function () {
 
       console.info(`Heritage Implementation contract deployed to: ${currentImplAddress}.`);
 
-      const proxyAfterUpgrade = heritageProxy as HeritageV2;
+      const proxyAfterUpgrade = heritageProxy as HeritageAdminV2;
 
       expect(await proxyAfterUpgrade.foo()).to.eql(5n);
     });

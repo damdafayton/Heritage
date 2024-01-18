@@ -1,28 +1,28 @@
 import {StyleSheet, Text, View} from 'react-native';
+
 import {DisplayVariable} from './Contract/DiplayVariable';
-import {useHeritageContract} from '../hooks/useHeritageContract';
+import {isSubscribed} from '../helpers/isSubscribed';
 
-export function Header({subscriptionData = [] as any, isSubscribed}) {
-  const {
-    address: heritageAddress,
-    abi,
-    getHeritageFunction,
-  } = useHeritageContract();
+export function Header({
+  subscriptionData,
+  findContractFunction,
+  heritageAddress,
+}) {
+  const contractIsFound = !!heritageAddress;
 
-  const fnFeeThousandage = getHeritageFunction?.('feeThousandagePerYear');
-  const fnMinFee = getHeritageFunction?.('minFeePerYearInUsd');
+  const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');
+  const fnMinFee = findContractFunction?.('minFeePerYearInUsd');
 
   const refreshDisplayVariables = true;
 
-  const [timestamp, minFeePerYear, feeThousandagePerYear] =
-    subscriptionData as Array<any>;
+  const {minFeePerYear, feeThousandagePerYear} = subscriptionData || {};
 
-  console.log({minFeePerYear, feeThousandagePerYear});
+  console.info({minFeePerYear, feeThousandagePerYear});
 
-  return heritageAddress ? (
+  return contractIsFound ? (
     <View style={styles.contractData}>
       <View style={styles.contractDataCell}>
-        <Text>Current fees</Text>
+        <Text>Fees for new users</Text>
         <View style={styles.contractDataRow}>
           <Text>Annual fee: </Text>
           <DisplayVariable
@@ -42,9 +42,9 @@ export function Header({subscriptionData = [] as any, isSubscribed}) {
           <Text>$</Text>
         </View>
       </View>
-      {isSubscribed ? (
+      {isSubscribed(subscriptionData) ? (
         <View style={styles.contractDataCell}>
-          <Text>Fees for registered user</Text>
+          <Text>Fees for you</Text>
           <View style={styles.contractDataRow}>
             <Text>Annual fee: </Text>
             <DisplayVariable
@@ -71,7 +71,7 @@ export function Header({subscriptionData = [] as any, isSubscribed}) {
       )}
     </View>
   ) : (
-    <></>
+    <Text>Loading</Text>
   );
 }
 

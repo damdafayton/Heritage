@@ -34,8 +34,8 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
 
   const manager = RainbowAccountAddress;
 
-  const heritageFactory = await ethers.getContractFactory("Heritage");
-  const deployment = await deployments.getOrNull("Heritage");
+  const heritageFactory = await ethers.getContractFactory("HeritageAdmin");
+  const deployment = await deployments.getOrNull("HeritageAdmin");
 
   // ETH price feed mock address
   const priceFeedMock = await deployments.getOrNull("Mock_AggregatorV3Interface");
@@ -96,7 +96,12 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
       heritageProxyContract.target as string,
     );
 
-    await saveDeployment(hre, "Heritage", heritageProxyContract as unknown as Contract, currentImplementationAddress);
+    await saveDeployment(
+      hre,
+      "HeritageAdmin",
+      heritageProxyContract as unknown as Contract,
+      currentImplementationAddress,
+    );
   } else if (!isDeploymentSame) {
     const upgradedHeritageProxyContract = (await upgrades.upgradeProxy(
       deployment.address,
@@ -113,9 +118,14 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
       heritageProxyContract.target as string,
     );
 
-    await saveDeployment(hre, "Heritage", heritageProxyContract as unknown as Contract, currentImplementationAddress);
+    await saveDeployment(
+      hre,
+      "HeritageAdmin",
+      heritageProxyContract as unknown as Contract,
+      currentImplementationAddress,
+    );
   } else {
-    console.info(`Re-using "Heritage" proxy at ${deployment.address}`);
+    console.info(`Re-using "HeritageAdmin" proxy at ${deployment.address}`);
 
     currentImplementationAddress = await getImplementationAddress(hre.network.provider, deployment.address);
   }
@@ -129,4 +139,4 @@ export default deployHeritageContract;
 
 // Tags are useful if you have multiple deploy files and only want to run one of them.
 // e.g. yarn deploy --tags YourContract
-deployHeritageContract.tags = ["HeritageProxy"];
+deployHeritageContract.tags = ["HeritageAdmin"];

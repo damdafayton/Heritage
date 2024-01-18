@@ -12,7 +12,7 @@ import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "../interfaces/HeritageWalletInterface.sol";
 import "./HeritageWallet.sol";
 
-contract Heritage is
+contract HeritageAdmin is
 	HeritageWalletInterface,
 	Initializable,
 	UUPSUpgradeable,

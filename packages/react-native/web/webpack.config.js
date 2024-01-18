@@ -1,5 +1,4 @@
 const path = require('path');
-const webpack = require('webpack');
 
 const appDirectory = path.resolve(__dirname, '../');
 

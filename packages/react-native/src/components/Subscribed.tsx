@@ -1,30 +1,25 @@
 import {Formik} from 'formik';
 import {FormEvent} from 'react';
 import {Button, StyleSheet, Text, TextInput, View} from 'react-native';
-import {DisplayVariable} from './Contract/DiplayVariable';
 import {formatEther} from 'ethers';
 
-export function Subscribed({subscriptionData}) {
-  const [
-    timestamp,
-    minFeePerYear,
-    feeThousandagePerYear,
-    paidFeeCount,
-    lastYearPaid,
-    deposited,
-  ] = subscriptionData as Array<any>;
-  console.log(deposited, formatEther(deposited));
+import {DisplayVariable} from './Contract/DiplayVariable';
+import {SubscriptionData} from '../hooks/useGetSubscriptionData';
+
+export function Subscribed({
+  subscriptionData,
+}: {
+  subscriptionData: SubscriptionData;
+}) {
+  const {deposited} = subscriptionData;
+
   const handleFormSubmit = () => {};
 
   return (
     <>
       <View style={styles.contractDataRow}>
         <Text>Wallet deposit: </Text>
-        <DisplayVariable
-          overrideValue={parseFloat(
-            parseFloat(formatEther(deposited)).toFixed(4),
-          )}
-        />
+        <DisplayVariable overrideValue={deposited} />
         <Text>ETH</Text>
       </View>
       <View style={styles.buttonContainer}>

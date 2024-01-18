@@ -1,38 +1,28 @@
 import {useEffect, useState} from 'react';
 
-import {NotSubscribedView} from './NotSubscribedView';
-import {useHeritageContract} from '../hooks/useHeritageContract';
-import {
-  readContracts,
-  useAccount,
-  useContractRead,
-  useContractWrite,
-} from 'wagmi';
+import {useContractRead, useContractWrite} from 'wagmi';
 import {parseEther} from 'ethers';
+
+import {NotSubscribedView} from './NotSubscribedView';
+import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
 
 export function NotSubscribed({
   refetchAddressSubscriptionMap,
 }: {
   refetchAddressSubscriptionMap: Function;
 }) {
-  const {address, abi, getHeritageFunction} = useHeritageContract();
+  const {address, abi} = useHeritageWalletContract();
 
   const [depositAmountInWEI, setDepositAmountInWEI] = useState<bigint>();
-  const [depositAmountInUSD, setDepositAmountInUSD] = useState<number>();
+  const [depositAmountInUSD, setDepositAmountInUSD] = useState<bigint>(0n);
 
-  const {
-    data: usdValInWei,
-    isFetching,
-    refetch: refetchConvertUsdToWei,
-  } = useContractRead({
+  const {data: usdValInWei, refetch: refetchConvertUsdToWei} = useContractRead({
     abi,
     address,
     functionName: 'convertUsdToWei',
     args: [depositAmountInUSD],
     enabled: false,
   });
-
-  const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
   const {
     write,
@@ -47,8 +37,8 @@ export function NotSubscribed({
 
   const handleFormSubmit = async ({depositType, depositAmount}) => {
     console.log({depositType, depositAmount});
-    setDepositAmountInWEI(undefined);
-    setDepositAmountInUSD(undefined);
+    setDepositAmountInWEI(0n);
+    setDepositAmountInUSD(0n);
 
     switch (depositType) {
       case 'ETH':
@@ -57,7 +47,7 @@ export function NotSubscribed({
         setDepositAmountInWEI(valueInWei);
         break;
       case 'USD':
-        setDepositAmountInUSD(depositAmount);
+        setDepositAmountInUSD(BigInt(depositAmount));
         break;
     }
   };

@@ -6,7 +6,7 @@ import { GenericContractsDeclaration } from "~~/types/hardhat";
 
 const deployedContracts = {
   31337: {
-    Heritage: {
+    HeritageAdmin: {
       address: "0xCf7Ed3AccA5a467e9e704C703E8D87F634fB0Fc9",
       abi: [
         {
@@ -820,6 +820,13 @@ const deployedContracts = {
         },
         {
           inputs: [],
+          name: "forcePaySingleFee",
+          outputs: [],
+          stateMutability: "nonpayable",
+          type: "function",
+        },
+        {
+          inputs: [],
           name: "getCollectedFees",
           outputs: [
             {
@@ -911,7 +918,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "minFeePerYearInUsd",
+          name: "maxFeePercentagePerYear",
           outputs: [
             {
               internalType: "uint256",
@@ -924,7 +931,7 @@ const deployedContracts = {
         },
         {
           inputs: [],
-          name: "minimumInheritancePercentage",
+          name: "minFeePerYearInUsd",
           outputs: [
             {
               internalType: "uint256",

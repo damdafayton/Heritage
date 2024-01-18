@@ -18,12 +18,12 @@ import {
   View,
 } from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
-import {useAccount, useContractRead} from 'wagmi';
-import {useHeritageContract} from './hooks/useHeritageContract';
-import {displayTxResult} from './components/Contract/utils';
-import {NotSubscribed} from './components/NotSubscribed';
-import {Subscribed} from './components/Subscribed';
+import {useAccount} from 'wagmi';
+
 import {Header} from './components/Header';
+import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
+import {Main} from './components/Main';
+import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -32,44 +32,16 @@ const App = () => {
     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
   };
 
-  const {address, isConnecting, isDisconnected} = useAccount();
+  const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
   const {
     address: heritageAddress,
     abi,
-    getHeritageFunction,
-  } = useHeritageContract();
+    findContractFunction,
+  } = useHeritageWalletContract();
 
-  const addressSubscriptionMap = getHeritageFunction?.(
-    'addressSubscriptionMap',
-  );
-
-  const {
-    data: subscriptionData,
-    isFetching,
-    isFetched,
-    refetch: refetchAddressSubscriptionMap,
-  } = useContractRead({
-    abi: [addressSubscriptionMap],
-    address: heritageAddress,
-    functionName: addressSubscriptionMap?.name,
-    args: [address],
-  });
-
-  const [isSubscribed, setIsSubscribed] = useState(false);
-
-  useEffect(() => {
-    if (!subscriptionData) return;
-
-    const [timestamp] = subscriptionData as Array<any>;
-
-    setIsSubscribed(displayTxResult(timestamp) === 0 ? false : true);
-  }, [isFetched]);
-
-  useEffect(() => {
-    if (isSubscribed) {
-    }
-  }, [isSubscribed]);
+  const {subscriptionData, isFetching, refetchSubscriptionData} =
+    useGetSubscriptionData(heritageAddress, userAddress, abi);
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -83,19 +55,21 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Text style={styles.header}>HERITAGE</Text>
-          <>
-            <Header
-              subscriptionData={subscriptionData}
-              isSubscribed={isSubscribed}
-            />
-            {isSubscribed ? (
-              <Subscribed subscriptionData={subscriptionData} />
-            ) : (
-              <NotSubscribed
-                refetchAddressSubscriptionMap={refetchAddressSubscriptionMap}
+          {isFetching ? (
+            <Text>Loading...</Text>
+          ) : (
+            <>
+              <Header
+                subscriptionData={subscriptionData}
+                findContractFunction={findContractFunction}
+                heritageAddress={heritageAddress}
               />
-            )}
-          </>
+              <Main
+                subscriptionData={subscriptionData}
+                refetchSubscriptionData={refetchSubscriptionData}
+              />
+            </>
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
