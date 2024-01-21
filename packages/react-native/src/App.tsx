@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 
 import {
   SafeAreaView,
@@ -24,6 +24,8 @@ import {Header} from './components/Header';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
 import {Main} from './components/Main';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
+import {HerritageWalletContext} from './context/HerritageWallet.context';
+import {isSubscribed} from './helpers/isSubscribed';
 
 const App = () => {
   const isDarkMode = useColorScheme() === 'dark';
@@ -40,8 +42,11 @@ const App = () => {
     findContractFunction,
   } = useHeritageWalletContract();
 
-  const {subscriptionData, isFetching, refetchSubscriptionData} =
-    useGetSubscriptionData(heritageAddress, userAddress, abi);
+  const {subscriptionData, refetchSubscriptionData} = useGetSubscriptionData(
+    heritageAddress,
+    userAddress,
+    abi,
+  );
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -55,20 +60,17 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Text style={styles.header}>HERITAGE</Text>
-          {isFetching ? (
+          {!subscriptionData ? (
             <Text>Loading...</Text>
           ) : (
-            <>
+            <HerritageWalletContext.Provider
+              value={{subscriptionData, refetchSubscriptionData}}>
               <Header
-                subscriptionData={subscriptionData}
                 findContractFunction={findContractFunction}
                 heritageAddress={heritageAddress}
               />
-              <Main
-                subscriptionData={subscriptionData}
-                refetchSubscriptionData={refetchSubscriptionData}
-              />
-            </>
+              <Main isSubscribed={isSubscribed(subscriptionData)} />
+            </HerritageWalletContext.Provider>
           )}
         </View>
       </ScrollView>

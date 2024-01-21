@@ -39,8 +39,8 @@ export const DisplayVariable = ({
   //   const {showAnimation} = useAnimationConfig(result);
 
   useEffect(() => {
-    refetch();
-  }, [refetch, refreshDisplayVariables]);
+    if (contractAddress) refetch();
+  }, [refreshDisplayVariables]);
 
   useEffect(() => {
     if (!overrideValue) refetch();

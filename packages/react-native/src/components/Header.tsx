@@ -1,20 +1,21 @@
 import {StyleSheet, Text, View} from 'react-native';
+import {Address} from 'viem';
+import {useContext} from 'react';
 
 import {DisplayVariable} from './Contract/DiplayVariable';
 import {isSubscribed} from '../helpers/isSubscribed';
-import {SubscriptionData} from '../hooks/useGetSubscriptionData';
 import {FindHeritageWalletFunction} from '../hooks/useHeritageWalletContract';
-import {Address} from 'viem';
+import {HerritageWalletContext} from '../context/HerritageWallet.context';
 
 export function Header({
-  subscriptionData,
   findContractFunction,
   heritageAddress,
 }: {
-  subscriptionData?: SubscriptionData;
   findContractFunction?: FindHeritageWalletFunction;
   heritageAddress?: Address;
 }) {
+  const {subscriptionData} = useContext(HerritageWalletContext);
+
   const contractIsFound = !!heritageAddress;
 
   const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');

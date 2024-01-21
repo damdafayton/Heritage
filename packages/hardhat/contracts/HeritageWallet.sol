@@ -171,6 +171,8 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 		collectedFees += fee;
 
+		_allowToModify(msg.sender);
+
 		emit PayFee(msg.sender, fee);
 	}
 
