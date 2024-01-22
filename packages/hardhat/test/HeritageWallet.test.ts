@@ -129,6 +129,30 @@ describe("HeritageWalletContract", function () {
       expect(inheritant0).to.eql(["0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC", 90n]);
     });
 
+    it("addInheritant() percentage value must be above 0 for new record", async () => {
+      const [, subscriber, inheritant] = await ethers.getSigners();
+
+      await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("1") });
+
+      await expect(heritageWallet.connect(subscriber).addInheritant(inheritant.address, 0)).to.rejectedWith(
+        "Percentage should be above 0.",
+      );
+    });
+
+    it("addInheritant() removes inheritant if an existing percentage is set to 0", async () => {
+      const [, subscriber, inheritant, inheritant2] = await ethers.getSigners();
+
+      await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("1") });
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant.address, 60);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant2.address, 30);
+      await heritageWallet.connect(subscriber).addInheritant(inheritant.address, 0);
+
+      const inheritant0 = await heritageWallet.addrInheritantListMap(subscriber.address, 0);
+
+      expect(inheritant0).to.eql([inheritant2.address, 30n]);
+    });
+
     it("getRemainingInheritancePercentage()", async () => {
       const [, subscriber, inheritant1, inheritant2, inheritant3] = await ethers.getSigners();
 

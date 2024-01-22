@@ -95,9 +95,15 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		Inheritant memory newInheritant = Inheritant(receiver, percentage);
 
 		if (existing) {
-			Inheritant storage inheritant = inheritants[existingIdx];
-			inheritant.percentToHeritage = percentage;
+			if (percentage == 0) {
+				_removeInheritant(msg.sender, existingIdx);
+			} else {
+				Inheritant storage inheritant = inheritants[existingIdx];
+				inheritant.percentToHeritage = percentage;
+			}
 		} else {
+			require(percentage > 0, "Percentage should be above 0.");
+
 			inheritants.push(newInheritant);
 		}
 
@@ -385,6 +391,19 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		);
 
 		return heritageProxy;
+	}
+
+	function _removeInheritant(
+		address userAddr,
+		uint inheritantIndex
+	) internal {
+		Inheritant memory lastInheritant = addrInheritantListMap[userAddr][
+			addrInheritantListMap[userAddr].length - 1
+		];
+
+		addrInheritantListMap[userAddr][inheritantIndex] = lastInheritant;
+
+		addrInheritantListMap[userAddr].pop();
 	}
 
 	function _allowToModify(address _address) internal {

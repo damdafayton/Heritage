@@ -2,13 +2,15 @@ import {Button, StyleSheet, Text, View} from 'react-native';
 
 import {DisplayVariable} from './Contract/DiplayVariable';
 import {findYearsPassed} from '../helpers/findYearsPassed';
-import {useContext, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
-import {AddInheritantForm} from '../forms/AddInheritantForm';
+import {AddInheritantForm, AddInheritantVals} from '../forms/AddInheritantForm';
 import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
 import {useAccount, useContractWrite} from 'wagmi';
-import {DepositForm} from '../forms/DepositForm';
+import {DepositForm, DepositFormVals} from '../forms/DepositForm';
 import {useConvertDepositToWei} from '../forms/hooks/useConvertDepositToWei';
+import {SendFundsForm, SendFundsFormVals} from '../forms/SendFundsForm';
+import {parseEther} from 'ethers';
 
 export function Subscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -38,15 +40,32 @@ export function Subscribed() {
 
   const {getDepositInWei} = useConvertDepositToWei();
 
-  const {writeAsync: writeAsyncDeposit} = useContractWrite({
+  const {
+    writeAsync: writeAsyncDeposit,
+    isLoading,
+    isSuccess,
+  } = useContractWrite({
     abi,
     address,
     functionName: 'deposit',
   });
 
+  const {writeAsync: writeAsyncSendFunds, isSuccess: isSuccess2} =
+    useContractWrite({
+      abi,
+      address,
+      functionName: 'sendFunds',
+    });
+
+  const {write: writeAddInheritant, isSuccess: isSuccess3} = useContractWrite({
+    abi,
+    address,
+    functionName: 'addInheritant',
+  });
+
   const {address: userAddr} = useAccount();
 
-  const onSubmitDeposit = async vals => {
+  const onSubmitDeposit = async (vals: DepositFormVals) => {
     const wei = await getDepositInWei(vals);
     console.log({wei});
 
@@ -58,6 +77,34 @@ export function Subscribed() {
     });
 
     refetchSubscriptionData();
+  };
+
+  const onSubmitSendFunds = async (vals: SendFundsFormVals) => {
+    const wei = await getDepositInWei(vals);
+    console.log({wei});
+
+    if (!userAddr) return;
+
+    await writeAsyncSendFunds({
+      args: [wei, vals.receiverAddress],
+    });
+
+    refetchSubscriptionData();
+  };
+
+  useEffect(() => {
+    if (isSuccess || isSuccess2) {
+      // show success
+      setActiveForm(undefined);
+    }
+  }, [isSuccess, isSuccess2]);
+
+  useEffect(() => {
+    refetchSubscriptionData();
+  }, [isSuccess3]);
+
+  const onSubmitAddInheritant = async (vals: AddInheritantVals) => {
+    await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
   };
 
   return (
@@ -102,9 +149,14 @@ export function Subscribed() {
           case 'pay-fee':
             return <Text>TEST ME</Text>;
           case 'send':
-            return <Text>TEST ME</Text>;
+            return <SendFundsForm onSubmit={onSubmitSendFunds} />;
           case 'add-inheritant':
-            return <AddInheritantForm />;
+            return (
+              <AddInheritantForm
+                onSubmit={onSubmitAddInheritant}
+                isSuccess={isSuccess3}
+              />
+            );
         }
       })()}
     </>

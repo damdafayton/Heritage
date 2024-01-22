@@ -15,18 +15,20 @@ export function NotSubscribed() {
   const handleFormSubmit = async vals => {
     const depositAmountInWEI = await getDepositInWei(vals);
 
-    write({
+    await writeAsync({
       value: depositAmountInWEI,
     });
   };
 
   const {address, abi} = useHeritageWalletContract();
 
-  const {write, isSuccess: registerSubscriberIsSuccess} = useContractWrite({
-    abi,
-    address,
-    functionName: 'registerSubscriber',
-  });
+  const {writeAsync, isSuccess: registerSubscriberIsSuccess} = useContractWrite(
+    {
+      abi,
+      address,
+      functionName: 'registerSubscriber',
+    },
+  );
 
   useEffect(() => {
     if (registerSubscriberIsSuccess) refetchSubscriptionData();
