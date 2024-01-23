@@ -16,14 +16,14 @@ import {Abi} from 'viem';
 
 export type AddInheritantVals = {
   address: Address;
-  percent: string;
+  percent: number;
 };
 
 export function AddInheritantForm({
   onSubmit,
   isSuccess,
 }: {
-  onSubmit: (values: AddInheritantVals) => void | Promise<any>;
+  onSubmit: (values: AddInheritantVals) => void;
   isSuccess: boolean;
 }) {
   const [_, forceUpdate] = useReducer(x => x + 1, 0);
@@ -83,18 +83,44 @@ export function AddInheritantForm({
         <Fragment key={inheritant[0]}>
           <Text>Inheritant {idx + 1}: </Text>
           <Text>{inheritant[0]}: </Text>
-          <Text>{parseInt(inheritant[1])} %</Text>
+          <Text>{parseInt(inheritant[1])}%</Text>
         </Fragment>
       ))}
       <Formik
         initialValues={{
-          address: '0xe7f1725e7734ce288f8367e1bb143e90bb3f0512',
+          address: '',
           percent: '',
         }}
-        onSubmit={onSubmit}>
-        {({handleChange, handleBlur, handleSubmit, values}) => (
+        validateOnChange={false}
+        validate={values => {
+          const errors: any = {};
+
+          const percentInt = parseInt(values.percent);
+
+          if (!percentInt) errors.percent = 'Must be a number';
+
+          if (!values.address.match(/^0x.+/))
+            errors.address = 'Invalid address type';
+
+          return errors;
+        }}
+        onSubmit={(values, {resetForm}) => {
+          const valuesTransformed = {
+            address: values.address as Address,
+            percent: parseInt(values.percent),
+          };
+
+          onSubmit(valuesTransformed);
+          resetForm();
+        }}>
+        {({handleChange, handleBlur, handleSubmit, values, errors}) => (
           <View>
-            <Text>Add new inheritants</Text>
+            {Object.keys(errors).length ? (
+              <Text>{JSON.stringify(errors)}</Text>
+            ) : (
+              ''
+            )}
+            <Text>Add new inheritant</Text>
             <TextInput
               placeholder="Address"
               value={values.address}
@@ -102,7 +128,7 @@ export function AddInheritantForm({
               onBlur={handleBlur('address')}
             />
             <TextInput
-              placeholder="Amount to deposit"
+              placeholder="Percentage"
               value={values.percent}
               onChangeText={handleChange('percent')}
               onBlur={handleBlur('percent')}

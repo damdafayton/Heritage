@@ -1,4 +1,5 @@
 import {Button, StyleSheet, Text, View} from 'react-native';
+import crypto from 'crypto';
 
 import {DisplayVariable} from './Contract/DiplayVariable';
 import {findYearsPassed} from '../helpers/findYearsPassed';
@@ -10,7 +11,11 @@ import {useAccount, useContractWrite} from 'wagmi';
 import {DepositForm, DepositFormVals} from '../forms/DepositForm';
 import {useConvertDepositToWei} from '../forms/hooks/useConvertDepositToWei';
 import {SendFundsForm, SendFundsFormVals} from '../forms/SendFundsForm';
-import {parseEther} from 'ethers';
+import {
+  EncryptedDataForm,
+  EncryptedDataFormVals,
+} from '../forms/EncryptedDataForm';
+import {deriveKey, encryptText} from '../helpers/crpyto';
 
 export function Subscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -20,7 +25,12 @@ export function Subscribed() {
     subscriptionData;
 
   const [activeForm, setActiveForm] = useState<
-    'send' | 'deposit' | 'add-inheritant' | 'pay-fee' | undefined
+    | 'send'
+    | 'deposit'
+    | 'add-inheritant'
+    | 'pay-fee'
+    | 'encrypted-data'
+    | undefined
   >(undefined);
 
   const {abi, address} = useHeritageWalletContract();
@@ -107,6 +117,21 @@ export function Subscribed() {
     await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
   };
 
+  const [encryptedText, setEncryptedText] = useState('');
+
+  const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
+    console.log({vals});
+
+    if (vals.encryptedText) {
+      // encrypt with our salt and save to db
+    } else {
+      const key = await deriveKey(vals.secretKey);
+      const cipher = await encryptText(key, vals.text);
+
+      setEncryptedText(cipher);
+    }
+  };
+
   return (
     <>
       <View style={styles.contractDataRow}>
@@ -142,12 +167,21 @@ export function Subscribed() {
         />
         <Button onPress={payFee} title="Pay 1 year fee" />
       </View>
+      <Button
+        onPress={() => setActiveForm('encrypted-data')}
+        title="Encrypted data"
+      />
       {(() => {
         switch (activeForm) {
           case 'deposit':
             return <DepositForm onSubmit={onSubmitDeposit} />;
-          case 'pay-fee':
-            return <Text>TEST ME</Text>;
+          case 'encrypted-data':
+            return (
+              <EncryptedDataForm
+                onSubmit={onSubmitEncryptedData}
+                encryptedText={encryptedText}
+              />
+            );
           case 'send':
             return <SendFundsForm onSubmit={onSubmitSendFunds} />;
           case 'add-inheritant':

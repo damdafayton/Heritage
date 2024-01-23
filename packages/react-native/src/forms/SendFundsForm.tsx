@@ -15,7 +15,7 @@ export function SendFundsForm({
   return (
     <Formik
       initialValues={{
-        receiverAddress: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8', //'0x',
+        receiverAddress: '0x', //'0x',
         depositType: 'USD',
         depositAmount: '',
       }}
@@ -29,7 +29,7 @@ export function SendFundsForm({
             onBlur={handleBlur('receiverAddress')}
           />
           <TextInput
-            placeholder="Amount to deposit"
+            placeholder="Amount to send"
             value={values.depositAmount}
             onChangeText={handleChange('depositAmount')}
             onBlur={handleBlur('depositAmount')}
