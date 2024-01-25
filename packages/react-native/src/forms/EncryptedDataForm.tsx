@@ -1,5 +1,5 @@
 import {Formik} from 'formik';
-import {FormEvent} from 'react';
+import {FormEvent, useEffect} from 'react';
 import {Button, Text, TextInput, View} from 'react-native';
 
 export type EncryptedDataFormVals = {
@@ -17,11 +17,15 @@ export function EncryptedDataForm({
   onSubmit: (values: EncryptedDataFormVals) => void;
   text?: string;
 }) {
+  useEffect(() => {
+    console.log('useEffect text:', text);
+  }, [text]);
+
   return (
     <View>
-      <Text>{encryptedText}</Text>
       <Formik
-        initialValues={{secretKey: '', text: ''}}
+        enableReinitialize={true}
+        initialValues={{secretKey: '', text: text}}
         validateOnChange={false}
         onSubmit={async (values, {resetForm}) => {
           await onSubmit(values);
@@ -50,12 +54,11 @@ export function EncryptedDataForm({
               <View>
                 <TextInput
                   multiline={true}
-                  placeholder="Type data to encrypt"
+                  placeholder={'Type data to encrypt'}
                   value={values.text}
                   onChangeText={handleChange('text')}
-                  onBlur={handleBlur('text')}>
-                  {text}
-                </TextInput>
+                  onBlur={handleBlur('text')}
+                />
                 <TextInput
                   placeholder="Type your secret key"
                   value={values.secretKey}

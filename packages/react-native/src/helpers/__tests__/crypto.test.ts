@@ -11,7 +11,7 @@ describe('crypto util', () => {
     cipherText = await encryptText(derivedKey, 'hello world', true);
 
     expect(cipherText).toBe(
-      'a59c10564a419dff8c67ad0ce8a147ed3c282f060be1eb121d69ee8d4f212b97999c75c0ca64eb',
+      'a59c10564a419dff8c67ad0ca0ce48d6404306e1e58e995854d44ecff9765e6e96666b47dbeb8a',
     );
   });
 

@@ -1,5 +1,5 @@
 import {Button, StyleSheet, Text, View} from 'react-native';
-import crypto from 'crypto';
+import PolyfillCrypto from 'react-native-webview-crypto';
 
 import {DisplayVariable} from './Contract/DiplayVariable';
 import {findYearsPassed} from '../helpers/findYearsPassed';
@@ -15,7 +15,7 @@ import {
   EncryptedDataForm,
   EncryptedDataFormVals,
 } from '../forms/EncryptedDataForm';
-import {deriveKey, encryptText} from '../helpers/crpyto';
+import {decryptText, deriveKey, encryptText} from '../helpers/crpyto';
 
 export function Subscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -118,22 +118,35 @@ export function Subscribed() {
   };
 
   const [encryptedText, setEncryptedText] = useState('');
+  const [text, setText] = useState('');
 
   const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
-    console.log({vals});
+    if (vals.text) {
+      if (!vals.secretKey) return;
 
-    if (vals.encryptedText) {
-      // encrypt with our salt and save to db
-    } else {
       const key = await deriveKey(vals.secretKey);
+
       const cipher = await encryptText(key, vals.text);
 
       setEncryptedText(cipher);
+      setText('');
+      console.log({cipher});
+      // encrypt again with our salt and save to db
+    } else {
+      if (!vals.secretKey) return;
+
+      const key = await deriveKey(vals.secretKey);
+
+      const text = await decryptText(key, encryptedText);
+      console.log({text});
+      setText(text);
+      setEncryptedText('');
     }
   };
 
   return (
     <>
+      <PolyfillCrypto />
       <View style={styles.contractDataRow}>
         <Text>Deposited: </Text>
         <DisplayVariable overrideValue={deposited} />
@@ -180,6 +193,7 @@ export function Subscribed() {
               <EncryptedDataForm
                 onSubmit={onSubmitEncryptedData}
                 encryptedText={encryptedText}
+                text={text}
               />
             );
           case 'send':

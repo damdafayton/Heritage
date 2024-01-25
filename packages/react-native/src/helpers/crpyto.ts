@@ -1,13 +1,18 @@
-import crypto from 'crypto';
+import '../../shim.js';
+import _crypto from 'crypto';
+
+// In mobile use the polyfill
+// import 'react-native-webview-crypto' wherever you want to use .subtle()
+window.crypto = window.crypto || _crypto;
 
 // Using PBKDF2 for key derivation
-export async function deriveKey(password, salt = '') {
+export async function deriveKey(password, salt = new Uint8Array([1])) {
   const keyLength = 256; // Choose the desired key length (in bits)
 
   const encoder = new TextEncoder();
   const passwordData = encoder.encode(password);
 
-  const key = await crypto.subtle.importKey(
+  const key = await window.crypto.subtle.importKey(
     'raw',
     passwordData,
     {name: 'PBKDF2'},
@@ -15,10 +20,10 @@ export async function deriveKey(password, salt = '') {
     ['deriveBits', 'deriveKey'],
   );
 
-  const derivedKey = await crypto.subtle.deriveKey(
+  const derivedKey = await window.crypto.subtle.deriveKey(
     {
       name: 'PBKDF2',
-      salt: salt as unknown as Uint8Array,
+      salt,
       iterations: 100000, // Adjust the number of iterations as needed for your security requirements
       hash: 'SHA-256',
     },
@@ -36,9 +41,9 @@ export async function encryptText(key: CryptoKey, text, test = false) {
   const byteArr = encoder.encode(text);
   const iv = test
     ? new Uint8Array([165, 156, 16, 86, 74, 65, 157, 255, 140, 103, 173, 12])
-    : crypto.getRandomValues(new Uint8Array(12)); // Generate a random 12-byte IV
+    : window.crypto.getRandomValues(new Uint8Array(12)); // Generate a random 12-byte IV
 
-  const cipherText = await crypto.subtle.encrypt(
+  const cipherText = await window.crypto.subtle.encrypt(
     {
       name: 'AES-GCM',
       iv: iv,
@@ -79,7 +84,7 @@ export async function decryptText(key: CryptoKey, ciphertext) {
   const encryptedData = combined.slice(12);
 
   try {
-    const decryptedData = await crypto.subtle.decrypt(
+    const decryptedData = await window.crypto.subtle.decrypt(
       {
         name: 'AES-GCM',
         iv,
