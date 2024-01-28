@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, {useEffect, useState, useContext} from 'react';
+import 'react';
 
 import {
   SafeAreaView,
@@ -18,16 +18,20 @@ import {
   View,
 } from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
-import {useAccount} from 'wagmi';
+import {useAccount, useContractRead} from 'wagmi';
+import Config from 'react-native-config';
 
-import {Header} from './components/Header';
-import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
-import {Main} from './components/Main';
+import {Header} from './components/0_Header';
+import {Main} from './components/0_Main';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {isSubscribed} from './helpers/isSubscribed';
+import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
+import {Abi} from 'viem';
+import {displayTxResult} from './components/Contract/utils';
 
 const App = () => {
+  console.log({Config});
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -36,17 +40,34 @@ const App = () => {
 
   const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
-  const {
-    address: heritageAddress,
-    abi,
-    findContractFunction,
-  } = useHeritageWalletContract();
+  const {subscriptionData, refetchSubscriptionData} =
+    useGetSubscriptionData(userAddress);
 
-  const {subscriptionData, refetchSubscriptionData} = useGetSubscriptionData(
-    heritageAddress,
-    userAddress,
-    abi,
-  );
+  const {findContractFunction, address: heritageAddress} =
+    useHeritageWalletContract();
+
+  const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');
+  const fnMinFee = findContractFunction?.('minFeePerYearInUsd');
+
+  const {
+    data: feeThousandagePerYear,
+    isFetching,
+    refetch,
+  } = useContractRead({
+    address: heritageAddress,
+    functionName: fnFeeThousandage?.name,
+    abi: [fnFeeThousandage] as Abi,
+  });
+
+  const {data: minFeePerYear} = useContractRead({
+    address: heritageAddress,
+    functionName: fnMinFee?.name,
+    abi: [fnMinFee] as Abi,
+  });
+
+  const isConnected = !!minFeePerYear;
+
+  console.info({minFeePerYear, feeThousandagePerYear});
 
   return (
     <SafeAreaView style={backgroundStyle}>
@@ -60,14 +81,18 @@ const App = () => {
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
           <Text style={styles.header}>HERITAGE</Text>
-          {!subscriptionData ? (
-            <Text>Loading...</Text>
+          {!(isConnected && subscriptionData) ? (
+            <Text>Connecting to chain...</Text>
           ) : (
             <HerritageWalletContext.Provider
-              value={{subscriptionData, refetchSubscriptionData}}>
+              value={{
+                subscriptionData,
+                refetchSubscriptionData,
+                hostName: Config.HOSTNAME,
+              }}>
               <Header
-                findContractFunction={findContractFunction}
-                heritageAddress={heritageAddress}
+                minFeePerYear={displayTxResult(minFeePerYear)}
+                feeThousandagePerYear={displayTxResult(feeThousandagePerYear)}
               />
               <Main isSubscribed={isSubscribed(subscriptionData)} />
             </HerritageWalletContext.Provider>

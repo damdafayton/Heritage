@@ -4,9 +4,11 @@ import {SubscriptionData} from '../hooks/useGetSubscriptionData';
 type ContextType = {
   subscriptionData: SubscriptionData;
   refetchSubscriptionData: Function;
+  hostName: string;
 };
 
 export const HerritageWalletContext = createContext<ContextType>({
   subscriptionData: {},
-  refetchSubscriptionData: {},
-} as ContextType);
+  refetchSubscriptionData: () => {},
+  hostname: '',
+} as unknown as ContextType);

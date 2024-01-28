@@ -3,17 +3,16 @@ import deployedContracts from '../../contracts/deployedContracts';
 import {displayTxResult} from '../components/Contract/utils';
 import {formatEther} from 'ethers';
 import {useEffect, useState} from 'react';
+import {useHeritageWalletContract} from './useHeritageWalletContract';
 
 const defaultABI = deployedContracts['31337']['HeritageWallet'].abi;
 
 defaultABI[9].outputs;
 
-export function useGetSubscriptionData(
-  heritageAddress,
-  userAddress,
-  abi?: typeof defaultABI,
-) {
+export function useGetSubscriptionData(userAddress) {
   const [subscriptionData, setsubscriptionData] = useState<SubscriptionData>();
+
+  const {address: heritageAddress, abi} = useHeritageWalletContract();
 
   const {
     data,

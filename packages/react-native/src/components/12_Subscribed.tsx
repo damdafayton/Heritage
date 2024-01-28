@@ -16,6 +16,7 @@ import {
   EncryptedDataFormVals,
 } from '../forms/EncryptedDataForm';
 import {decryptText, deriveKey, encryptText} from '../helpers/crpyto';
+import {EncryptedData} from './121_EncryptedData';
 
 export function Subscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -117,33 +118,6 @@ export function Subscribed() {
     await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
   };
 
-  const [encryptedText, setEncryptedText] = useState('');
-  const [text, setText] = useState('');
-
-  const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
-    if (vals.text) {
-      if (!vals.secretKey) return;
-
-      const key = await deriveKey(vals.secretKey);
-
-      const cipher = await encryptText(key, vals.text);
-
-      setEncryptedText(cipher);
-      setText('');
-      console.log({cipher});
-      // encrypt again with our salt and save to db
-    } else {
-      if (!vals.secretKey) return;
-
-      const key = await deriveKey(vals.secretKey);
-
-      const text = await decryptText(key, encryptedText);
-      console.log({text});
-      setText(text);
-      setEncryptedText('');
-    }
-  };
-
   return (
     <>
       <PolyfillCrypto />
@@ -189,13 +163,7 @@ export function Subscribed() {
           case 'deposit':
             return <DepositForm onSubmit={onSubmitDeposit} />;
           case 'encrypted-data':
-            return (
-              <EncryptedDataForm
-                onSubmit={onSubmitEncryptedData}
-                encryptedText={encryptedText}
-                text={text}
-              />
-            );
+            return <EncryptedData />;
           case 'send':
             return <SendFundsForm onSubmit={onSubmitSendFunds} />;
           case 'add-inheritant':

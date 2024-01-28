@@ -2,7 +2,7 @@ import {useContext, useEffect} from 'react';
 
 import {useContractWrite} from 'wagmi';
 
-import {NotSubscribedView} from './NotSubscribedView';
+import {NotSubscribedView} from './11_NotSubscribedView';
 import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {useConvertDepositToWei} from '../forms/hooks/useConvertDepositToWei';

@@ -1,7 +1,4 @@
-import {Button, Text, TextInput, View} from 'react-native';
-import {Picker} from '@react-native-picker/picker';
-import {FormEvent} from 'react';
-import {Formik} from 'formik';
+import {Text, View} from 'react-native';
 import {DepositForm} from '../forms/DepositForm';
 
 type PropTypes = {

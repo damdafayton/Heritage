@@ -6,7 +6,8 @@
     "packages": [
       "packages/hardhat",
       "packages/nextjs",
-      "packages/react-native"
+      "packages/react-native",
+      "packages/react-native/functions"
     ]
   },
   "scripts": {
