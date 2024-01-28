@@ -22,7 +22,7 @@ const db = getFirestore();
 import {ethers} from 'ethers';
 
 const {deriveKey, encryptText, decryptText} = require('./utils/crypto');
-console.log({deriveKey, encryptText});
+
 const KEY = 'HELLO_WORLD';
 
 export const auth = onRequest((req, res) => {
@@ -57,13 +57,11 @@ export const auth = onRequest((req, res) => {
 });
 
 export const encryptedData = onRequest(async (req, res) => {
-  console.log('encryptedData');
-
   const {method, body} = req;
+  logger.log({method, body});
 
   switch (method) {
     case 'GET':
-      console.log('GET');
       const {query} = req;
 
       var {address, signedToken} = query;
@@ -73,23 +71,34 @@ export const encryptedData = onRequest(async (req, res) => {
         return;
       }
 
+      logger.debug({address, signedToken});
+
       var doc = await db.collection('encrypted-data').doc(address).get();
 
       const docData = doc.data();
 
+      if (!docData) {
+        res.sendStatus(403);
+
+        return;
+      }
+
       var key = await deriveKey(KEY);
 
       var encryptedData = await decryptText(key, docData.encryptedData);
-      console.log(docData.encryptedData, encryptedData);
+
+      logger.debug({encryptedData});
+
       res.send({encryptedData});
       break;
     case 'POST':
-      console.log('POST');
       const data = body.data ? JSON.parse(body.data) : {};
       //@ts-ignore
       var {address, signedToken, encryptedData} = data;
 
       if (!address || !signedToken || !encryptedData) return;
+
+      logger.debug({address, signedToken, encryptedData});
 
       if (!(await verifySigner(address as string, signedToken as string))) {
         res.sendStatus(403);
@@ -99,7 +108,9 @@ export const encryptedData = onRequest(async (req, res) => {
       var key = await deriveKey(KEY);
 
       const serverEncryptedData = await encryptText(key, encryptedData);
-      console.log({serverEncryptedData});
+
+      logger.debug({serverEncryptedData});
+
       await db
         .collection('encrypted-data')
         .doc(address)
@@ -127,12 +138,12 @@ async function verifySigner(address: string, signedToken: string) {
   );
 
   if (signerAddress !== address) {
-    console.error('Address verification failed');
+    logger.error('Address verification failed');
     return;
   }
 
   if (Date.now() > authData.timeOut) {
-    console.error('Token expired');
+    logger.error('Token expired');
     return;
   }
 

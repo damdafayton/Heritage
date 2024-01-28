@@ -1,4 +1,7 @@
 import {useContractRead} from 'wagmi';
+import {logger, consoleTransport} from 'react-native-logs';
+const log = logger.createLogger().extend('useGetSubscriptionData');
+
 import deployedContracts from '../../contracts/deployedContracts';
 import {displayTxResult} from '../components/Contract/utils';
 import {formatEther} from 'ethers';
@@ -55,7 +58,7 @@ export function useGetSubscriptionData(userAddress) {
         : 0,
     } as unknown as SubscriptionData;
 
-    console.info({subscriptionData: _subscriptionData});
+    log.info({subscriptionData: _subscriptionData});
 
     setsubscriptionData(_subscriptionData);
   }, [data]);

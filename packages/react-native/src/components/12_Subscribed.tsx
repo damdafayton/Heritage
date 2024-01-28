@@ -1,5 +1,7 @@
 import {Button, StyleSheet, Text, View} from 'react-native';
 import PolyfillCrypto from 'react-native-webview-crypto';
+import {logger, consoleTransport} from 'react-native-logs';
+const log = logger.createLogger().extend('Subscribed');
 
 import {DisplayVariable} from './Contract/DiplayVariable';
 import {findYearsPassed} from '../helpers/findYearsPassed';
@@ -11,11 +13,6 @@ import {useAccount, useContractWrite} from 'wagmi';
 import {DepositForm, DepositFormVals} from '../forms/DepositForm';
 import {useConvertDepositToWei} from '../forms/hooks/useConvertDepositToWei';
 import {SendFundsForm, SendFundsFormVals} from '../forms/SendFundsForm';
-import {
-  EncryptedDataForm,
-  EncryptedDataFormVals,
-} from '../forms/EncryptedDataForm';
-import {decryptText, deriveKey, encryptText} from '../helpers/crpyto';
 import {EncryptedData} from './121_EncryptedData';
 
 export function Subscribed() {
@@ -78,7 +75,7 @@ export function Subscribed() {
 
   const onSubmitDeposit = async (vals: DepositFormVals) => {
     const wei = await getDepositInWei(vals);
-    console.log({wei});
+    log.info({wei});
 
     if (!userAddr) return;
 
@@ -92,7 +89,7 @@ export function Subscribed() {
 
   const onSubmitSendFunds = async (vals: SendFundsFormVals) => {
     const wei = await getDepositInWei(vals);
-    console.log({wei});
+    log.info({wei});
 
     if (!userAddr) return;
 

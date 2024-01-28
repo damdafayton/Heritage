@@ -20,6 +20,8 @@ import {
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
+import {logger, consoleTransport} from 'react-native-logs';
+const log = logger.createLogger().extend('App');
 
 import {Header} from './components/0_Header';
 import {Main} from './components/0_Main';
@@ -31,7 +33,7 @@ import {Abi} from 'viem';
 import {displayTxResult} from './components/Contract/utils';
 
 const App = () => {
-  console.log({Config});
+  log.debug({Config});
   const isDarkMode = useColorScheme() === 'dark';
 
   const backgroundStyle = {
@@ -67,7 +69,7 @@ const App = () => {
 
   const isConnected = !!minFeePerYear;
 
-  console.info({minFeePerYear, feeThousandagePerYear});
+  log.info({minFeePerYear, feeThousandagePerYear});
 
   return (
     <SafeAreaView style={backgroundStyle}>

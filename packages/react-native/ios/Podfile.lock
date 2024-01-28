@@ -468,8 +468,16 @@ PODS:
     - React-Core
   - RNOS (1.2.6):
     - React
+  - RNSentry (5.17.0):
+    - hermes-engine
+    - React-Core
+    - React-hermes
+    - Sentry/HybridSDK (= 8.17.1)
   - RNSVG (14.1.0):
     - React-Core
+  - Sentry/HybridSDK (8.17.1):
+    - SentryPrivate (= 8.17.1)
+  - SentryPrivate (8.17.1)
   - SocketRocket (0.6.1)
   - TcpSockets (3.3.2):
     - React
@@ -528,6 +536,7 @@ DEPENDENCIES:
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - RNOS (from `../node_modules/react-native-os`)
+  - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
@@ -541,6 +550,8 @@ SPEC REPOS:
     - GoogleUtilities
     - libevent
     - PromisesObjC
+    - Sentry
+    - SentryPrivate
     - SocketRocket
 
 EXTERNAL SOURCES:
@@ -645,6 +656,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNOS:
     :path: "../node_modules/react-native-os"
+  RNSentry:
+    :path: "../node_modules/@sentry/react-native"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   TcpSockets:
@@ -710,7 +723,10 @@ SPEC CHECKSUMS:
   RNCPicker: b18aaf30df596e9b1738e7c1f9ee55402a229dca
   RNFBApp: a4f5b074984cf612e4c97d68b42be690c59e2638
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
+  RNSentry: ed42b1443bef1fec1fc9273b5193a79b0cab1a01
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
+  Sentry: d9f99f9cc13777c5d938650c1e1c85047bb4f0d1
+  SentryPrivate: 839b1e58addf58624087a80b2628e543193fa8ef
   SocketRocket: f32cd54efbe0f095c4d7594881e52619cfe80b17
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: b76f1acfda8212aa16b7e26bcce3983230c82603
