@@ -6,4 +6,9 @@ module.exports = {
     '@babel/plugin-transform-flow-strip-types',
     ['@babel/plugin-transform-private-methods', {loose: true}],
   ],
+  env: {
+    production: {
+      plugins: ['react-native-paper/babel'],
+    },
+  },
 };

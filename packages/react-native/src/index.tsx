@@ -4,6 +4,7 @@ import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {PaperProvider} from 'react-native-paper';
 
 import '../shim';
 import App from './App';
@@ -37,7 +38,9 @@ createWeb3Modal({
 export const index = () => {
   return (
     <WagmiConfig config={wagmiConfig}>
-      <App />
+      <PaperProvider>
+        <App />
+      </PaperProvider>
       <Web3Modal />
     </WagmiConfig>
   );
