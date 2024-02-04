@@ -31,6 +31,7 @@ import {isSubscribed} from './helpers/isSubscribed';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
 import {Abi} from 'viem';
 import {displayTxResult} from './helpers/utils';
+import {Appbar} from './ui/Appbar';
 
 const App = () => {
   log.debug({Config});
@@ -82,7 +83,9 @@ const App = () => {
           style={{
             backgroundColor: isDarkMode ? Colors.black : Colors.white,
           }}>
-          <Text style={styles.header}>HERITAGE</Text>
+          <Appbar.Header>
+            <Appbar.Content title="HERITAGE" />
+          </Appbar.Header>
           {!(isConnected && subscriptionData) ? (
             <Text>Connecting to chain...</Text>
           ) : (
