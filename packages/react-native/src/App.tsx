@@ -20,17 +20,17 @@ import {
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
-import {logger, consoleTransport} from 'react-native-logs';
+import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('App');
 
-import {Header} from './components/0_Header';
-import {Main} from './components/0_Main';
+import {Header} from './pages/0_Header';
+import {Main} from './pages/0_Main';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {isSubscribed} from './helpers/isSubscribed';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
 import {Abi} from 'viem';
-import {displayTxResult} from './components/Contract/utils';
+import {displayTxResult} from './helpers/utils';
 
 const App = () => {
   log.debug({Config});

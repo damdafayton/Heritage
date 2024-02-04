@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react';
 
 import axios from 'axios';
-import {logger, consoleTransport} from 'react-native-logs';
+import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('EncryptedData');
 
 import {Address, useAccount, useSignMessage} from 'wagmi';
@@ -21,7 +21,7 @@ export function EncryptedData() {
 
   const {hostName} = useContext(HerritageWalletContext);
 
-  const {data: signedMessage, isLoading, signMessageAsync} = useSignMessage();
+  const {isLoading, signMessageAsync} = useSignMessage();
 
   useEffect(() => {
     (async () => {

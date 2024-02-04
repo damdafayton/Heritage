@@ -1,5 +1,5 @@
 import {Formik} from 'formik';
-import {FormEvent, useEffect, useState} from 'react';
+import {FormEvent, useState} from 'react';
 import {Button, Text, TextInput, View} from 'react-native';
 
 export type EncryptedDataFormVals = {

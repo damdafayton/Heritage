@@ -1,5 +1,7 @@
 import {useNetwork} from 'wagmi';
 import {AbiFunction} from 'abitype';
+import {logger} from 'react-native-logs';
+const log = logger.createLogger().extend('useHeritageWalletContract');
 
 import deployedContracts from '../../contracts/deployedContracts';
 import {GenericContractsDeclaration} from '../../types/hardhat';
@@ -16,7 +18,7 @@ export function useHeritageWalletContract() {
 
   if (!chain?.id) {
     const error = 'Chain or chain ID can not be found.';
-    console.info(error);
+    log.error(error);
     return {error};
   }
 
@@ -24,7 +26,7 @@ export function useHeritageWalletContract() {
 
   if (!deployment) {
     const error = `HeritageWallet can not be found at chain with ID: ${chain.id} and name: ${chain.name}`;
-    console.info(error);
+    log.error(error);
     return {error};
   }
 
@@ -39,6 +41,8 @@ export function useHeritageWalletContract() {
       return partAsFn.name === functionName;
     }) as AbiFunction;
   };
+
+  log.info({address});
 
   return {
     address,

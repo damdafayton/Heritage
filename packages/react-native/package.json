@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "android": "ENVFILE=.env.dev react-native run-android",
-    "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --simulator='iPhone 8'",
+    "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --simulator='iPhone 8' --port=8082",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
@@ -55,6 +55,8 @@
     "react-native-logs": "^5.1.0",
     "react-native-modal": "^13.0.1",
     "react-native-os": "^1.2.6",
+    "react-native-paper": "^5.12.3",
+    "react-native-safe-area-context": "^4.9.0",
     "react-native-svg": "^14.1.0",
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "2.7.0",

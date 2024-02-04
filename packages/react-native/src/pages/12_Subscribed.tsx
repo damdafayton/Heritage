@@ -120,22 +120,20 @@ export function Subscribed() {
       <PolyfillCrypto />
       <View style={styles.contractDataRow}>
         <Text>Deposited: </Text>
-        <DisplayVariable overrideValue={deposited} />
+        <Text>{deposited}</Text>
         <Text>ETH</Text>
       </View>
       <View style={styles.contractDataRow}>
         <Text>Last year paid: </Text>
-        <DisplayVariable overrideValue={lastYearPaid} />
+        <Text>{lastYearPaid}</Text>
       </View>
       <View style={styles.contractDataRow}>
         <Text>Years paid: </Text>
-        <DisplayVariable overrideValue={paidFeeCount} />
+        <Text>{paidFeeCount}</Text>
       </View>
       <View style={styles.contractDataRow}>
         <Text>Years required to pay: </Text>
-        <DisplayVariable
-          overrideValue={findYearsPassed(startTimestamp * 1000)}
-        />
+        <Text>{findYearsPassed(startTimestamp * 1000)}</Text>
       </View>
       <View style={styles.buttonContainer}>
         <Button onPress={() => setActiveForm('send')} title="Send funds" />

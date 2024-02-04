@@ -3,7 +3,7 @@ import {logger, consoleTransport} from 'react-native-logs';
 const log = logger.createLogger().extend('useGetSubscriptionData');
 
 import deployedContracts from '../../contracts/deployedContracts';
-import {displayTxResult} from '../components/Contract/utils';
+import {displayTxResult} from '../helpers/utils';
 import {formatEther} from 'ethers';
 import {useEffect, useState} from 'react';
 import {useHeritageWalletContract} from './useHeritageWalletContract';
