@@ -2,7 +2,7 @@ import {createContext} from 'react';
 import {SubscriptionData} from '../hooks/useGetSubscriptionData';
 
 type ContextType = {
-  subscriptionData: SubscriptionData;
+  subscriptionData?: SubscriptionData;
   refetchSubscriptionData: Function;
   hostName: string;
 };

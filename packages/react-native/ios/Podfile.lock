@@ -470,6 +470,9 @@ PODS:
     - React-Core
   - RNOS (1.2.6):
     - React
+  - RNScreens (3.29.0):
+    - RCT-Folly (= 2021.07.22.00)
+    - React-Core
   - RNSentry (5.18.0):
     - hermes-engine
     - React-Core
@@ -542,6 +545,7 @@ DEPENDENCIES:
   - "RNCPicker (from `../node_modules/@react-native-picker/picker`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - RNOS (from `../node_modules/react-native-os`)
+  - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -665,6 +669,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/app"
   RNOS:
     :path: "../node_modules/react-native-os"
+  RNScreens:
+    :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
   RNSVG:
@@ -735,6 +741,7 @@ SPEC CHECKSUMS:
   RNCPicker: b18aaf30df596e9b1738e7c1f9ee55402a229dca
   RNFBApp: a4f5b074984cf612e4c97d68b42be690c59e2638
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
+  RNScreens: 1c2444658fbb696a094272d946708167b1f63409
   RNSentry: eefa12fa65b37dd71f54371720f9fcddcd17be2f
   RNSVG: ba3e7232f45e34b7b47e74472386cf4e1a676d0a
   RNVectorIcons: 6731bd488db95f4197433b30d81d03dc228b367e

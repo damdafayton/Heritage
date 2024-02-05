@@ -1,5 +1,5 @@
-import {Text, View} from 'react-native';
-import {DepositForm} from '../forms/DepositForm';
+import {Text, ScrollView} from 'react-native';
+import {DepositForm} from '../../forms/DepositForm';
 
 type PropTypes = {
   handleFormSubmit: (x: any) => void;
@@ -7,9 +7,9 @@ type PropTypes = {
 
 export function NotSubscribedView({handleFormSubmit}: PropTypes) {
   return (
-    <View>
+    <ScrollView>
       <Text>Subscribe</Text>
       <DepositForm onSubmit={handleFormSubmit} />
-    </View>
+    </ScrollView>
   );
 }

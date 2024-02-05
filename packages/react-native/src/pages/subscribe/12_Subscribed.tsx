@@ -3,22 +3,28 @@ import PolyfillCrypto from 'react-native-webview-crypto';
 import {logger, consoleTransport} from 'react-native-logs';
 const log = logger.createLogger().extend('Subscribed');
 
-import {DisplayVariable} from './Contract/DiplayVariable';
-import {findYearsPassed} from '../helpers/findYearsPassed';
+import {findYearsPassed} from '../../helpers/findYearsPassed';
 import {useContext, useEffect, useState} from 'react';
-import {HerritageWalletContext} from '../context/HerritageWallet.context';
-import {AddInheritantForm, AddInheritantVals} from '../forms/AddInheritantForm';
-import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
+import {HerritageWalletContext} from '../../context/HerritageWallet.context';
+import {
+  AddInheritantForm,
+  AddInheritantVals,
+} from '../../forms/AddInheritantForm';
+import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {useAccount, useContractWrite} from 'wagmi';
-import {DepositForm, DepositFormVals} from '../forms/DepositForm';
-import {useConvertDepositToWei} from '../forms/hooks/useConvertDepositToWei';
-import {SendFundsForm, SendFundsFormVals} from '../forms/SendFundsForm';
+import {DepositForm, DepositFormVals} from '../../forms/DepositForm';
+import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
+import {SendFundsForm, SendFundsFormVals} from '../../forms/SendFundsForm';
 import {EncryptedData} from './121_EncryptedData';
+import {ActivityIndicator} from '../../ui/ActivityIndicator';
 
 export function Subscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
     HerritageWalletContext,
   );
+
+  if (!subscriptionData) return <ActivityIndicator />;
+
   const {deposited, paidFeeCount, lastYearPaid, startTimestamp, minFeePerYear} =
     subscriptionData;
 
@@ -182,3 +188,23 @@ const styles = StyleSheet.create({
     columnGap: 2,
   },
 });
+
+{
+  /* {subscriptionData && isSubscribed(subscriptionData) ? (
+        <View style={styles.contractDataCell}>
+          <Text>Fees for you</Text>
+          <View style={styles.contractDataRow}>
+            <Text>Annual fee: </Text>
+            <Text>{subscriptionData.feeThousandagePerYear}</Text>
+            <Text>‰</Text>
+          </View>
+          <View style={styles.contractDataRow}>
+            <Text>Minimum fee: </Text>
+            <Text>{subscriptionData.minFeePerYear}</Text>
+            <Text>$</Text>
+          </View>
+        </View>
+      ) : (
+        <></>
+      )} */
+}

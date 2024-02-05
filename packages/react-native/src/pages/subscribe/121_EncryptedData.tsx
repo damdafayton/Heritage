@@ -9,9 +9,9 @@ import {Address, useAccount, useSignMessage} from 'wagmi';
 import {
   EncryptedDataForm,
   EncryptedDataFormVals,
-} from '../forms/EncryptedDataForm';
-import {decryptText, deriveKey, encryptText} from '../helpers/crpyto';
-import {HerritageWalletContext} from '../context/HerritageWallet.context';
+} from '../../forms/EncryptedDataForm';
+import {decryptText, deriveKey, encryptText} from '../../helpers/crpyto';
+import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 
 export function EncryptedData() {
   const [encryptedText, setEncryptedText] = useState('');

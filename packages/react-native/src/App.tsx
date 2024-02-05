@@ -20,11 +20,14 @@ import {
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
+import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('App');
 
-import {Header} from './pages/0_Header';
-import {Main} from './pages/0_Main';
+import {Home} from './pages/Home';
+import {Subscribe} from './pages/subscribe/Subscribe';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {isSubscribed} from './helpers/isSubscribed';
@@ -32,14 +35,16 @@ import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
 import {Abi} from 'viem';
 import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
+import {MenuType} from './typings/config';
+import {Contract} from './pages/Contract';
 
 const App = () => {
   log.debug({Config});
   const isDarkMode = useColorScheme() === 'dark';
 
-  const backgroundStyle = {
-    backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-  };
+  // const backgroundStyle = {
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  // };
 
   const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
@@ -72,39 +77,104 @@ const App = () => {
 
   log.info({minFeePerYear, feeThousandagePerYear});
 
+  const Tab = createMaterialBottomTabNavigator();
+
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <W3mButton balance="show" />
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
-      <ScrollView
-        contentInsetAdjustmentBehavior="automatic"
-        style={backgroundStyle}>
-        <View
-          style={{
-            backgroundColor: isDarkMode ? Colors.black : Colors.white,
+    <>
+      {/* // Only in iOS, test in Android */}
+      {/* <SafeAreaView style={styles.safeArea}> */}
+      {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
+      <HerritageWalletContext.Provider
+        value={{
+          subscriptionData,
+          refetchSubscriptionData,
+          hostName: Config.HOSTNAME,
+        }}>
+        {/* <ScrollView contentInsetAdjustmentBehavior="automatic"> */}
+        {/* <View
+        //     style={{
+              backgroundColor: isDarkMode ? Colors.black : Colors.white,
+            }}> */}
+        {/* <Appbar /> */}
+        <W3mButton balance="show" />
+        <Tab.Navigator
+          initialRouteName={MenuType.HOME}
+          // style={{
+          //   paddingHorizontal: 20,
+          //   paddingVertical: 10,
+          // }}
+
+          screenOptions={{
+            //@ts-ignore
+            header: props => <Appbar {...props} />,
+            paddingHorizontal: 20,
+            // contentStyle: {
+            //   paddingHorizontal: 20,
+            //   paddingVertical: 10,
+            //   backgroundColor: 'lightblue',
+            //   flexDirection: 'column',
+            //   // display: 'flex',
+            //   // height: 'auto',
+            //   // flex: 1,
+            // },
           }}>
-          <Appbar.Header>
-            <Appbar.Content title="HERITAGE" />
-          </Appbar.Header>
-          {!(isConnected && subscriptionData) ? (
-            <Text>Connecting to chain...</Text>
-          ) : (
-            <HerritageWalletContext.Provider
-              value={{
-                subscriptionData,
-                refetchSubscriptionData,
-                hostName: Config.HOSTNAME,
-              }}>
-              <Header
+          <Tab.Screen
+            name={MenuType.HOME}
+            options={{
+              tabBarLabel: MenuType.HOME,
+              tabBarIcon: ({color}) => (
+                <MaterialCommunityIcons name="home" color={color} size={26} />
+              ),
+            }}>
+            {props => <Home {...props} loading={!isConnected} />}
+          </Tab.Screen>
+          <Tab.Screen
+            name={MenuType.CONTRACT}
+            options={{
+              tabBarLabel: MenuType.CONTRACT,
+              tabBarIcon: ({color}) => (
+                <MaterialCommunityIcons name="bell" color={color} size={26} />
+              ),
+            }}>
+            {props => (
+              <Contract
+                {...props}
                 minFeePerYear={displayTxResult(minFeePerYear)}
                 feeThousandagePerYear={displayTxResult(feeThousandagePerYear)}
               />
-              <Main isSubscribed={isSubscribed(subscriptionData)} />
-            </HerritageWalletContext.Provider>
-          )}
-        </View>
-      </ScrollView>
-    </SafeAreaView>
+            )}
+          </Tab.Screen>
+          <Tab.Screen
+            name={MenuType.REGISTER}
+            options={{
+              tabBarLabel: MenuType.REGISTER,
+              tabBarIcon: ({color}) => (
+                <MaterialCommunityIcons
+                  name="account"
+                  color={color}
+                  size={26}
+                />
+              ),
+            }}>
+            {props => (
+              <Subscribe
+                {...props}
+                isSubscribed={isSubscribed(subscriptionData)}
+              />
+            )}
+          </Tab.Screen>
+        </Tab.Navigator>
+        {/* {!(isConnected && subscriptionData) ? (
+            <Text>Connecting to chain...</Text>
+          ) : (
+            <Main isSubscribed={isSubscribed(subscriptionData)} />
+          )} */}
+        {/* </View> */}
+        {/* </ScrollView> */}
+      </HerritageWalletContext.Provider>
+      {/* </SafeAreaView> */}
+      {/* <BottomNavigation /> */}
+    </>
   );
 };
 
@@ -127,33 +197,36 @@ const Colors = {
   darker: '#111',
 };
 
-const Section = ({children, title}: {children: any; title: string}) => {
-  const isDarkMode = useColorScheme() === 'dark';
-  return (
-    <View style={styles.sectionContainer}>
-      <Text
-        style={[
-          styles.sectionTitle,
-          {
-            color: isDarkMode ? Colors.white : Colors.black,
-          },
-        ]}>
-        {title}
-      </Text>
-      <Text
-        style={[
-          styles.sectionDescription,
-          {
-            color: isDarkMode ? Colors.light : Colors.dark,
-          },
-        ]}>
-        {children}
-      </Text>
-    </View>
-  );
-};
+// const Section = ({children, title}: {children: any; title: string}) => {
+//   const isDarkMode = useColorScheme() === 'dark';
+//   return (
+//     <View style={styles.sectionContainer}>
+//       <Text
+//         style={[
+//           styles.sectionTitle,
+//           {
+//             color: isDarkMode ? Colors.white : Colors.black,
+//           },
+//         ]}>
+//         {title}
+//       </Text>
+//       <Text
+//         style={[
+//           styles.sectionDescription,
+//           {
+//             color: isDarkMode ? Colors.light : Colors.dark,
+//           },
+//         ]}>
+//         {children}
+//       </Text>
+//     </View>
+//   );
+// };
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flexGrow: 1,
+  },
   header: {
     fontWeight: '600',
     fontSize: 24,
@@ -240,21 +313,21 @@ export default App;
 // function App(): JSX.Element {
 //   const isDarkMode = useColorScheme() === 'dark';
 
-//   const backgroundStyle = {
-//     backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-//   };
+// const backgroundStyle = {
+//   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+// };
 
 //   return (
-//     <SafeAreaView style={backgroundStyle}>
-//       <StatusBar
-//         barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-//         backgroundColor={backgroundStyle.backgroundColor}
-//       />
-//       <ScrollView
+// <SafeAreaView style={backgroundStyle}>
+//   <StatusBar
+//     barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+//     backgroundColor={backgroundStyle.backgroundColor}
+//   />
+//   <ScrollView
 //         contentInsetAdjustmentBehavior="automatic"
-//         style={backgroundStyle}>
-//         <Header />
-//         <View
+// style={backgroundStyle}>
+// <Header />
+// <View
 //           style={{
 //             backgroundColor: isDarkMode ? Colors.black : Colors.white,
 //           }}>

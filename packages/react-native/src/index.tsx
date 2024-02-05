@@ -4,6 +4,7 @@ import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
+import {NavigationContainer} from '@react-navigation/native';
 import {MD3LightTheme as DefaultTheme, PaperProvider} from 'react-native-paper';
 
 import '../shim';
@@ -46,11 +47,13 @@ const theme = {
 
 export const index = () => {
   return (
-    <WagmiConfig config={wagmiConfig}>
-      <PaperProvider theme={theme}>
-        <App />
-      </PaperProvider>
-      <Web3Modal />
-    </WagmiConfig>
+    <NavigationContainer>
+      <WagmiConfig config={wagmiConfig}>
+        <PaperProvider theme={theme}>
+          <App />
+        </PaperProvider>
+        <Web3Modal />
+      </WagmiConfig>
+    </NavigationContainer>
   );
 };

@@ -1,7 +1,8 @@
 import {Picker} from '@react-native-picker/picker';
 import {Formik} from 'formik';
 import {FormEvent} from 'react';
-import {Button, TextInput, View} from 'react-native';
+import {TextInput, View, Text} from 'react-native';
+import {Button} from 'react-native-paper';
 
 export type DepositFormVals = {
   depositType: string;
@@ -34,9 +35,9 @@ export function DepositForm({
           <Button
             onPress={e =>
               handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
-            }
-            title="Submit"
-          />
+            }>
+            Submit
+          </Button>
         </View>
       )}
     </Formik>

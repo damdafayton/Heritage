@@ -1,16 +1,21 @@
 import {StyleSheet, Text, View} from 'react-native';
 import {useContext} from 'react';
+import {logger} from 'react-native-logs';
+const log = logger.createLogger().extend('Contract');
 
 import {isSubscribed} from '../helpers/isSubscribed';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
+import {ActivityIndicator} from '../ui/ActivityIndicator';
 
-export function Header({minFeePerYear, feeThousandagePerYear}) {
+export function Contract({minFeePerYear, feeThousandagePerYear}) {
   const {subscriptionData} = useContext(HerritageWalletContext);
+  log.info({minFeePerYear, feeThousandagePerYear});
 
-  return (
+  const contractIsLoaded = minFeePerYear && feeThousandagePerYear;
+
+  return contractIsLoaded ? (
     <View style={styles.contractData}>
       <View style={styles.contractDataCell}>
-        <Text>Fees for new users</Text>
         <View style={styles.contractDataRow}>
           <Text>Annual fee: </Text>
           <Text>{feeThousandagePerYear}</Text>
@@ -22,24 +27,9 @@ export function Header({minFeePerYear, feeThousandagePerYear}) {
           <Text>$</Text>
         </View>
       </View>
-      {subscriptionData && isSubscribed(subscriptionData) ? (
-        <View style={styles.contractDataCell}>
-          <Text>Fees for you</Text>
-          <View style={styles.contractDataRow}>
-            <Text>Annual fee: </Text>
-            <Text>{subscriptionData.feeThousandagePerYear}</Text>
-            <Text>‰</Text>
-          </View>
-          <View style={styles.contractDataRow}>
-            <Text>Minimum fee: </Text>
-            <Text>{subscriptionData.minFeePerYear}</Text>
-            <Text>$</Text>
-          </View>
-        </View>
-      ) : (
-        <></>
-      )}
     </View>
+  ) : (
+    <ActivityIndicator />
   );
 }
 
@@ -51,11 +41,10 @@ const styles = StyleSheet.create({
   },
   contractDataCell: {
     flex: 1,
-    backgroundColor: 'yellow',
   },
   contractDataRow: {
     display: 'flex',
-    columnGap: 2,
+    columnGap: 1,
     flexDirection: 'row',
   },
 });
