@@ -1,8 +1,12 @@
-import {Picker} from '@react-native-picker/picker';
 import {Formik} from 'formik';
 import {FormEvent} from 'react';
-import {TextInput, View, Text} from 'react-native';
+import {View, StyleSheet} from 'react-native';
 import {Button} from 'react-native-paper';
+
+import {TextInput} from '../ui/TextInput';
+import {Text} from '../ui/Text';
+import {HelperText} from '../ui/HelperText';
+import {SegmentedButtons} from '../ui/SegmentedButtons';
 
 export type DepositFormVals = {
   depositType: string;
@@ -14,24 +18,51 @@ export function DepositForm({
 }: {
   onSubmit: (values: DepositFormVals) => void | Promise<any>;
 }) {
+  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+
+  const validate = values => {
+    return sleep(2000).then(() => {
+      const errors: any = {};
+      if (!values.depositAmount) {
+        errors.depositAmount = 'Please input amount as number';
+      }
+      return errors;
+    });
+  };
+
   return (
     <Formik
+      validate={validate}
+      validateOnMount={false}
       initialValues={{depositType: 'USD', depositAmount: ''}}
       onSubmit={onSubmit}>
-      {({handleChange, handleBlur, handleSubmit, values}) => (
-        <View>
+      {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+        <View style={styles.view}>
           <TextInput
             placeholder="Amount to deposit"
             value={values.depositAmount}
             onChangeText={handleChange('depositAmount')}
             onBlur={handleBlur('depositAmount')}
+            error={!!errors.depositAmount}
           />
-          <Picker
-            selectedValue={values.depositType}
-            onValueChange={handleChange('depositType')}>
-            <Picker.Item label="USD" value="USD" />
-            <Picker.Item label="ETH" value="ETH" />
-          </Picker>
+          {errors.depositAmount && (
+            <HelperText type="error">{errors.depositAmount}</HelperText>
+          )}
+          <Text>Please choose deposit type</Text>
+          <SegmentedButtons
+            value={values.depositType}
+            onValueChange={handleChange('depositType')}
+            buttons={[
+              {
+                label: 'USD',
+                value: 'USD',
+              },
+              {
+                label: 'ETH',
+                value: 'ETH',
+              },
+            ]}
+          />
           <Button
             onPress={e =>
               handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
@@ -43,3 +74,10 @@ export function DepositForm({
     </Formik>
   );
 }
+
+const styles = StyleSheet.create({
+  view: {
+    flexDirection: 'column',
+    rowGap: 15,
+  },
+});

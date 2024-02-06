@@ -15,7 +15,7 @@ import {useAccount, useContractWrite} from 'wagmi';
 import {DepositForm, DepositFormVals} from '../../forms/DepositForm';
 import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
 import {SendFundsForm, SendFundsFormVals} from '../../forms/SendFundsForm';
-import {EncryptedData} from './121_EncryptedData';
+import {EncryptedData} from './EncryptedData';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 
 export function Subscribed() {

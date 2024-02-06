@@ -6,21 +6,28 @@ const log = logger.createLogger().extend('Home');
 import {isSubscribed} from '../helpers/isSubscribed';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {Button} from '../ui/Button';
-import {Appbar} from '../ui/Appbar';
 import {ActivityIndicator} from '../ui/ActivityIndicator';
+import {MenuType} from '../typings/config';
+import {useNavigation} from '@react-navigation/native';
 
 export function Home({loading}: {loading: boolean}) {
   const {subscriptionData} = useContext(HerritageWalletContext);
 
   const isRegistered = subscriptionData && isSubscribed(subscriptionData);
 
+  const navigation = useNavigation();
+
   const Content = () => {
     return isRegistered ? (
       <Text>Welcome</Text>
     ) : (
       <View>
-        <Text>You are not registered. Click button below to register.</Text>
-        <Button>Register</Button>
+        <Text style={styles.text}>
+          You are not registered. Click button below to register.
+        </Text>
+        <Button onPress={() => navigation.navigate(MenuType.REGISTER as never)}>
+          Register
+        </Button>
       </View>
     );
   };

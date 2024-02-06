@@ -5,6 +5,8 @@ type ContextType = {
   subscriptionData?: SubscriptionData;
   refetchSubscriptionData: Function;
   hostName: string;
+  minFeePerYear?: number;
+  feeThousandagePerYear?: number;
 };
 
 export const HerritageWalletContext = createContext<ContextType>({

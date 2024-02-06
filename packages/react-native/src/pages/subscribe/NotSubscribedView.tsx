@@ -1,5 +1,6 @@
-import {Text, ScrollView} from 'react-native';
+import {Text, ScrollView, StyleSheet, View} from 'react-native';
 import {DepositForm} from '../../forms/DepositForm';
+import {ContractData} from '../../molecules/ContractData';
 
 type PropTypes = {
   handleFormSubmit: (x: any) => void;
@@ -8,8 +9,16 @@ type PropTypes = {
 export function NotSubscribedView({handleFormSubmit}: PropTypes) {
   return (
     <ScrollView>
-      <Text>Subscribe</Text>
+      <View style={styles.contract}>
+        <ContractData />
+      </View>
       <DepositForm onSubmit={handleFormSubmit} />
     </ScrollView>
   );
 }
+
+const styles = StyleSheet.create({
+  contract: {
+    marginBottom: 10,
+  },
+});

@@ -96,6 +96,8 @@ const App = ({style}) => {
           subscriptionData,
           refetchSubscriptionData,
           hostName: Config.HOSTNAME,
+          minFeePerYear: Number(displayTxResult(minFeePerYear)),
+          feeThousandagePerYear: Number(displayTxResult(feeThousandagePerYear)),
         }}>
         {/* <ScrollView contentInsetAdjustmentBehavior="automatic"> */}
         {/* <View
