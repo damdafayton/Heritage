@@ -10,7 +10,7 @@
     "test": "jest",
     "web": "webpack serve -d source-map --mode development --config \"./web/webpack.config.js\" --color --hot",
     "build:web": "webpack --mode production --config \"./web/webpack.config.js\"",
-    "pod:clean": "cd ios && rm -rf Pods && rm -rf Podfile.lock && pod cache clean --all && pod install && cd ..",
+    "pod:clean": "cd ios && rm -rf Pods && rm -rf Podfile.lock && rm -rf build && pod cache clean --all && pod install && cd ..",
     "pod:reset": "cd ios && && pod deintegrate && pod cache clean --all && pod install && cd ..",
     "pod": "cd ios && pod install --repo-update && cd ..",
     "ios:clean": "rm -rf ~/Library/Developer/Xcode/DerivedData/",

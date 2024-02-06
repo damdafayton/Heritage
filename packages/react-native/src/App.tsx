@@ -22,7 +22,6 @@ import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
 import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('App');
 
@@ -37,8 +36,9 @@ import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
 import {MenuType} from './typings/config';
 import {Contract} from './pages/Contract';
+import {useState} from 'react';
 
-const App = () => {
+const App = ({style}) => {
   log.debug({Config});
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -79,6 +79,8 @@ const App = () => {
 
   const Tab = createMaterialBottomTabNavigator();
 
+  const [activeTab, setActiveTab] = useState<string>(MenuType.HOME);
+
   return (
     <>
       {/* // Only in iOS, test in Android */}
@@ -95,29 +97,34 @@ const App = () => {
         //     style={{
               backgroundColor: isDarkMode ? Colors.black : Colors.white,
             }}> */}
-        {/* <Appbar /> */}
+        <Appbar title={activeTab} />
         <W3mButton balance="show" />
         <Tab.Navigator
-          initialRouteName={MenuType.HOME}
-          // style={{
-          //   paddingHorizontal: 20,
-          //   paddingVertical: 10,
-          // }}
-
-          screenOptions={{
-            //@ts-ignore
-            header: props => <Appbar {...props} />,
+          barStyle={{marginHorizontal: -20}}
+          style={{
             paddingHorizontal: 20,
-            // contentStyle: {
-            //   paddingHorizontal: 20,
-            //   paddingVertical: 10,
-            //   backgroundColor: 'lightblue',
-            //   flexDirection: 'column',
-            //   // display: 'flex',
-            //   // height: 'auto',
-            //   // flex: 1,
-            // },
-          }}>
+            paddingTop: 10,
+            ...style,
+          }}
+          screenListeners={{
+            state: e => {
+              //@ts-ignore
+              const historLen = e.data?.state.history.length;
+              if (historLen > 0) {
+                const tabName =
+                  //@ts-ignore
+                  e.data?.state.history[historLen - 1].key.split('-')[0];
+                setActiveTab(tabName);
+              }
+            },
+          }}
+          initialRouteName={MenuType.HOME}
+          screenOptions={
+            {
+              //@ts-ignore
+              // header: props => <Appbar {...props} />,
+            }
+          }>
           <Tab.Screen
             name={MenuType.HOME}
             options={{
@@ -178,16 +185,6 @@ const App = () => {
   );
 };
 
-// import {ConnectButton} from '@rainbow-me/rainbowkit';
-
-// import {
-//   Colors,
-//   DebugInstructions,
-//   Header,
-//   LearnMoreLinks,
-//   ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
-
 const Colors = {
   white: '#fff',
   black: '#000',
@@ -197,35 +194,14 @@ const Colors = {
   darker: '#111',
 };
 
-// const Section = ({children, title}: {children: any; title: string}) => {
-//   const isDarkMode = useColorScheme() === 'dark';
-//   return (
-//     <View style={styles.sectionContainer}>
-//       <Text
-//         style={[
-//           styles.sectionTitle,
-//           {
-//             color: isDarkMode ? Colors.white : Colors.black,
-//           },
-//         ]}>
-//         {title}
-//       </Text>
-//       <Text
-//         style={[
-//           styles.sectionDescription,
-//           {
-//             color: isDarkMode ? Colors.light : Colors.dark,
-//           },
-//         ]}>
-//         {children}
-//       </Text>
-//     </View>
-//   );
-// };
-
 const styles = StyleSheet.create({
   safeArea: {
     flexGrow: 1,
+  },
+  wrapper: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    backgroundColor: 'yellow',
   },
   header: {
     fontWeight: '600',
@@ -252,122 +228,3 @@ const styles = StyleSheet.create({
 });
 
 export default App;
-
-// /**
-//  * Sample React Native App
-//  * https://github.com/facebook/react-native
-//  *
-//  * @format
-//  */
-
-// import React from 'react';
-// import type {PropsWithChildren} from 'react';
-// import {
-//   SafeAreaView,
-//   ScrollView,
-//   StatusBar,
-//   StyleSheet,
-//   Text,
-//   useColorScheme,
-//   View,
-// } from 'react-native';
-
-// import {
-//   Colors,
-//   DebugInstructions,
-//   Header,
-//   LearnMoreLinks,
-//   ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
-
-// type SectionProps = PropsWithChildren<{
-//   title: string;
-// }>;
-
-// function Section({children, title}: SectionProps): JSX.Element {
-//   const isDarkMode = useColorScheme() === 'dark';
-//   return (
-//     <View style={styles.sectionContainer}>
-//       <Text
-//         style={[
-//           styles.sectionTitle,
-//           {
-//             color: isDarkMode ? Colors.white : Colors.black,
-//           },
-//         ]}>
-//         {title}
-//       </Text>
-//       <Text
-//         style={[
-//           styles.sectionDescription,
-//           {
-//             color: isDarkMode ? Colors.light : Colors.dark,
-//           },
-//         ]}>
-//         {children}
-//       </Text>
-//     </View>
-//   );
-// }
-
-// function App(): JSX.Element {
-//   const isDarkMode = useColorScheme() === 'dark';
-
-// const backgroundStyle = {
-//   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
-// };
-
-//   return (
-// <SafeAreaView style={backgroundStyle}>
-//   <StatusBar
-//     barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-//     backgroundColor={backgroundStyle.backgroundColor}
-//   />
-//   <ScrollView
-//         contentInsetAdjustmentBehavior="automatic"
-// style={backgroundStyle}>
-// <Header />
-// <View
-//           style={{
-//             backgroundColor: isDarkMode ? Colors.black : Colors.white,
-//           }}>
-//           <Section title="Step One">
-//             Edit <Text style={styles.highlight}>App.tsx</Text> to change this
-//             screen and then come back to see your edits.
-//           </Section>
-//           <Section title="See Your Changes">
-//             <ReloadInstructions />
-//           </Section>
-//           <Section title="Debug">
-//             <DebugInstructions />
-//           </Section>
-//           <Section title="Learn More">
-//             Read the docs to discover what to do next:
-//           </Section>
-//           <LearnMoreLinks />
-//         </View>
-//       </ScrollView>
-//     </SafeAreaView>
-//   );
-// }
-
-// const styles = StyleSheet.create({
-//   sectionContainer: {
-//     marginTop: 32,
-//     paddingHorizontal: 24,
-//   },
-//   sectionTitle: {
-//     fontSize: 24,
-//     fontWeight: '600',
-//   },
-//   sectionDescription: {
-//     marginTop: 8,
-//     fontSize: 18,
-//     fontWeight: '400',
-//   },
-//   highlight: {
-//     fontWeight: '700',
-//   },
-// });
-
-// export default App;
