@@ -19,7 +19,7 @@ export function Home({loading}: {loading: boolean}) {
       <Text>Welcome</Text>
     ) : (
       <View>
-        <Text>You are not registered. Click button below to regsiter.</Text>
+        <Text>You are not registered. Click button below to register.</Text>
         <Button>Register</Button>
       </View>
     );
@@ -27,8 +27,17 @@ export function Home({loading}: {loading: boolean}) {
 
   return (
     <ScrollView style={styles.view}>
-      <Text style={styles.text}>HERITAGE</Text>
-      {loading ? <ActivityIndicator /> : <Content />}
+      <Text style={styles.title}>HERITAGE</Text>
+      {loading ? (
+        <>
+          <Text style={styles.text}>
+            Waiting for connection to the contract
+          </Text>
+          <ActivityIndicator />
+        </>
+      ) : (
+        <Content />
+      )}
     </ScrollView>
   );
 }
@@ -49,9 +58,14 @@ const styles = StyleSheet.create({
     columnGap: 2,
     flexDirection: 'row',
   },
-  text: {
+  title: {
     alignSelf: 'center',
     fontSize: 24,
     paddingVertical: 10,
+    paddingBottom: 20,
+  },
+  text: {
+    alignSelf: 'center',
+    paddingBottom: 15,
   },
 });

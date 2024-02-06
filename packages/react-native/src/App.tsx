@@ -8,15 +8,7 @@
 
 import 'react';
 
-import {
-  SafeAreaView,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  useColorScheme,
-  View,
-} from 'react-native';
+import {StyleSheet, useColorScheme} from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
@@ -36,7 +28,7 @@ import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
 import {MenuType} from './typings/config';
 import {Contract} from './pages/Contract';
-import {useState} from 'react';
+import {useEffect, useReducer, useState} from 'react';
 
 const App = ({style}) => {
   log.debug({Config});
@@ -57,11 +49,7 @@ const App = ({style}) => {
   const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');
   const fnMinFee = findContractFunction?.('minFeePerYearInUsd');
 
-  const {
-    data: feeThousandagePerYear,
-    isFetching,
-    refetch,
-  } = useContractRead({
+  const {data: feeThousandagePerYear, isFetching} = useContractRead({
     address: heritageAddress,
     functionName: fnFeeThousandage?.name,
     abi: [fnFeeThousandage] as Abi,
@@ -73,7 +61,7 @@ const App = ({style}) => {
     abi: [fnMinFee] as Abi,
   });
 
-  const isConnected = !!minFeePerYear;
+  const [isConnected, setIsConnected] = useState(!!minFeePerYear);
 
   log.info({minFeePerYear, feeThousandagePerYear});
 
@@ -81,12 +69,29 @@ const App = ({style}) => {
 
   const [activeTab, setActiveTab] = useState<string>(MenuType.HOME);
 
+  const [key, forceUpdate] = useReducer(x => x + 1, 0);
+
+  useEffect(() => {
+    if (isConnected) return;
+
+    if (minFeePerYear && feeThousandagePerYear) {
+      setIsConnected(true);
+      return;
+    }
+
+    setTimeout(() => {
+      log.error(`Connection error to contract at ${heritageAddress}`);
+      forceUpdate();
+    }, 2000);
+  }, [key]);
+
   return (
     <>
       {/* // Only in iOS, test in Android */}
       {/* <SafeAreaView style={styles.safeArea}> */}
       {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
       <HerritageWalletContext.Provider
+        key={key}
         value={{
           subscriptionData,
           refetchSubscriptionData,
@@ -135,41 +140,51 @@ const App = ({style}) => {
             }}>
             {props => <Home {...props} loading={!isConnected} />}
           </Tab.Screen>
-          <Tab.Screen
-            name={MenuType.CONTRACT}
-            options={{
-              tabBarLabel: MenuType.CONTRACT,
-              tabBarIcon: ({color}) => (
-                <MaterialCommunityIcons name="bell" color={color} size={26} />
-              ),
-            }}>
-            {props => (
-              <Contract
-                {...props}
-                minFeePerYear={displayTxResult(minFeePerYear)}
-                feeThousandagePerYear={displayTxResult(feeThousandagePerYear)}
-              />
-            )}
-          </Tab.Screen>
-          <Tab.Screen
-            name={MenuType.REGISTER}
-            options={{
-              tabBarLabel: MenuType.REGISTER,
-              tabBarIcon: ({color}) => (
-                <MaterialCommunityIcons
-                  name="account"
-                  color={color}
-                  size={26}
-                />
-              ),
-            }}>
-            {props => (
-              <Subscribe
-                {...props}
-                isSubscribed={isSubscribed(subscriptionData)}
-              />
-            )}
-          </Tab.Screen>
+          {isConnected && (
+            <>
+              <Tab.Screen
+                name={MenuType.CONTRACT}
+                options={{
+                  tabBarLabel: MenuType.CONTRACT,
+                  tabBarIcon: ({color}) => (
+                    <MaterialCommunityIcons
+                      name="bell"
+                      color={color}
+                      size={26}
+                    />
+                  ),
+                }}>
+                {props => (
+                  <Contract
+                    {...props}
+                    minFeePerYear={displayTxResult(minFeePerYear)}
+                    feeThousandagePerYear={displayTxResult(
+                      feeThousandagePerYear,
+                    )}
+                  />
+                )}
+              </Tab.Screen>
+              <Tab.Screen
+                name={MenuType.REGISTER}
+                options={{
+                  tabBarLabel: MenuType.REGISTER,
+                  tabBarIcon: ({color}) => (
+                    <MaterialCommunityIcons
+                      name="account"
+                      color={color}
+                      size={26}
+                    />
+                  ),
+                }}>
+                {props => (
+                  <Subscribe
+                    {...props}
+                    isSubscribed={isSubscribed(subscriptionData)}
+                  />
+                )}
+              </Tab.Screen>
+            </>
+          )}
         </Tab.Navigator>
         {/* {!(isConnected && subscriptionData) ? (
             <Text>Connecting to chain...</Text>
