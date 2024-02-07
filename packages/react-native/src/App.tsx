@@ -28,7 +28,7 @@ import {Appbar} from './ui/Appbar';
 import {MenuType} from './typings/config';
 import {Contract} from './pages/Contract';
 import {useEffect, useReducer, useState} from 'react';
-import {Subscribed} from './pages/Subscribed';
+import {Subscribed} from './pages/subscribed/Subscribed';
 
 const App = ({style}) => {
   log.debug({Config});
@@ -180,22 +180,6 @@ const App = ({style}) => {
                   />
                 )}
               </Tab.Screen>
-              {false && (
-                <Tab.Screen
-                  component={Subscribe}
-                  name={MenuType.REGISTER}
-                  options={{
-                    tabBarLabel: MenuType.REGISTER,
-                    tabBarIcon: ({color}) => (
-                      <MaterialCommunityIcons
-                        name="account"
-                        color={color}
-                        size={26}
-                      />
-                    ),
-                  }}
-                />
-              )}
             </>
           )}
         </Tab.Navigator>

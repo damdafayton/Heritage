@@ -7,8 +7,10 @@ import {SubscribeView} from './SubscribeView';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
+import {Modal, Portal} from '../../ui/Modal';
+import {ContractData} from '../../molecules/ContractData';
 
-export function Subscribe() {
+export function Subscribe({visible, setVisible}) {
   const {refetchSubscriptionData} = useContext(HerritageWalletContext);
 
   const {getDepositInWei} = useConvertDepositToWei();
@@ -40,5 +42,21 @@ export function Subscribe() {
     if (registerSubscriberIsSuccess) refetchSubscriptionData();
   }, [registerSubscriberIsSuccess]);
 
-  return <SubscribeView handleFormSubmit={handleFormSubmit} />;
+  const contextData = useContext(HerritageWalletContext);
+
+  return (
+    <Portal>
+      {/* Add context to modal because it will be lost with Portal */}
+      <HerritageWalletContext.Provider value={contextData}>
+        <Modal
+          visible={visible}
+          onDismiss={() => setVisible(false)}
+          contentContainerStyle={containerStyle}>
+          <SubscribeView handleFormSubmit={handleFormSubmit} />
+        </Modal>
+      </HerritageWalletContext.Provider>
+    </Portal>
+  );
 }
+
+const containerStyle = {backgroundColor: 'white', padding: 20};

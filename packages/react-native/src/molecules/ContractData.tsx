@@ -1,6 +1,6 @@
 import {StyleSheet, View} from 'react-native';
-import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('ContractData');
+import {logger} from '../utils/logger';
+const log = logger('ContractData');
 
 import {ActivityIndicator} from '../ui/ActivityIndicator';
 import {Text} from '../ui/Text';
@@ -11,25 +11,30 @@ export function ContractData() {
   const {minFeePerYear, feeThousandagePerYear} = useContext(
     HerritageWalletContext,
   );
+
+  log.debug({minFeePerYear, feeThousandagePerYear});
+
   const contractIsLoaded = minFeePerYear && feeThousandagePerYear;
 
-  return contractIsLoaded ? (
+  return (
     <View style={styles.contractData}>
-      <View style={styles.contractDataCell}>
-        <View style={styles.contractDataRow}>
-          <Text>Annual fee: </Text>
-          <Text>{feeThousandagePerYear}</Text>
-          <Text>‰</Text>
+      {contractIsLoaded ? (
+        <View style={styles.contractDataCell}>
+          <View style={styles.contractDataRow}>
+            <Text>Annual fee: </Text>
+            <Text>{feeThousandagePerYear}</Text>
+            <Text>‰</Text>
+          </View>
+          <View style={styles.contractDataRow}>
+            <Text>Minimum fee: </Text>
+            <Text>{minFeePerYear}</Text>
+            <Text>$</Text>
+          </View>
         </View>
-        <View style={styles.contractDataRow}>
-          <Text>Minimum fee: </Text>
-          <Text>{minFeePerYear}</Text>
-          <Text>$</Text>
-        </View>
-      </View>
+      ) : (
+        <ActivityIndicator />
+      )}
     </View>
-  ) : (
-    <ActivityIndicator />
   );
 }
 
@@ -37,7 +42,9 @@ const styles = StyleSheet.create({
   contractData: {
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'center',
     columnGap: 2,
+    marginBottom: 5,
   },
   contractDataCell: {
     flex: 1,

@@ -1,22 +1,15 @@
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
-import {useContext} from 'react';
+import {useState} from 'react';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('Home');
 
-import {isSubscribed} from '../helpers/isSubscribed';
-import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {Button} from '../ui/Button';
 import {ActivityIndicator} from '../ui/ActivityIndicator';
-import {MenuType} from '../typings/config';
-import {useNavigation} from '@react-navigation/native';
-import {Subscribed} from './Subscribed';
+
+import {Subscribe} from './subscribe/Subscribe';
 
 export function Home({loading}: {loading: boolean}) {
-  const {subscriptionData} = useContext(HerritageWalletContext);
-
-  const isRegistered = subscriptionData && isSubscribed(subscriptionData);
-
-  const navigation = useNavigation();
+  const [visible, setVisible] = useState(false);
 
   const Content = () => {
     return (
@@ -24,9 +17,7 @@ export function Home({loading}: {loading: boolean}) {
         <Text style={styles.text}>
           You are not registered. Click button below to register.
         </Text>
-        <Button onPress={() => navigation.navigate(MenuType.REGISTER as never)}>
-          Register
-        </Button>
+        <Button onPress={() => setVisible(true)}>Register</Button>
       </View>
     );
   };
@@ -44,6 +35,7 @@ export function Home({loading}: {loading: boolean}) {
       ) : (
         <Content />
       )}
+      <Subscribe visible={visible} setVisible={setVisible} />
     </ScrollView>
   );
 }
