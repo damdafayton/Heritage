@@ -1,7 +1,8 @@
 import {useNetwork} from 'wagmi';
 import {AbiFunction} from 'abitype';
-import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('useHeritageWalletContract');
+import {logger} from '../utils/logger';
+
+const log = logger('useHeritageWalletContract');
 
 import deployedContracts from '../../contracts/deployedContracts';
 import {GenericContractsDeclaration} from '../../types/hardhat';

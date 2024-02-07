@@ -7,6 +7,7 @@ import {displayTxResult} from '../helpers/utils';
 import {formatEther} from 'ethers';
 import {useEffect, useState} from 'react';
 import {useHeritageWalletContract} from './useHeritageWalletContract';
+import {isSubscribed} from '../helpers/isSubscribed';
 
 const defaultABI = deployedContracts['31337']['HeritageWallet'].abi;
 
@@ -63,7 +64,13 @@ export function useGetSubscriptionData(userAddress) {
     setsubscriptionData(_subscriptionData);
   }, [data]);
 
-  return {subscriptionData, isFetching, isFetched, refetchSubscriptionData};
+  return {
+    subscriptionData,
+    isFetching,
+    isFetched,
+    refetchSubscriptionData,
+    isSubscribed: isSubscribed(subscriptionData),
+  };
 }
 
 export type SubscriptionData = {

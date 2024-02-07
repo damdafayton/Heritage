@@ -90,6 +90,8 @@ export function Subscribed() {
     });
 
     refetchSubscriptionData();
+
+    if (isSuccess) setActiveForm(undefined);
   };
 
   const onSubmitSendFunds = async (vals: SendFundsFormVals) => {
@@ -103,21 +105,14 @@ export function Subscribed() {
     });
 
     refetchSubscriptionData();
+
+    if (isSuccess2) setActiveForm(undefined);
   };
-
-  // useEffect(() => {
-  //   if (isSuccess || isSuccess2) {
-  //     // show success
-  //     setActiveForm(undefined);
-  //   }
-  // }, [isSuccess, isSuccess2]);
-
-  // useEffect(() => {
-  //   refetchSubscriptionData();
-  // }, [isSuccess3]);
 
   const onSubmitAddInheritant = async (vals: AddInheritantVals) => {
     await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
+
+    if (isSuccess3) setActiveForm(undefined);
   };
 
   return (

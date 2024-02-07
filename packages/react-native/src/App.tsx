@@ -21,7 +21,6 @@ import {Home} from './pages/Home';
 import {Subscribe} from './pages/subscribe/Subscribe';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
-import {isSubscribed} from './helpers/isSubscribed';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
 import {Abi} from 'viem';
 import {displayTxResult} from './helpers/utils';
@@ -29,6 +28,7 @@ import {Appbar} from './ui/Appbar';
 import {MenuType} from './typings/config';
 import {Contract} from './pages/Contract';
 import {useEffect, useReducer, useState} from 'react';
+import {Subscribed} from './pages/Subscribed';
 
 const App = ({style}) => {
   log.debug({Config});
@@ -40,7 +40,7 @@ const App = ({style}) => {
 
   const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
-  const {subscriptionData, refetchSubscriptionData} =
+  const {subscriptionData, refetchSubscriptionData, isSubscribed} =
     useGetSubscriptionData(userAddress);
 
   const {findContractFunction, address: heritageAddress} =
@@ -49,20 +49,19 @@ const App = ({style}) => {
   const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');
   const fnMinFee = findContractFunction?.('minFeePerYearInUsd');
 
-  const {data: data1, isFetching} = useContractRead({
+  const {data: data1, refetch} = useContractRead({
     address: heritageAddress,
     functionName: fnFeeThousandage?.name,
     abi: [fnFeeThousandage] as Abi,
   });
 
-  const feeThousandagePerYear = Number(displayTxResult(data1));
-
-  const {data: data2} = useContractRead({
+  const {data: data2, refetch: refetch2} = useContractRead({
     address: heritageAddress,
     functionName: fnMinFee?.name,
     abi: [fnMinFee] as Abi,
   });
 
+  const feeThousandagePerYear = Number(displayTxResult(data1));
   const minFeePerYear = Number(displayTxResult(data2));
 
   const [isConnected, setIsConnected] = useState(!!minFeePerYear);
@@ -83,8 +82,13 @@ const App = ({style}) => {
       return;
     }
 
+    log.error(
+      `Connection error to contract at ${heritageAddress}. Will try again in 4 seconds`,
+    );
+
     setTimeout(() => {
-      log.error(`Connection error to contract at ${heritageAddress}`);
+      refetch();
+      refetch2();
       forceUpdate();
     }, 2000);
   }, [key]);
@@ -144,7 +148,13 @@ const App = ({style}) => {
                 <MaterialCommunityIcons name="home" color={color} size={26} />
               ),
             }}>
-            {props => <Home {...props} loading={!isConnected} />}
+            {props =>
+              isSubscribed ? (
+                <Subscribed />
+              ) : (
+                <Home {...props} loading={!isConnected} />
+              )
+            }
           </Tab.Screen>
           {isConnected && (
             <>
@@ -170,7 +180,7 @@ const App = ({style}) => {
                   />
                 )}
               </Tab.Screen>
-              {!isSubscribed(subscriptionData) && (
+              {false && (
                 <Tab.Screen
                   component={Subscribe}
                   name={MenuType.REGISTER}

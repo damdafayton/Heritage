@@ -19,9 +19,7 @@ export function Home({loading}: {loading: boolean}) {
   const navigation = useNavigation();
 
   const Content = () => {
-    return isRegistered ? (
-      <Subscribed />
-    ) : (
+    return (
       <View>
         <Text style={styles.text}>
           You are not registered. Click button below to register.
