@@ -12,5 +12,5 @@ type ContextType = {
 export const HerritageWalletContext = createContext<ContextType>({
   subscriptionData: {},
   refetchSubscriptionData: () => {},
-  hostname: '',
+  hostName: '',
 } as unknown as ContextType);

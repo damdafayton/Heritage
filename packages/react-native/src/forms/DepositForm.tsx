@@ -1,4 +1,4 @@
-import {Formik} from 'formik';
+import {Formik, FormikHelpers} from 'formik';
 import {FormEvent} from 'react';
 import {View, StyleSheet} from 'react-native';
 import {Button} from 'react-native-paper';
@@ -13,11 +13,16 @@ export type DepositFormVals = {
   depositAmount: string;
 };
 
-export function DepositForm({
-  onSubmit,
-}: {
-  onSubmit: (values: DepositFormVals) => void | Promise<any>;
-}) {
+type DepositFormProps = {
+  onSubmit: DepositFormSubmit;
+};
+
+export type DepositFormSubmit = (
+  values: DepositFormVals,
+  actions: FormikHelpers<DepositFormVals>,
+) => void | Promise<any>;
+
+export function DepositForm({onSubmit}: DepositFormProps) {
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   const validate = values => {
@@ -35,12 +40,10 @@ export function DepositForm({
         errors.depositAmount = 'Value must be a number';
       }
 
-      if (
-        depositType === 'USD' &&
-        depositAmount > Number(depositAmount.toFixed())
-      ) {
-        errors.depositAmount = 'USD value must be a rational number';
-      }
+      //@ts-ignore
+      // if (depositType === 'USD' && depositAmount > parseInt(depositAmount)) {
+      //   errors.depositAmount = 'USD value must be a rational number';
+      // }
 
       return errors;
     });
@@ -48,7 +51,6 @@ export function DepositForm({
 
   return (
     <Formik
-      initialErrors={{}}
       validate={validate}
       validateOnMount={false}
       validateOnChange={false}

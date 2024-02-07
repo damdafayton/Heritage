@@ -1,9 +1,9 @@
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {DepositForm} from '../../forms/DepositForm';
+import {DepositForm, DepositFormSubmit} from '../../forms/DepositForm';
 import {ContractData} from '../../molecules/ContractData';
 
 type PropTypes = {
-  handleFormSubmit: (x: any) => void;
+  handleFormSubmit: DepositFormSubmit;
 };
 
 export function SubscribeView({handleFormSubmit}: PropTypes) {

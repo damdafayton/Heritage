@@ -29,6 +29,7 @@ import {MenuType} from './typings/config';
 import {Contract} from './pages/Contract';
 import {useEffect, useReducer, useState} from 'react';
 import {Subscribed} from './pages/subscribed/Subscribed';
+import {AppStateContext} from './context/AppState.context';
 
 const App = ({style}) => {
   log.debug({Config});
@@ -98,99 +99,101 @@ const App = ({style}) => {
       {/* // Only in iOS, test in Android */}
       {/* <SafeAreaView style={styles.safeArea}> */}
       {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
-      <HerritageWalletContext.Provider
-        key={key}
-        value={{
-          subscriptionData,
-          refetchSubscriptionData,
-          hostName: Config.HOSTNAME,
-          minFeePerYear,
-          feeThousandagePerYear,
-        }}>
-        {/* <ScrollView contentInsetAdjustmentBehavior="automatic"> */}
-        {/* <View
+      <AppStateContext.Provider value={{errors: [], clearErrors: () => {}}}>
+        <HerritageWalletContext.Provider
+          key={key}
+          value={{
+            subscriptionData,
+            refetchSubscriptionData,
+            hostName: Config.HOSTNAME,
+            minFeePerYear,
+            feeThousandagePerYear,
+          }}>
+          {/* <ScrollView contentInsetAdjustmentBehavior="automatic"> */}
+          {/* <View
         //     style={{
               backgroundColor: isDarkMode ? Colors.black : Colors.white,
             }}> */}
-        <Appbar title={activeTab} />
-        <W3mButton balance="show" />
-        <Tab.Navigator
-          barStyle={{marginHorizontal: -20}}
-          style={{
-            paddingHorizontal: 20,
-            paddingTop: 10,
-            ...style,
-          }}
-          screenListeners={{
-            state: e => {
-              //@ts-ignore
-              const historLen = e.data?.state.history.length;
-              if (historLen > 0) {
-                const tabName =
-                  //@ts-ignore
-                  e.data?.state.history[historLen - 1].key.split('-')[0];
-                setActiveTab(tabName);
+          <Appbar title={activeTab} />
+          <W3mButton balance="show" />
+          <Tab.Navigator
+            barStyle={{marginHorizontal: -20}}
+            style={{
+              paddingHorizontal: 20,
+              paddingTop: 10,
+              ...style,
+            }}
+            screenListeners={{
+              state: e => {
+                //@ts-ignore
+                const historLen = e.data?.state.history.length;
+                if (historLen > 0) {
+                  const tabName =
+                    //@ts-ignore
+                    e.data?.state.history[historLen - 1].key.split('-')[0];
+                  setActiveTab(tabName);
+                }
+              },
+            }}
+            initialRouteName={MenuType.HOME}
+            screenOptions={
+              {
+                //@ts-ignore
+                // header: props => <Appbar {...props} />,
               }
-            },
-          }}
-          initialRouteName={MenuType.HOME}
-          screenOptions={
-            {
-              //@ts-ignore
-              // header: props => <Appbar {...props} />,
-            }
-          }>
-          <Tab.Screen
-            name={MenuType.HOME}
-            options={{
-              tabBarLabel: MenuType.HOME,
-              tabBarIcon: ({color}) => (
-                <MaterialCommunityIcons name="home" color={color} size={26} />
-              ),
-            }}>
-            {props =>
-              isSubscribed ? (
-                <Subscribed />
-              ) : (
-                <Home {...props} loading={!isConnected} />
-              )
-            }
-          </Tab.Screen>
-          {isConnected && (
-            <>
-              <Tab.Screen
-                name={MenuType.CONTRACT}
-                options={{
-                  tabBarLabel: MenuType.CONTRACT,
-                  tabBarIcon: ({color}) => (
-                    <MaterialCommunityIcons
-                      name="bell"
-                      color={color}
-                      size={26}
+            }>
+            <Tab.Screen
+              name={MenuType.HOME}
+              options={{
+                tabBarLabel: MenuType.HOME,
+                tabBarIcon: ({color}) => (
+                  <MaterialCommunityIcons name="home" color={color} size={26} />
+                ),
+              }}>
+              {props =>
+                isSubscribed ? (
+                  <Subscribed />
+                ) : (
+                  <Home {...props} loading={!isConnected} />
+                )
+              }
+            </Tab.Screen>
+            {isConnected && (
+              <>
+                <Tab.Screen
+                  name={MenuType.CONTRACT}
+                  options={{
+                    tabBarLabel: MenuType.CONTRACT,
+                    tabBarIcon: ({color}) => (
+                      <MaterialCommunityIcons
+                        name="bell"
+                        color={color}
+                        size={26}
+                      />
+                    ),
+                  }}>
+                  {props => (
+                    <Contract
+                      {...props}
+                      minFeePerYear={displayTxResult(minFeePerYear)}
+                      feeThousandagePerYear={displayTxResult(
+                        feeThousandagePerYear,
+                      )}
                     />
-                  ),
-                }}>
-                {props => (
-                  <Contract
-                    {...props}
-                    minFeePerYear={displayTxResult(minFeePerYear)}
-                    feeThousandagePerYear={displayTxResult(
-                      feeThousandagePerYear,
-                    )}
-                  />
-                )}
-              </Tab.Screen>
-            </>
-          )}
-        </Tab.Navigator>
-        {/* {!(isConnected && subscriptionData) ? (
+                  )}
+                </Tab.Screen>
+              </>
+            )}
+          </Tab.Navigator>
+          {/* {!(isConnected && subscriptionData) ? (
             <Text>Connecting to chain...</Text>
           ) : (
             <Main isSubscribed={isSubscribed(subscriptionData)} />
           )} */}
-        {/* </View> */}
-        {/* </ScrollView> */}
-      </HerritageWalletContext.Provider>
+          {/* </View> */}
+          {/* </ScrollView> */}
+        </HerritageWalletContext.Provider>
+      </AppStateContext.Provider>
       {/* </SafeAreaView> */}
       {/* <BottomNavigation /> */}
     </>

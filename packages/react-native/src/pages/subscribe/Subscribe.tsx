@@ -1,21 +1,20 @@
 import {useContext, useEffect} from 'react';
 import {useContractWrite} from 'wagmi';
 import {logger} from '../../utils/logger';
-const log = logger('NotSubscribed');
+const log = logger('Subscribe');
 
 import {SubscribeView} from './SubscribeView';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
 import {Modal, Portal} from '../../ui/Modal';
-import {ContractData} from '../../molecules/ContractData';
 
 export function Subscribe({visible, setVisible}) {
   const {refetchSubscriptionData} = useContext(HerritageWalletContext);
 
   const {getDepositInWei} = useConvertDepositToWei();
 
-  const handleFormSubmit = async vals => {
+  const handleFormSubmit = async (vals, actions) => {
     try {
       const depositAmountInWEI = await getDepositInWei(vals);
 
