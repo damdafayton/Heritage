@@ -14,8 +14,8 @@ import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
 import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('App');
+import {logger} from './utils/logger';
+const log = logger('App');
 
 import {Home} from './pages/Home';
 import {Subscribe} from './pages/subscribe/Subscribe';
@@ -49,21 +49,25 @@ const App = ({style}) => {
   const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');
   const fnMinFee = findContractFunction?.('minFeePerYearInUsd');
 
-  const {data: feeThousandagePerYear, isFetching} = useContractRead({
+  const {data: data1, isFetching} = useContractRead({
     address: heritageAddress,
     functionName: fnFeeThousandage?.name,
     abi: [fnFeeThousandage] as Abi,
   });
 
-  const {data: minFeePerYear} = useContractRead({
+  const feeThousandagePerYear = Number(displayTxResult(data1));
+
+  const {data: data2} = useContractRead({
     address: heritageAddress,
     functionName: fnMinFee?.name,
     abi: [fnMinFee] as Abi,
   });
 
+  const minFeePerYear = Number(displayTxResult(data2));
+
   const [isConnected, setIsConnected] = useState(!!minFeePerYear);
 
-  log.info({minFeePerYear, feeThousandagePerYear});
+  log.debug({minFeePerYear, feeThousandagePerYear});
 
   const Tab = createMaterialBottomTabNavigator();
 
@@ -96,8 +100,8 @@ const App = ({style}) => {
           subscriptionData,
           refetchSubscriptionData,
           hostName: Config.HOSTNAME,
-          minFeePerYear: Number(displayTxResult(minFeePerYear)),
-          feeThousandagePerYear: Number(displayTxResult(feeThousandagePerYear)),
+          minFeePerYear,
+          feeThousandagePerYear,
         }}>
         {/* <ScrollView contentInsetAdjustmentBehavior="automatic"> */}
         {/* <View
@@ -166,25 +170,22 @@ const App = ({style}) => {
                   />
                 )}
               </Tab.Screen>
-              <Tab.Screen
-                name={MenuType.REGISTER}
-                options={{
-                  tabBarLabel: MenuType.REGISTER,
-                  tabBarIcon: ({color}) => (
-                    <MaterialCommunityIcons
-                      name="account"
-                      color={color}
-                      size={26}
-                    />
-                  ),
-                }}>
-                {props => (
-                  <Subscribe
-                    {...props}
-                    isSubscribed={isSubscribed(subscriptionData)}
-                  />
-                )}
-              </Tab.Screen>
+              {!isSubscribed(subscriptionData) && (
+                <Tab.Screen
+                  component={Subscribe}
+                  name={MenuType.REGISTER}
+                  options={{
+                    tabBarLabel: MenuType.REGISTER,
+                    tabBarIcon: ({color}) => (
+                      <MaterialCommunityIcons
+                        name="account"
+                        color={color}
+                        size={26}
+                      />
+                    ),
+                  }}
+                />
+              )}
             </>
           )}
         </Tab.Navigator>

@@ -1,4 +1,4 @@
-import {Text, ScrollView, StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {DepositForm} from '../../forms/DepositForm';
 import {ContractData} from '../../molecules/ContractData';
 
@@ -6,7 +6,7 @@ type PropTypes = {
   handleFormSubmit: (x: any) => void;
 };
 
-export function NotSubscribedView({handleFormSubmit}: PropTypes) {
+export function SubscribeView({handleFormSubmit}: PropTypes) {
   return (
     <ScrollView>
       <View style={styles.contract}>

@@ -3,6 +3,8 @@ import {parseEther} from 'ethers';
 import {DepositFormVals} from '../DepositForm';
 import {usePublicClient} from 'wagmi';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
+import {logger} from '../../utils/logger';
+const log = logger('useConvertDepositToWei');
 
 export function useConvertDepositToWei() {
   const {abi, address} = useHeritageWalletContract();
@@ -15,7 +17,7 @@ export function useConvertDepositToWei() {
   }: DepositFormVals) {
     if (!abi || !address) return;
 
-    console.log({depositType, depositAmount});
+    log.debug({depositType, depositAmount});
 
     let valueInWei;
     switch (depositType) {

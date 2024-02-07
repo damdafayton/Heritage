@@ -1,24 +1,23 @@
 import {Button, StyleSheet, Text, View} from 'react-native';
 import PolyfillCrypto from 'react-native-webview-crypto';
-import {logger, consoleTransport} from 'react-native-logs';
-const log = logger.createLogger().extend('Subscribed');
 
-import {findYearsPassed} from '../../helpers/findYearsPassed';
+import {findYearsPassed} from '../helpers/findYearsPassed';
 import {useContext, useEffect, useState} from 'react';
-import {HerritageWalletContext} from '../../context/HerritageWallet.context';
-import {
-  AddInheritantForm,
-  AddInheritantVals,
-} from '../../forms/AddInheritantForm';
-import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
+import {HerritageWalletContext} from '../context/HerritageWallet.context';
+import {AddInheritantForm, AddInheritantVals} from '../forms/AddInheritantForm';
+import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
 import {useAccount, useContractWrite} from 'wagmi';
-import {DepositForm, DepositFormVals} from '../../forms/DepositForm';
-import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
-import {SendFundsForm, SendFundsFormVals} from '../../forms/SendFundsForm';
-import {EncryptedData} from './EncryptedData';
-import {ActivityIndicator} from '../../ui/ActivityIndicator';
+import {DepositForm, DepositFormVals} from '../forms/DepositForm';
+import {useConvertDepositToWei} from '../forms/hooks/useConvertDepositToWei';
+import {SendFundsForm, SendFundsFormVals} from '../forms/SendFundsForm';
+import {EncryptedData} from './subscribe/EncryptedData';
+import {ActivityIndicator} from '../ui/ActivityIndicator';
+import {logger} from '../utils/logger';
+const log = logger('Subscribed');
 
 export function Subscribed() {
+  log.debug('rendering Subscribed');
+
   const {subscriptionData, refetchSubscriptionData} = useContext(
     HerritageWalletContext,
   );
@@ -106,16 +105,16 @@ export function Subscribed() {
     refetchSubscriptionData();
   };
 
-  useEffect(() => {
-    if (isSuccess || isSuccess2) {
-      // show success
-      setActiveForm(undefined);
-    }
-  }, [isSuccess, isSuccess2]);
+  // useEffect(() => {
+  //   if (isSuccess || isSuccess2) {
+  //     // show success
+  //     setActiveForm(undefined);
+  //   }
+  // }, [isSuccess, isSuccess2]);
 
-  useEffect(() => {
-    refetchSubscriptionData();
-  }, [isSuccess3]);
+  // useEffect(() => {
+  //   refetchSubscriptionData();
+  // }, [isSuccess3]);
 
   const onSubmitAddInheritant = async (vals: AddInheritantVals) => {
     await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});

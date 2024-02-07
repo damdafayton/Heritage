@@ -9,6 +9,7 @@ import {Button} from '../ui/Button';
 import {ActivityIndicator} from '../ui/ActivityIndicator';
 import {MenuType} from '../typings/config';
 import {useNavigation} from '@react-navigation/native';
+import {Subscribed} from './Subscribed';
 
 export function Home({loading}: {loading: boolean}) {
   const {subscriptionData} = useContext(HerritageWalletContext);
@@ -19,7 +20,7 @@ export function Home({loading}: {loading: boolean}) {
 
   const Content = () => {
     return isRegistered ? (
-      <Text>Welcome</Text>
+      <Subscribed />
     ) : (
       <View>
         <Text style={styles.text}>

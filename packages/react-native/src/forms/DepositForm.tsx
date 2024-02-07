@@ -21,19 +21,37 @@ export function DepositForm({
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   const validate = values => {
-    return sleep(2000).then(() => {
+    return sleep(1000).then(() => {
       const errors: any = {};
-      if (!values.depositAmount) {
-        errors.depositAmount = 'Please input amount as number';
+
+      const {depositAmount: _, depositType} = values;
+      const depositAmount = Number(_);
+
+      if (!depositAmount) {
+        errors.depositAmount = 'Please type the amount';
       }
+
+      if (!depositAmount) {
+        errors.depositAmount = 'Value must be a number';
+      }
+
+      if (
+        depositType === 'USD' &&
+        depositAmount > Number(depositAmount.toFixed())
+      ) {
+        errors.depositAmount = 'USD value must be a rational number';
+      }
+
       return errors;
     });
   };
 
   return (
     <Formik
+      initialErrors={{}}
       validate={validate}
       validateOnMount={false}
+      validateOnChange={false}
       initialValues={{depositType: 'USD', depositAmount: ''}}
       onSubmit={onSubmit}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
