@@ -8,13 +8,16 @@
 
 import 'react';
 
+import {StyleSheet, useColorScheme} from 'react-native';
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
-
+import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {logger} from './utils/logger';
 const log = logger('App');
 
+import {Home} from './pages/Home';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
@@ -22,13 +25,21 @@ import {Abi} from 'viem';
 import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
 import {MenuType} from './typings/config';
-import {useEffect, useReducer, useState} from 'react';
+import {Contract} from './pages/Contract';
+import {useContext, useEffect, useReducer, useState} from 'react';
+import {Subscribed} from './pages/subscribed/Subscribed';
 import {AppStateContext} from './context/AppState.context';
 import {ErrorBanner} from './molecules/ErrorBanner';
+import {useTheme} from 'react-native-paper';
 import {Tabs} from './molecules/Tabs';
 
-const App = () => {
+const AppWithContext = ({children}) => {
   log.debug({Config});
+  const isDarkMode = useColorScheme() === 'dark';
+
+  // const backgroundStyle = {
+  //   backgroundColor: isDarkMode ? Colors.darker : Colors.lighter,
+  // };
 
   const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
@@ -117,17 +128,10 @@ const App = () => {
           minFeePerYear,
           feeThousandagePerYear,
         }}>
-        <Appbar title={activeTab} />
-        <W3mButton balance="show" />
-        <ErrorBanner />
-        <Tabs
-          isConnected={isConnected}
-          isSubscribed={isSubscribed}
-          setActiveTab={setActiveTab}
-        />
+        {children}
       </HerritageWalletContext.Provider>
     </AppStateContext.Provider>
   );
 };
 
-export default App;
+export default AppWithContext;

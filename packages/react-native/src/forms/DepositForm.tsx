@@ -40,10 +40,10 @@ export function DepositForm({onSubmit}: DepositFormProps) {
         errors.depositAmount = 'Value must be a number';
       }
 
-      //@ts-ignore
-      // if (depositType === 'USD' && depositAmount > parseInt(depositAmount)) {
-      //   errors.depositAmount = 'USD value must be a rational number';
-      // }
+      // @ts-ignore
+      if (depositType === 'USD' && depositAmount > parseInt(depositAmount)) {
+        errors.depositAmount = 'USD value must be a rational number';
+      }
 
       return errors;
     });
