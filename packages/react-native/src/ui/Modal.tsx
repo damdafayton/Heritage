@@ -1,1 +1,1 @@
-export {Modal, Portal} from 'react-native-paper';
+export {Modal} from 'react-native-paper';

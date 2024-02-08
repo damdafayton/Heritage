@@ -7,10 +7,12 @@ import {SubscribeView} from './SubscribeView';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
-import {Modal, Portal} from '../../ui/Modal';
+import {PortalWithModal} from '../../ui/PortalWithModal';
+import {AppStateContext} from '../../context/AppState.context';
 
 export function Subscribe({visible, setVisible}) {
   const {refetchSubscriptionData} = useContext(HerritageWalletContext);
+  const {setErrors} = useContext(AppStateContext);
 
   const {getDepositInWei} = useConvertDepositToWei();
 
@@ -23,6 +25,10 @@ export function Subscribe({visible, setVisible}) {
       });
     } catch (e) {
       log.error(e);
+      setErrors({
+        errors: ['Something went wrong, please try again.'],
+        modalError: true,
+      });
       return {error: e};
     }
   };
@@ -41,21 +47,9 @@ export function Subscribe({visible, setVisible}) {
     if (registerSubscriberIsSuccess) refetchSubscriptionData();
   }, [registerSubscriberIsSuccess]);
 
-  const contextData = useContext(HerritageWalletContext);
-
   return (
-    <Portal>
-      {/* Add context to modal because it will be lost with Portal */}
-      <HerritageWalletContext.Provider value={contextData}>
-        <Modal
-          visible={visible}
-          onDismiss={() => setVisible(false)}
-          contentContainerStyle={containerStyle}>
-          <SubscribeView handleFormSubmit={handleFormSubmit} />
-        </Modal>
-      </HerritageWalletContext.Provider>
-    </Portal>
+    <PortalWithModal visible={visible} onDismiss={() => setVisible(false)}>
+      <SubscribeView handleFormSubmit={handleFormSubmit} />
+    </PortalWithModal>
   );
 }
-
-const containerStyle = {backgroundColor: 'white', padding: 20};

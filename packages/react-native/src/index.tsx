@@ -50,7 +50,7 @@ export const index = () => {
     <NavigationContainer>
       <WagmiConfig config={wagmiConfig}>
         <PaperProvider theme={theme}>
-          <App style={{backgroundColor: DefaultTheme.colors.background}} />
+          <App />
         </PaperProvider>
         <Web3Modal />
       </WagmiConfig>

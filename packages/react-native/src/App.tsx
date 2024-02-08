@@ -18,7 +18,6 @@ import {logger} from './utils/logger';
 const log = logger('App');
 
 import {Home} from './pages/Home';
-import {Subscribe} from './pages/subscribe/Subscribe';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
@@ -27,11 +26,13 @@ import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
 import {MenuType} from './typings/config';
 import {Contract} from './pages/Contract';
-import {useEffect, useReducer, useState} from 'react';
+import {useContext, useEffect, useReducer, useState} from 'react';
 import {Subscribed} from './pages/subscribed/Subscribed';
 import {AppStateContext} from './context/AppState.context';
+import {ErrorBanner} from './molecules/ErrorBanner';
+import {useTheme} from 'react-native-paper';
 
-const App = ({style}) => {
+const App = () => {
   log.debug({Config});
   const isDarkMode = useColorScheme() === 'dark';
 
@@ -94,12 +95,26 @@ const App = ({style}) => {
     }, 2000);
   }, [key]);
 
+  const [errors, setErrors] = useState<string[]>([]);
+  const [isModalError, setIsModalError] = useState(false);
+
+  const theme = useTheme();
+
   return (
     <>
       {/* // Only in iOS, test in Android */}
       {/* <SafeAreaView style={styles.safeArea}> */}
       {/* <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} /> */}
-      <AppStateContext.Provider value={{errors: [], clearErrors: () => {}}}>
+      <AppStateContext.Provider
+        value={{
+          errors,
+          clearErrors: () => setErrors([]),
+          setErrors: ({errors: newErrors, modalError = false}) => {
+            setErrors([...errors, ...newErrors]);
+            setIsModalError(modalError);
+          },
+          isModalError,
+        }}>
         <HerritageWalletContext.Provider
           key={key}
           value={{
@@ -116,12 +131,13 @@ const App = ({style}) => {
             }}> */}
           <Appbar title={activeTab} />
           <W3mButton balance="show" />
+          <ErrorBanner />
           <Tab.Navigator
             barStyle={{marginHorizontal: -20}}
             style={{
               paddingHorizontal: 20,
               paddingTop: 10,
-              ...style,
+              backgroundColor: theme.colors.background,
             }}
             screenListeners={{
               state: e => {
