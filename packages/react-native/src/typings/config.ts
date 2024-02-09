@@ -5,7 +5,7 @@ export enum MenuType {
 }
 
 export enum HomeSubscribedType {
-  HOME = 'Home',
+  HOME = 'Welcome',
   DEPOSIT = 'Deposit',
   SEND = 'Send',
   ENCRYPTED_DATA = 'Encrypted Data',

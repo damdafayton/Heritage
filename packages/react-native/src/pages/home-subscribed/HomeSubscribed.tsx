@@ -119,6 +119,7 @@ export function HomeSubscribed({setActiveTab}) {
       <Stack.Navigator
         screenListeners={{
           state: e => {
+            //@ts-ignore
             const routes = e.data?.state?.routes;
             const lastRoute = routes[routes.length - 1];
 
@@ -127,20 +128,12 @@ export function HomeSubscribed({setActiveTab}) {
             setTimeout(() => setActiveTab(lastRoute.name), 1);
 
             parentState.history?.push(lastRoute);
-            //@ts-ignore
-            // const historLen = e.data?.state.history.length;
-            // if (historLen > 0) {
-            //   const tabName =
-            //     //@ts-ignore
-            //     e.data?.state.history[historLen - 1].key.split('-')[0];
-            //   setActiveTab(tabName);
-            // }
           },
         }}
         screenOptions={{
           contentStyle: {
             backgroundColor: theme.colors.background,
-            paddingTop: 20,
+            paddingTop: 10,
             flexDirection: 'column',
             rowGap: 14,
           },
