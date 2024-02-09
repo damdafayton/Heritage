@@ -3,3 +3,11 @@ export enum MenuType {
   REGISTER = 'Register',
   CONTRACT = 'Contract',
 }
+
+export enum HomeSubscribedType {
+  HOME = 'Home',
+  DEPOSIT = 'Deposit',
+  SEND = 'Send',
+  ENCRYPTED_DATA = 'Encrypted Data',
+  ADD_INHERITANT = 'Add Inheritant',
+}

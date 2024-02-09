@@ -7,10 +7,10 @@ import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigat
 import {logger} from '../utils/logger';
 const log = logger('Tabs');
 
-import {Home} from '../pages/Home';
+import {Home} from '../pages/HomeNonSubscribed';
 import {MenuType} from '../typings/config';
 import {Contract} from '../pages/Contract';
-import {Subscribed} from '../pages/subscribed/Subscribed';
+import {HomeSubscribed} from '../pages/home-subscribed/HomeSubscribed';
 
 export function Tabs({setActiveTab, isSubscribed, isConnected}) {
   const theme = useTheme();
@@ -27,6 +27,7 @@ export function Tabs({setActiveTab, isSubscribed, isConnected}) {
       }}
       screenListeners={{
         state: e => {
+          console.log('state-tab', e.data.state);
           //@ts-ignore
           const historLen = e.data?.state.history.length;
           if (historLen > 0) {
@@ -54,7 +55,7 @@ export function Tabs({setActiveTab, isSubscribed, isConnected}) {
         }}>
         {props =>
           isSubscribed ? (
-            <Subscribed />
+            <HomeSubscribed setActiveTab={setActiveTab} />
           ) : (
             <Home {...props} loading={!isConnected} />
           )

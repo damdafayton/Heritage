@@ -17,7 +17,7 @@ import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityI
 import {logger} from './utils/logger';
 const log = logger('App');
 
-import {Home} from './pages/Home';
+import {Home} from './pages/HomeNonSubscribed';
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';

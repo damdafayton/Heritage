@@ -1,7 +1,6 @@
-import {Button, StyleSheet, Text, View} from 'react-native';
 import PolyfillCrypto from 'react-native-webview-crypto';
+import {createNativeStackNavigator} from '@react-navigation/native-stack';
 
-import {findYearsPassed} from '../../helpers/findYearsPassed';
 import {useContext, useEffect, useState} from 'react';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {
@@ -16,9 +15,13 @@ import {SendFundsForm, SendFundsFormVals} from '../../forms/SendFundsForm';
 import {EncryptedData} from './EncryptedData';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {logger} from '../../utils/logger';
-const log = logger('Subscribed');
+import {HomeSubscribedType, MenuType} from '../../typings/config';
+import {Home} from './Home';
+import {useTheme} from 'react-native-paper';
+import {useNavigation} from '@react-navigation/native';
+const log = logger('THomeSubscribedType.HOME');
 
-export function Subscribed() {
+export function HomeSubscribed({setActiveTab}) {
   log.debug('rendering Subscribed');
 
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -26,9 +29,6 @@ export function Subscribed() {
   );
 
   if (!subscriptionData) return <ActivityIndicator />;
-
-  const {deposited, paidFeeCount, lastYearPaid, startTimestamp, minFeePerYear} =
-    subscriptionData;
 
   const [activeForm, setActiveForm] = useState<
     | 'send'
@@ -40,19 +40,6 @@ export function Subscribed() {
   >(undefined);
 
   const {abi, address} = useHeritageWalletContract();
-
-  const {writeAsync: writeAsyncFee} = useContractWrite({
-    abi,
-    address,
-    functionName: 'forcePaySingleFee',
-  });
-
-  const payFee = async () => {
-    setActiveForm(undefined);
-    await writeAsyncFee();
-
-    refetchSubscriptionData();
-  };
 
   const {getDepositInWei} = useConvertDepositToWei();
 
@@ -118,73 +105,81 @@ export function Subscribed() {
     if (isSuccess3) setActiveForm(undefined);
   };
 
+  const Stack = createNativeStackNavigator();
+
+  const theme = useTheme();
+
+  const globalScreenOptions = {headerShown: false};
+
+  const navigation = useNavigation();
+
   return (
     <>
       <PolyfillCrypto />
-      <View style={styles.contractDataRow}>
-        <Text>Deposited: </Text>
-        <Text>{deposited}</Text>
-        <Text>ETH</Text>
-      </View>
-      <View style={styles.contractDataRow}>
-        <Text>Last year paid: </Text>
-        <Text>{lastYearPaid}</Text>
-      </View>
-      <View style={styles.contractDataRow}>
-        <Text>Years paid: </Text>
-        <Text>{paidFeeCount}</Text>
-      </View>
-      <View style={styles.contractDataRow}>
-        <Text>Years required to pay: </Text>
-        <Text>{findYearsPassed(startTimestamp * 1000)}</Text>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button onPress={() => setActiveForm('send')} title="Send funds" />
-        <Button
-          onPress={() => setActiveForm('deposit')}
-          title="Deposit funds"
+      <Stack.Navigator
+        screenListeners={{
+          state: e => {
+            const routes = e.data?.state?.routes;
+            const lastRoute = routes[routes.length - 1];
+
+            const parentState = navigation.getState();
+
+            setTimeout(() => setActiveTab(lastRoute.name), 1);
+
+            parentState.history?.push(lastRoute);
+            //@ts-ignore
+            // const historLen = e.data?.state.history.length;
+            // if (historLen > 0) {
+            //   const tabName =
+            //     //@ts-ignore
+            //     e.data?.state.history[historLen - 1].key.split('-')[0];
+            //   setActiveTab(tabName);
+            // }
+          },
+        }}
+        screenOptions={{
+          contentStyle: {
+            backgroundColor: theme.colors.background,
+            paddingTop: 20,
+            flexDirection: 'column',
+            rowGap: 14,
+          },
+        }}>
+        <Stack.Screen
+          name={HomeSubscribedType.HOME}
+          component={Home}
+          options={globalScreenOptions}
         />
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button
-          onPress={() => setActiveForm('add-inheritant')}
-          title="Add inheritant"
+        <Stack.Screen
+          name={HomeSubscribedType.DEPOSIT}
+          options={globalScreenOptions}>
+          {props => <DepositForm onSubmit={onSubmitDeposit} {...props} />}
+        </Stack.Screen>
+        <Stack.Screen
+          options={globalScreenOptions}
+          name={HomeSubscribedType.ENCRYPTED_DATA}
+          component={EncryptedData}
         />
-        <Button onPress={payFee} title="Pay 1 year fee" />
-      </View>
-      <Button
-        onPress={() => setActiveForm('encrypted-data')}
-        title="Encrypted data"
-      />
-      {(() => {
-        switch (activeForm) {
-          case 'deposit':
-            return <DepositForm onSubmit={onSubmitDeposit} />;
-          case 'encrypted-data':
-            return <EncryptedData />;
-          case 'send':
-            return <SendFundsForm onSubmit={onSubmitSendFunds} />;
-          case 'add-inheritant':
-            return (
-              <AddInheritantForm
-                onSubmit={onSubmitAddInheritant}
-                isSuccess={isSuccess3}
-              />
-            );
-        }
-      })()}
+        <Stack.Screen
+          name={HomeSubscribedType.SEND}
+          options={globalScreenOptions}>
+          {props => <SendFundsForm onSubmit={onSubmitSendFunds} {...props} />}
+        </Stack.Screen>
+        <Stack.Screen
+          name={HomeSubscribedType.ADD_INHERITANT}
+          options={globalScreenOptions}>
+          {props => (
+            <AddInheritantForm
+              onSubmit={onSubmitAddInheritant}
+              isSuccess={isSuccess3}
+              {...props}
+            />
+          )}
+        </Stack.Screen>
+      </Stack.Navigator>
     </>
   );
 }
-
-const styles = StyleSheet.create({
-  buttonContainer: {flexDirection: 'row', justifyContent: 'center'},
-  contractDataRow: {
-    display: 'flex',
-    flexDirection: 'row',
-    columnGap: 2,
-  },
-});
 
 {
   /* {subscriptionData && isSubscribed(subscriptionData) ? (
