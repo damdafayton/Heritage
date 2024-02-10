@@ -84,6 +84,7 @@ export function DepositForm({onSubmit}: DepositFormProps) {
             ]}
           />
           <Button
+            mode={'contained'}
             onPress={e =>
               handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
             }>

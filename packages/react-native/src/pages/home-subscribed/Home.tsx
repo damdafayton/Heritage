@@ -1,6 +1,8 @@
 import {useContext, useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ant from 'react-native-vector-icons/AntDesign';
 
 import {SegmentedButtons} from '../../ui/SegmentedButtons';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
@@ -9,6 +11,9 @@ import {findYearsPassed} from '../../helpers/findYearsPassed';
 import {HomeSubscribedType} from '../../typings/config';
 import {useContractWrite} from 'wagmi';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
+import {Button} from '../../ui/Button';
+import {Divider} from '../../ui/Divider';
+import {useTheme} from 'react-native-paper';
 
 export function Home() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -48,21 +53,35 @@ export function Home() {
       </View>
       <View style={styles.contractDataRow}>
         <Text>Last year paid: </Text>
-        <Text>{lastYearPaid}</Text>
+        <Text>
+          {lastYearPaid ? (
+            <Ant name="checkcircle" size={20} color="green" />
+          ) : (
+            <MaterialIcons name="cancel" size={20} color="red" />
+          )}
+        </Text>
       </View>
       <View style={styles.contractDataRow}>
         <Text>Years paid: </Text>
         <Text>{paidFeeCount}</Text>
+        <Button
+          mode="contained-tonal"
+          onPress={payFee}
+          compact={true}
+          style={{marginHorizontal: 8}}
+          labelStyle={{paddingVertical: 2, marginVertical: 0}}>
+          Pay extra
+        </Button>
       </View>
       <View style={styles.contractDataRow}>
         <Text>Years required to pay: </Text>
         <Text>{findYearsPassed(startTimestamp * 1000)}</Text>
       </View>
-
+      <Divider />
       <SegmentedButtons
         value={segmentedButtons}
         onValueChange={value => {
-          setSegmentedButtons(value);
+          // setSegmentedButtons(value);
           navigation.navigate(value);
         }}
         buttons={[
@@ -76,7 +95,7 @@ export function Home() {
       <SegmentedButtons
         value={segmentedButtons}
         onValueChange={value => {
-          setSegmentedButtons(value);
+          // setSegmentedButtons(value);
           navigation.navigate(value);
         }}
         buttons={[
@@ -100,5 +119,6 @@ const styles = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     columnGap: 2,
+    alignItems: 'center',
   },
 });
