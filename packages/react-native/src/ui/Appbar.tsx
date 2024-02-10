@@ -2,12 +2,12 @@ import {useNavigation} from '@react-navigation/native';
 import {Appbar as AppbarUI} from 'react-native-paper';
 import {getHeaderTitle} from '@react-navigation/elements';
 import {useEffect, useState} from 'react';
+import {logger} from '../utils/logger';
+const log = logger('Appbar');
 
 export function Appbar() {
   const navigation = useNavigation();
   const navState = navigation.getState();
-
-  console.log('appbar-state:', navigation.getState());
 
   // const title = getHeaderTitle(options, route?.name);
 
@@ -28,7 +28,7 @@ export function Appbar() {
     const activeRoute = routes[index];
     _appBarName = activeRoute.name;
 
-    console.log({activeRoute: JSON.stringify(activeRoute)});
+    log.debug({activeRoute: JSON.stringify(activeRoute)});
     if (activeRoute.state) {
       const {routes: subRoutes, index: subIndex = 0} = activeRoute.state;
       const subActiveRoute = subRoutes[subIndex];
