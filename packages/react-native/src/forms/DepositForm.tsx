@@ -15,6 +15,7 @@ export type DepositFormVals = {
 
 type DepositFormProps = {
   onSubmit: DepositFormSubmit;
+  isLoading: boolean;
 };
 
 export type DepositFormSubmit = (
@@ -22,7 +23,7 @@ export type DepositFormSubmit = (
   actions: FormikHelpers<DepositFormVals>,
 ) => void | Promise<any>;
 
-export function DepositForm({onSubmit}: DepositFormProps) {
+export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
   const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
   const validate = values => {
@@ -30,22 +31,24 @@ export function DepositForm({onSubmit}: DepositFormProps) {
       const errors: any = {};
 
       const {depositAmount: _, depositType} = values;
+
+      if (!_) {
+        errors.depositAmount = 'Please type the amount';
+        return errors;
+      }
+
       const depositAmount = Number(_);
 
       if (!depositAmount) {
-        errors.depositAmount = 'Please type the amount';
-      }
-
-      if (!depositAmount) {
         errors.depositAmount = 'Value must be a number';
+        return errors;
       }
 
       // @ts-ignore
       if (depositType === 'USD' && depositAmount > parseInt(depositAmount)) {
         errors.depositAmount = 'USD value must be a rational number';
+        return errors;
       }
-
-      return errors;
     });
   };
 
@@ -84,6 +87,7 @@ export function DepositForm({onSubmit}: DepositFormProps) {
             ]}
           />
           <Button
+            loading={isLoading}
             mode={'contained'}
             onPress={e =>
               handleSubmit(e as unknown as FormEvent<HTMLFormElement>)

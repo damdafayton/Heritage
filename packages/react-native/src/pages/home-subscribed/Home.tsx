@@ -31,11 +31,12 @@ export function Home() {
 
   const {abi, address} = useHeritageWalletContract();
 
-  const {writeAsync: writeAsyncFee} = useContractWrite({
-    abi,
-    address,
-    functionName: 'forcePaySingleFee',
-  });
+  const {writeAsync: writeAsyncFee, isLoading: loadingPayFee} =
+    useContractWrite({
+      abi,
+      address,
+      functionName: 'forcePaySingleFee',
+    });
 
   const payFee = async () => {
     // setActiveForm(undefined);
@@ -69,7 +70,12 @@ export function Home() {
           onPress={payFee}
           compact={true}
           style={{marginHorizontal: 8}}
-          labelStyle={{paddingVertical: 2, marginVertical: 0}}>
+          loading={loadingPayFee}
+          labelStyle={{
+            paddingVertical: 2,
+            marginVertical: 0,
+            paddingHorizontal: 4,
+          }}>
           Pay extra
         </Button>
       </View>
