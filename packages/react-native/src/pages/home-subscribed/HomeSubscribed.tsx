@@ -18,10 +18,10 @@ import {logger} from '../../utils/logger';
 import {HomeSubscribedType, MenuType} from '../../typings/config';
 import {Home} from './Home';
 import {useTheme} from 'react-native-paper';
-import {useNavigation} from '@react-navigation/native';
-const log = logger('THomeSubscribedType.HOME');
 
-export function HomeSubscribed({setActiveTab}) {
+const log = logger('HomeSubscribed');
+
+export function HomeSubscribed() {
   log.debug('rendering Subscribed');
 
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -111,25 +111,10 @@ export function HomeSubscribed({setActiveTab}) {
 
   const globalScreenOptions = {headerShown: false};
 
-  const navigation = useNavigation();
-
   return (
     <>
       <PolyfillCrypto />
       <Stack.Navigator
-        screenListeners={{
-          state: e => {
-            //@ts-ignore
-            const routes = e.data?.state?.routes;
-            const lastRoute = routes[routes.length - 1];
-
-            const parentState = navigation.getState();
-
-            setTimeout(() => setActiveTab(lastRoute.name), 1);
-
-            parentState.history?.push(lastRoute);
-          },
-        }}
         screenOptions={{
           contentStyle: {
             backgroundColor: theme.colors.background,
@@ -141,11 +126,11 @@ export function HomeSubscribed({setActiveTab}) {
         <Stack.Screen
           name={HomeSubscribedType.HOME}
           component={Home}
-          options={globalScreenOptions}
+          options={{...globalScreenOptions, title: 'Home'}}
         />
         <Stack.Screen
           name={HomeSubscribedType.DEPOSIT}
-          options={globalScreenOptions}>
+          options={{...globalScreenOptions, title: 'newTitle'}}>
           {props => <DepositForm onSubmit={onSubmitDeposit} {...props} />}
         </Stack.Screen>
         <Stack.Screen

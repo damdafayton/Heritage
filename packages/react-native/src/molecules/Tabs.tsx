@@ -12,7 +12,7 @@ import {MenuType} from '../typings/config';
 import {Contract} from '../pages/Contract';
 import {HomeSubscribed} from '../pages/home-subscribed/HomeSubscribed';
 
-export function Tabs({setActiveTab, isSubscribed, isConnected}) {
+export function Tabs({updateAppBar, isSubscribed, isConnected}) {
   const theme = useTheme();
 
   const Tab = createMaterialBottomTabNavigator();
@@ -27,15 +27,7 @@ export function Tabs({setActiveTab, isSubscribed, isConnected}) {
       }}
       screenListeners={{
         state: e => {
-          console.log('state-tab', e.data.state);
-          //@ts-ignore
-          const historLen = e.data?.state.history.length;
-          if (historLen > 0) {
-            const tabName =
-              //@ts-ignore
-              e.data?.state.history[historLen - 1].key.split('-')[0];
-            setActiveTab(tabName);
-          }
+          updateAppBar();
         },
       }}
       initialRouteName={MenuType.HOME}
@@ -50,12 +42,12 @@ export function Tabs({setActiveTab, isSubscribed, isConnected}) {
         options={{
           tabBarLabel: MenuType.HOME,
           tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="home" color={color} size={26} />
+            <MaterialCommunityIcons name="home" color={color} size={24} />
           ),
         }}>
         {props =>
           isSubscribed ? (
-            <HomeSubscribed setActiveTab={setActiveTab} />
+            <HomeSubscribed />
           ) : (
             <Home {...props} loading={!isConnected} />
           )
@@ -69,7 +61,7 @@ export function Tabs({setActiveTab, isSubscribed, isConnected}) {
             options={{
               tabBarLabel: MenuType.CONTRACT,
               tabBarIcon: ({color}) => (
-                <MaterialCommunityIcons name="bell" color={color} size={26} />
+                <MaterialCommunityIcons name="bell" color={color} size={24} />
               ),
             }}
           />

@@ -62,8 +62,6 @@ const App = () => {
 
   log.debug({minFeePerYear, feeThousandagePerYear});
 
-  const [activeTab, setActiveTab] = useState<string>(MenuType.HOME);
-
   const [key, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
@@ -89,6 +87,8 @@ const App = () => {
   const [isModalError, setIsModalError] = useState(false);
   const [successes, setSuccesses] = useState<string[]>([]);
   const [isModalSuccess, setIsModalSuccess] = useState(false);
+
+  const [appBarKey, rerenderAppBar] = useReducer(x => x + 1, 0);
 
   return (
     <AppStateContext.Provider
@@ -117,13 +117,13 @@ const App = () => {
           minFeePerYear,
           feeThousandagePerYear,
         }}>
-        <Appbar title={activeTab} />
+        <Appbar key={appBarKey} />
         <W3mButton balance="show" />
         <ErrorBanner />
         <Tabs
           isConnected={isConnected}
           isSubscribed={isSubscribed}
-          setActiveTab={setActiveTab}
+          updateAppBar={rerenderAppBar}
         />
       </HerritageWalletContext.Provider>
     </AppStateContext.Provider>

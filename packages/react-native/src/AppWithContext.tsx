@@ -73,8 +73,6 @@ const AppWithContext = ({children}) => {
 
   log.debug({minFeePerYear, feeThousandagePerYear});
 
-  const [activeTab, setActiveTab] = useState<string>(MenuType.HOME);
-
   const [key, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
