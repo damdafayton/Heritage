@@ -1,12 +1,12 @@
 import {Formik, FormikHelpers} from 'formik';
 import {FormEvent} from 'react';
 import {View, StyleSheet} from 'react-native';
-import {Button} from 'react-native-paper';
 
 import {TextInput} from '../ui/TextInput';
 import {Text} from '../ui/Text';
 import {HelperText} from '../ui/HelperText';
 import {SegmentedButtons} from '../ui/SegmentedButtons';
+import {Button} from '../ui/Button';
 
 export type DepositFormVals = {
   depositType: string;
@@ -71,7 +71,7 @@ export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
           {errors.depositAmount && (
             <HelperText type="error">{errors.depositAmount}</HelperText>
           )}
-          <Text>Please choose deposit type</Text>
+          <Text style={{marginTop: 14}}>Please choose deposit type</Text>
           <SegmentedButtons
             value={values.depositType}
             onValueChange={handleChange('depositType')}
@@ -103,6 +103,5 @@ export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
 const styles = StyleSheet.create({
   view: {
     flexDirection: 'column',
-    rowGap: 15,
   },
 });

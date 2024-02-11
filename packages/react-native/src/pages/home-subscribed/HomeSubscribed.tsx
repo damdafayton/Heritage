@@ -1,118 +1,130 @@
-import PolyfillCrypto from 'react-native-webview-crypto';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import {useContext, useState} from 'react';
+import {StyleSheet, Text, View} from 'react-native';
+import {useNavigation} from '@react-navigation/native';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Ant from 'react-native-vector-icons/AntDesign';
 
-import {useContext} from 'react';
+import {SegmentedButtons} from '../../ui/SegmentedButtons';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
-import {
-  AddInheritantForm,
-  AddInheritantVals,
-} from '../../forms/AddInheritantForm';
-import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
-import {useAccount, useContractWrite} from 'wagmi';
-import {DepositForm, DepositFormVals} from '../../forms/DepositForm';
-import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
-import {EncryptedData} from './EncryptedData';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
-import {logger} from '../../utils/logger';
+import {findYearsPassed} from '../../helpers/findYearsPassed';
 import {HomeSubscribedType} from '../../typings/config';
-import {Home} from './Home';
-import {useTheme} from 'react-native-paper';
-import {SendFunds} from './SendFunds';
-import {Deposit} from './Deposit';
-
-const log = logger('HomeSubscribed');
+import {useContractWrite} from 'wagmi';
+import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
+import {Button} from '../../ui/Button';
+import {Divider} from '../../ui/Divider';
 
 export function HomeSubscribed() {
-  log.debug('rendering Subscribed');
-
   const {subscriptionData, refetchSubscriptionData} = useContext(
     HerritageWalletContext,
   );
 
   if (!subscriptionData) return <ActivityIndicator />;
 
+  const {deposited, paidFeeCount, lastYearPaid, startTimestamp, minFeePerYear} =
+    subscriptionData;
+
+  const navigation = useNavigation();
+
+  const [segmentedButtons, setSegmentedButtons] = useState('');
+
   const {abi, address} = useHeritageWalletContract();
 
-  const {write: writeAddInheritant, isSuccess: isSuccess3} = useContractWrite({
-    abi,
-    address,
-    functionName: 'addInheritant',
-  });
+  const {writeAsync: writeAsyncFee, isLoading: loadingPayFee} =
+    useContractWrite({
+      abi,
+      address,
+      functionName: 'forcePaySingleFee',
+    });
 
-  const onSubmitAddInheritant = async (vals: AddInheritantVals) => {
-    await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
+  const payFee = async () => {
+    // setActiveForm(undefined);
+    await writeAsyncFee();
+
+    refetchSubscriptionData();
   };
-
-  const Stack = createNativeStackNavigator();
-
-  const theme = useTheme();
-
-  const globalScreenOptions = {headerShown: false};
 
   return (
     <>
-      <PolyfillCrypto />
-      <Stack.Navigator
-        screenOptions={{
-          contentStyle: {
-            backgroundColor: theme.colors.background,
-            paddingTop: 10,
-            flexDirection: 'column',
-            rowGap: 14,
-          },
-        }}>
-        <Stack.Screen
-          name={HomeSubscribedType.HOME}
-          component={Home}
-          options={{...globalScreenOptions, title: 'Home'}}
-        />
-        <Stack.Screen
-          name={HomeSubscribedType.DEPOSIT}
-          options={{...globalScreenOptions, title: 'newTitle'}}>
-          {props => <Deposit {...props} />}
-        </Stack.Screen>
-        <Stack.Screen
-          options={globalScreenOptions}
-          name={HomeSubscribedType.ENCRYPTED_DATA}
-          component={EncryptedData}
-        />
-        <Stack.Screen
-          name={HomeSubscribedType.SEND}
-          options={globalScreenOptions}>
-          {props => <SendFunds {...props} />}
-        </Stack.Screen>
-        <Stack.Screen
-          name={HomeSubscribedType.ADD_INHERITANT}
-          options={globalScreenOptions}>
-          {props => (
-            <AddInheritantForm
-              onSubmit={onSubmitAddInheritant}
-              isSuccess={isSuccess3}
-              {...props}
-            />
+      <View style={styles.contractDataRow}>
+        <Text>Deposited: </Text>
+        <Text>{deposited}</Text>
+        <Text>ETH</Text>
+      </View>
+      <View style={styles.contractDataRow}>
+        <Text>Last year paid: </Text>
+        <Text>
+          {lastYearPaid ? (
+            <Ant name="checkcircle" size={20} color="green" />
+          ) : (
+            <MaterialIcons name="cancel" size={20} color="red" />
           )}
-        </Stack.Screen>
-      </Stack.Navigator>
+        </Text>
+      </View>
+      <View style={styles.contractDataRow}>
+        <Text>Years paid: </Text>
+        <Text>{paidFeeCount}</Text>
+        <Button
+          mode="contained-tonal"
+          onPress={payFee}
+          compact={true}
+          style={{marginHorizontal: 8, marginTop: 0}}
+          loading={loadingPayFee}
+          labelStyle={{
+            paddingVertical: 2,
+            marginVertical: 0,
+            paddingHorizontal: 4,
+          }}>
+          Pay extra
+        </Button>
+      </View>
+      <View style={styles.contractDataRow}>
+        <Text>Years required to pay: </Text>
+        <Text>{findYearsPassed(startTimestamp * 1000)}</Text>
+      </View>
+      <Divider />
+      <SegmentedButtons
+        value={segmentedButtons}
+        onValueChange={value => {
+          // setSegmentedButtons(value);
+          navigation.navigate(value);
+        }}
+        buttons={[
+          {
+            value: HomeSubscribedType.DEPOSIT,
+            label: HomeSubscribedType.DEPOSIT,
+          },
+          {value: HomeSubscribedType.SEND, label: HomeSubscribedType.SEND},
+        ]}
+      />
+      <SegmentedButtons
+        value={segmentedButtons}
+        onValueChange={value => {
+          // setSegmentedButtons(value);
+          navigation.navigate(value);
+        }}
+        buttons={[
+          {
+            value: HomeSubscribedType.ENCRYPTED_DATA,
+            label: HomeSubscribedType.ENCRYPTED_DATA,
+          },
+          {
+            value: HomeSubscribedType.ADD_INHERITANT,
+            label: HomeSubscribedType.ADD_INHERITANT,
+          },
+        ]}
+      />
     </>
   );
 }
 
-{
-  /* {subscriptionData && isSubscribed(subscriptionData) ? (
-        <View style={styles.contractDataCell}>
-          <Text>Fees for you</Text>
-          <View style={styles.contractDataRow}>
-            <Text>Annual fee: </Text>
-            <Text>{subscriptionData.feeThousandagePerYear}</Text>
-            <Text>‰</Text>
-          </View>
-          <View style={styles.contractDataRow}>
-            <Text>Minimum fee: </Text>
-            <Text>{subscriptionData.minFeePerYear}</Text>
-            <Text>$</Text>
-          </View>
-        </View>
-      ) : (
-        <></>
-      )} */
-}
+const styles = StyleSheet.create({
+  buttonContainer: {flexDirection: 'row', justifyContent: 'center'},
+  contractDataRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    columnGap: 2,
+    alignItems: 'center',
+    marginTop: 8,
+  },
+});

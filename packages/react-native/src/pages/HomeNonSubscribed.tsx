@@ -1,14 +1,14 @@
 import {StyleSheet, Text, View, ScrollView} from 'react-native';
 import {useState} from 'react';
 import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('Home');
+const log = logger.createLogger().extend('HomeNonSubscribed');
 
 import {Button} from '../ui/Button';
 import {ActivityIndicator} from '../ui/ActivityIndicator';
 
 import {Subscribe} from './subscribe/Subscribe';
 
-export function Home({loading}: {loading: boolean}) {
+export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
   const [visible, setVisible] = useState(false);
 
   const Content = () => {
@@ -25,7 +25,7 @@ export function Home({loading}: {loading: boolean}) {
   return (
     <ScrollView style={styles.view}>
       <Text style={styles.title}>HERITAGE</Text>
-      {loading ? (
+      {!isConnected ? (
         <>
           <Text style={styles.text}>
             Waiting for connection to the contract
@@ -42,20 +42,6 @@ export function Home({loading}: {loading: boolean}) {
 
 const styles = StyleSheet.create({
   view: {},
-  contractData: {
-    display: 'flex',
-    flexDirection: 'row',
-    columnGap: 2,
-  },
-  contractDataCell: {
-    flex: 1,
-    backgroundColor: 'yellow',
-  },
-  contractDataRow: {
-    display: 'flex',
-    columnGap: 2,
-    flexDirection: 'row',
-  },
   title: {
     alignSelf: 'center',
     fontSize: 24,

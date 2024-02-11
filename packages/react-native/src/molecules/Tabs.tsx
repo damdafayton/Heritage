@@ -7,10 +7,9 @@ import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigat
 import {logger} from '../utils/logger';
 const log = logger('Tabs');
 
-import {Home} from '../pages/HomeNonSubscribed';
 import {MenuType} from '../typings/config';
 import {Contract} from '../pages/Contract';
-import {HomeSubscribed} from '../pages/home-subscribed/HomeSubscribed';
+import {Home} from '../pages/Home';
 
 export function Tabs({updateAppBar, isSubscribed, isConnected}) {
   const theme = useTheme();
@@ -45,13 +44,13 @@ export function Tabs({updateAppBar, isSubscribed, isConnected}) {
             <MaterialCommunityIcons name="home" color={color} size={24} />
           ),
         }}>
-        {props =>
-          isSubscribed ? (
-            <HomeSubscribed />
-          ) : (
-            <Home {...props} loading={!isConnected} />
-          )
-        }
+        {props => (
+          <Home
+            isConnected={isConnected}
+            isSubscribed={isSubscribed}
+            {...props}
+          />
+        )}
       </Tab.Screen>
       {isConnected && (
         <>

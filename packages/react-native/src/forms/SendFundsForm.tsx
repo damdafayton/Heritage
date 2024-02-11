@@ -7,6 +7,7 @@ import {SegmentedButtons} from '../ui/SegmentedButtons';
 import {Button} from '../ui/Button';
 import {TextInput} from '../ui/TextInput';
 import {HelperText} from '../ui/HelperText';
+import {Text} from '../ui/Text';
 
 export type SendFundsFormVals = DepositFormVals & {receiverAddress: Address};
 
@@ -76,6 +77,7 @@ export function SendFundsForm({
           {errors.depositAmount && (
             <HelperText type="error">{errors.depositAmount}</HelperText>
           )}
+          <Text style={{marginTop: 14}}>Please choose deposit type</Text>
           <SegmentedButtons
             value={values.depositType}
             onValueChange={handleChange('depositType')}
@@ -107,6 +109,5 @@ export function SendFundsForm({
 const styles = StyleSheet.create({
   view: {
     flexDirection: 'column',
-    rowGap: 15,
   },
 });
