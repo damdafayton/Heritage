@@ -6,12 +6,11 @@ import {
   AddInheritantVals,
 } from '../../forms/AddInheritantForm';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
-import {Fragment, useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {isSubscribed} from '../../helpers/isSubscribed';
-import {Text} from '../../ui';
+import {List, Tooltip} from '../../ui';
 import {AppStateContext} from '../../context/AppState.context';
-import {SuccessSnackbar} from '../../molecules/SuccessSnackbar';
 
 export function AddInheritant() {
   const {setError, setSuccess} = useContext(AppStateContext);
@@ -86,21 +85,31 @@ export function AddInheritant() {
   }, [subscriptionData, address, isSuccess]);
 
   const Inheritants = () =>
-    inheritants?.map((inheritant, idx) => (
-      <Fragment key={inheritant[0]}>
-        <Text>Inheritant {idx + 1}: </Text>
-        <Text>{inheritant[0]}: </Text>
-        <Text>{parseInt(inheritant[1])}%</Text>
-      </Fragment>
-    ));
+    inheritants.length && (
+      <List.Section title="Inheritants" style={{marginTop: 20}}>
+        {inheritants?.map((inheritant: string[], idx) => (
+          <List.Accordion
+            title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
+            left={props => <List.Icon {...props} icon="human" />}>
+            <Tooltip title={inheritant[0]}>
+              <List.Item
+                title={`Address: ${
+                  inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
+                }`}
+              />
+            </Tooltip>
+          </List.Accordion>
+        ))}
+      </List.Section>
+    );
 
   return (
     <>
-      <Inheritants />
       <AddInheritantForm
         onSubmit={onSubmitAddInheritant}
         isLoading={isLoading}
       />
+      <Inheritants />
     </>
   );
 }

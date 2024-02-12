@@ -11,3 +11,4 @@ export * from './SegmentedButtons';
 export * from './Text';
 export * from './TextInput';
 export * from './Snackbar';
+export * from './Tooltip';

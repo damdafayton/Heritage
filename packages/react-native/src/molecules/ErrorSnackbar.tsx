@@ -1,4 +1,6 @@
 import {useContext, useEffect, useState} from 'react';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {AppStateContext} from '../context/AppState.context';
 import {Snackbar, Text} from '../ui';
 
@@ -43,6 +45,12 @@ export function ErrorSnackbar() {
             color: theme.colors.inverseOnSurface,
             marginVertical: 0,
           }}>
+          <MaterialCommunityIcons
+            name="warning"
+            size={20}
+            color={theme.colors.inverseOnSurface}
+          />
+          {'  '}
           {errors}
         </Text>
       </Snackbar>

@@ -1,4 +1,6 @@
 import {useContext, useEffect, useState} from 'react';
+import Ant from 'react-native-vector-icons/AntDesign';
+
 import {AppStateContext} from '../context/AppState.context';
 import {Snackbar, Text} from '../ui';
 
@@ -30,7 +32,7 @@ export function SuccessSnackbar() {
   const theme = useTheme();
 
   return (
-    <View>
+    <View style={{flexDirection: 'row'}}>
       <Snackbar
         visible={visible}
         onDismiss={onDismissSnackBar}
@@ -45,6 +47,12 @@ export function SuccessSnackbar() {
             color: theme.colors.inverseOnSurface,
             marginVertical: 0,
           }}>
+          <Ant
+            name="checkcircle"
+            size={20}
+            color={theme.colors.inverseOnSurface}
+          />
+          {'  '}
           {successes}
         </Text>
       </Snackbar>
