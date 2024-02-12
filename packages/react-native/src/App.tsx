@@ -26,6 +26,8 @@ import {useEffect, useReducer, useState} from 'react';
 import {AppStateContext} from './context/AppState.context';
 import {ErrorBanner} from './molecules/ErrorBanner';
 import {Tabs} from './molecules/Tabs';
+import {SuccessSnackbar} from './molecules/SuccessSnackbar';
+import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 
 const App = () => {
   log.debug({Config});
@@ -83,30 +85,31 @@ const App = () => {
     }, 2000);
   }, [key]);
 
-  const [errors, setErrors] = useState<string[]>([]);
-  const [isModalError, setIsModalError] = useState(false);
-  const [successes, setSuccesses] = useState<string[]>([]);
-  const [isModalSuccess, setIsModalSuccess] = useState(false);
+  const [errors, setError] = useState<string[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [successes, setSuccess] = useState<string[]>([]);
 
   const [appBarKey, rerenderAppBar] = useReducer(x => x + 1, 0);
 
   return (
     <AppStateContext.Provider
       value={{
+        isModalVisible,
         errors,
-        clearErrors: () => setErrors([]),
-        setErrors: ({errors: newErrors, modalError = false}) => {
-          setErrors([...errors, ...newErrors]);
-          setIsModalError(modalError);
+        clearErrors: () => setError([]),
+        setError: ({message: newError, isModalVisible: isModal = false}) => {
+          setError([...errors, newError]);
+          setIsModalVisible(isModal);
         },
-        isModalError,
         successes,
-        clearSuccesses: () => setSuccesses([]),
-        setSuccesses: ({successes: newSuccesses, modalSuccess = false}) => {
-          setSuccesses([...successes, ...newSuccesses]);
-          setIsModalSuccess(modalSuccess);
+        clearSuccesses: () => setSuccess([]),
+        setSuccess: ({
+          message: newMessage,
+          isModalVisible: isModal = false,
+        }) => {
+          setSuccess([...successes, newMessage]);
+          setIsModalVisible(isModal);
         },
-        isModalSuccess,
       }}>
       <HerritageWalletContext.Provider
         key={key}
@@ -119,12 +122,13 @@ const App = () => {
         }}>
         <Appbar key={appBarKey} />
         <W3mButton balance="show" />
-        <ErrorBanner />
         <Tabs
           isConnected={isConnected}
           isSubscribed={isSubscribed}
           updateAppBar={rerenderAppBar}
         />
+        <SuccessSnackbar />
+        <ErrorSnackbar />
       </HerritageWalletContext.Provider>
     </AppStateContext.Provider>
   );

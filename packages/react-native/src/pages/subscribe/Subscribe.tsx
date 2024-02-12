@@ -12,7 +12,7 @@ import {AppStateContext} from '../../context/AppState.context';
 
 export function Subscribe({visible, setVisible}) {
   const {refetchSubscriptionData} = useContext(HerritageWalletContext);
-  const {setErrors} = useContext(AppStateContext);
+  const {setError} = useContext(AppStateContext);
 
   const {getDepositInWei} = useConvertDepositToWei();
 
@@ -25,7 +25,7 @@ export function Subscribe({visible, setVisible}) {
       });
     } catch (e) {
       log.error(e);
-      setErrors({
+      setError({
         errors: ['Something went wrong, please try again.'],
         modalError: true,
       });

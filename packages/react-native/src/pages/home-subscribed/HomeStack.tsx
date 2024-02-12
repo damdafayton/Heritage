@@ -1,14 +1,8 @@
 import PolyfillCrypto from 'react-native-webview-crypto';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-
 import {useContext} from 'react';
+
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
-import {
-  AddInheritantForm,
-  AddInheritantVals,
-} from '../../forms/AddInheritantForm';
-import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
-import {useContractWrite} from 'wagmi';
 import {EncryptedData} from './EncryptedData';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {logger} from '../../utils/logger';
@@ -17,6 +11,8 @@ import {HomeSubscribed} from './HomeSubscribed';
 import {useTheme} from 'react-native-paper';
 import {SendFunds} from './SendFunds';
 import {Deposit} from './Deposit';
+import {AddInheritant} from './AddInheritant';
+import {SuccessSnackbar} from '../../molecules/SuccessSnackbar';
 
 const log = logger('HomeStack');
 
@@ -26,18 +22,6 @@ export function HomeStack() {
   );
 
   if (!subscriptionData) return <ActivityIndicator />;
-
-  const {abi, address} = useHeritageWalletContract();
-
-  const {write: writeAddInheritant, isSuccess: isSuccess3} = useContractWrite({
-    abi,
-    address,
-    functionName: 'addInheritant',
-  });
-
-  const onSubmitAddInheritant = async (vals: AddInheritantVals) => {
-    await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
-  };
 
   const Stack = createNativeStackNavigator();
 
@@ -52,7 +36,7 @@ export function HomeStack() {
         screenOptions={{
           contentStyle: {
             backgroundColor: theme.colors.background,
-            paddingTop: 10,
+            paddingTop: 4,
             flexDirection: 'column',
             rowGap: 2,
           },
@@ -60,11 +44,11 @@ export function HomeStack() {
         <Stack.Screen
           name={HomeSubscribedType.HOME}
           component={HomeSubscribed}
-          options={{...globalScreenOptions, title: 'Home'}}
+          options={{...globalScreenOptions}}
         />
         <Stack.Screen
           name={HomeSubscribedType.DEPOSIT}
-          options={{...globalScreenOptions, title: 'newTitle'}}>
+          options={{...globalScreenOptions}}>
           {props => <Deposit {...props} />}
         </Stack.Screen>
         <Stack.Screen
@@ -79,36 +63,10 @@ export function HomeStack() {
         </Stack.Screen>
         <Stack.Screen
           name={HomeSubscribedType.ADD_INHERITANT}
-          options={globalScreenOptions}>
-          {props => (
-            <AddInheritantForm
-              onSubmit={onSubmitAddInheritant}
-              isSuccess={isSuccess3}
-              {...props}
-            />
-          )}
-        </Stack.Screen>
+          options={globalScreenOptions}
+          component={AddInheritant}
+        />
       </Stack.Navigator>
     </>
   );
-}
-
-{
-  /* {subscriptionData && isSubscribed(subscriptionData) ? (
-        <View style={styles.contractDataCell}>
-          <Text>Fees for you</Text>
-          <View style={styles.contractDataRow}>
-            <Text>Annual fee: </Text>
-            <Text>{subscriptionData.feeThousandagePerYear}</Text>
-            <Text>‰</Text>
-          </View>
-          <View style={styles.contractDataRow}>
-            <Text>Minimum fee: </Text>
-            <Text>{subscriptionData.minFeePerYear}</Text>
-            <Text>$</Text>
-          </View>
-        </View>
-      ) : (
-        <></>
-      )} */
 }

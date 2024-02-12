@@ -94,25 +94,25 @@ const AppWithContext = ({children}) => {
     }, 2000);
   }, [key]);
 
-  const [errors, setErrors] = useState<string[]>([]);
+  const [errors, setError] = useState<string[]>([]);
   const [isModalError, setIsModalError] = useState(false);
-  const [successes, setSuccesses] = useState<string[]>([]);
+  const [successes, setSuccess] = useState<string[]>([]);
   const [isModalSuccess, setIsModalSuccess] = useState(false);
 
   return (
     <AppStateContext.Provider
       value={{
         errors,
-        clearErrors: () => setErrors([]),
-        setErrors: ({errors: newErrors, modalError = false}) => {
-          setErrors([...errors, ...newErrors]);
+        clearErrors: () => setError([]),
+        setError: ({errors: newErrors, modalError = false}) => {
+          setError([...errors, ...newErrors]);
           setIsModalError(modalError);
         },
         isModalError,
         successes,
-        clearSuccesses: () => setSuccesses([]),
-        setSuccesses: ({successes: newSuccesses, modalSuccess = false}) => {
-          setSuccesses([...successes, ...newSuccesses]);
+        clearSuccesses: () => setSuccess([]),
+        setSuccess: ({successes: newSuccesses, modalSuccess = false}) => {
+          setSuccess([...successes, ...newSuccesses]);
           setIsModalSuccess(modalSuccess);
         },
         isModalSuccess,

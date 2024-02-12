@@ -4,8 +4,9 @@ import {useContext} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {Modal} from './Modal';
 import {AppStateContext} from '../context/AppState.context';
-import {ErrorBanner} from '../molecules/ErrorBanner';
 import {logger} from '../utils/logger';
+import {ErrorSnackbar} from '../molecules/ErrorSnackbar';
+import {SuccessSnackbar} from '../molecules/SuccessSnackbar';
 const log = logger('PortalWithModal');
 
 export function PortalWithModal({children, visible, onDismiss}) {
@@ -21,7 +22,12 @@ export function PortalWithModal({children, visible, onDismiss}) {
             visible={visible}
             onDismiss={onDismiss}
             contentContainerStyle={containerStyle}>
-            {appStateContextData.isModalError && <ErrorBanner />}
+            {appStateContextData.isModalVisible && (
+              <>
+                <ErrorSnackbar />
+                <SuccessSnackbar />
+              </>
+            )}
             {children}
           </Modal>
         </HerritageWalletContext.Provider>

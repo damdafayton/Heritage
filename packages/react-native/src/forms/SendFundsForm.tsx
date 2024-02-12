@@ -8,6 +8,7 @@ import {Button} from '../ui/Button';
 import {TextInput} from '../ui/TextInput';
 import {HelperText} from '../ui/HelperText';
 import {Text} from '../ui/Text';
+import {isAddress} from 'ethers';
 
 export type SendFundsFormVals = DepositFormVals & {receiverAddress: Address};
 
@@ -38,7 +39,7 @@ export function SendFundsForm({
 
       if (!receiverAddress) {
         errors.receiverAddress = 'Type an address';
-      } else if (!receiverAddress.startsWith('0x')) {
+      } else if (!isAddress(values.address)) {
         errors.receiverAddress = 'Address is not correct';
       }
 

@@ -5,20 +5,19 @@ export const AppStateContext = createContext({
   successes: [] as string[],
   clearErrors: () => {},
   clearSuccesses: () => {},
-  setErrors: ({
-    errors,
-    modalError,
+  setError: ({
+    message,
+    isModalVisible,
   }: {
-    errors: string[];
-    modalError?: boolean;
+    message: string;
+    isModalVisible?: boolean;
   }) => {},
-  setSuccesses: ({
-    successes,
-    modalSuccess,
+  setSuccess: ({
+    message,
+    isModalVisible,
   }: {
-    successes: string[];
-    modalSuccess?: boolean;
+    message: string;
+    isModalVisible?: boolean;
   }) => {},
-  isModalError: false,
-  isModalSuccess: false,
+  isModalVisible: false,
 });
