@@ -1,4 +1,4 @@
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons';
 import {useContext} from 'react';
 
 import {Banner} from '../ui/Banner';

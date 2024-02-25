@@ -1,0 +1,119 @@
+{
+  "manifestVersion": "3.2",
+  "proxies": [
+    {
+      "address": "0x8defD3BE777c25A094978b05349b3593aAa673Ba",
+      "txHash": "0xdf7957a8550c229f353f7c3801f1ccde6e22f02dd975061f5ac931ca322b954f",
+      "kind": "uups"
+    }
+  ],
+  "impls": {
+    "d4a5c6b28c589caf73626d3eb427a19989c722a8a6942856ca0cacfeb4acba24": {
+      "address": "0x490b3ef67d5accFd4F7e671a920E676Cb225bE9a",
+      "txHash": "0xd6f14a7754813ee3ac5f6f73bcd20d658c5e6c6c18e415e793d2c2f6f56bfaf0",
+      "layout": {
+        "solcVersion": "0.8.20",
+        "storage": [
+          {
+            "label": "heritageWalletAddr",
+            "offset": 0,
+            "slot": "0",
+            "type": "t_address",
+            "contract": "HeritageAdmin",
+            "src": "contracts/HeritageAdmin.sol:22"
+          },
+          {
+            "label": "ethUsdPriceFeed",
+            "offset": 0,
+            "slot": "1",
+            "type": "t_address",
+            "contract": "HeritageAdmin",
+            "src": "contracts/HeritageAdmin.sol:23"
+          },
+          {
+            "label": "manager",
+            "offset": 0,
+            "slot": "2",
+            "type": "t_address",
+            "contract": "HeritageAdmin",
+            "src": "contracts/HeritageAdmin.sol:24"
+          }
+        ],
+        "types": {
+          "t_address": {
+            "label": "address",
+            "numberOfBytes": "20"
+          },
+          "t_bool": {
+            "label": "bool",
+            "numberOfBytes": "1"
+          },
+          "t_struct(InitializableStorage)77_storage": {
+            "label": "struct Initializable.InitializableStorage",
+            "members": [
+              {
+                "label": "_initialized",
+                "type": "t_uint64",
+                "offset": 0,
+                "slot": "0"
+              },
+              {
+                "label": "_initializing",
+                "type": "t_bool",
+                "offset": 8,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_struct(OwnableStorage)27_storage": {
+            "label": "struct OwnableUpgradeable.OwnableStorage",
+            "members": [
+              {
+                "label": "_owner",
+                "type": "t_address",
+                "offset": 0,
+                "slot": "0"
+              }
+            ],
+            "numberOfBytes": "32"
+          },
+          "t_uint64": {
+            "label": "uint64",
+            "numberOfBytes": "8"
+          }
+        },
+        "namespaces": {
+          "erc7201:openzeppelin.storage.Ownable": [
+            {
+              "contract": "OwnableUpgradeable",
+              "label": "_owner",
+              "type": "t_address",
+              "src": "@openzeppelin/contracts-upgradeable/access/OwnableUpgradeable.sol:24",
+              "offset": 0,
+              "slot": "0"
+            }
+          ],
+          "erc7201:openzeppelin.storage.Initializable": [
+            {
+              "contract": "Initializable",
+              "label": "_initialized",
+              "type": "t_uint64",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:69",
+              "offset": 0,
+              "slot": "0"
+            },
+            {
+              "contract": "Initializable",
+              "label": "_initializing",
+              "type": "t_bool",
+              "src": "@openzeppelin/contracts-upgradeable/proxy/utils/Initializable.sol:73",
+              "offset": 8,
+              "slot": "0"
+            }
+          ]
+        }
+      }
+    }
+  }
+}

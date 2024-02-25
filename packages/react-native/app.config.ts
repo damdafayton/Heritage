@@ -1,10 +1,12 @@
 import {Hex} from 'viem';
 import * as chains from 'viem/chains';
+import Config from 'react-native-config';
+
+console.log('appConfig', Config);
 
 export type ScaffoldConfig = {
   targetNetwork: chains.Chain;
   burnerPrivateKey: Hex;
-
   pollingInterval: number;
   alchemyApiKey: string;
   walletConnectProjectId: string;
@@ -15,8 +17,8 @@ export type ScaffoldConfig = {
 
 export const appConfig = {
   // The network where your DApp lives in
-  logSeverity: 'debug',
-  targetNetwork: chains.hardhat,
+  logSeverity: Config.LOG_SEVERITY,
+  targetNetwork: chains[Config.CHAIN],
   burnerPrivateKey:
     '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80',
 
@@ -41,7 +43,7 @@ export const appConfig = {
     '3a8170812b534d0ff9d794f19a901d64',
 
   // Only show the Burner Wallet when running on hardhat network
-  onlyLocalBurnerWallet: true,
+  onlyLocalBurnerWallet: Config.CHAIN === 'hardhat',
 
   /**
    * Auto connect:

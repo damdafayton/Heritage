@@ -21,7 +21,7 @@ import {
 } from '../../forms/DataDecryptionForm';
 
 export function EncryptedData() {
-  const {setError, setSuccess} = useContext(AppStateContext);
+  const {setError} = useContext(AppStateContext);
 
   const [encryptedText, setEncryptedText] = useState('');
   const [initialText, setInitialText] = useState('');

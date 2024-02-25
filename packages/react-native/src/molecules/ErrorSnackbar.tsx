@@ -1,5 +1,5 @@
 import {useContext, useEffect, useState} from 'react';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons';
 
 import {AppStateContext} from '../context/AppState.context';
 import {Snackbar, Text} from '../ui';

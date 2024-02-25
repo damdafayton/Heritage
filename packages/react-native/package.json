@@ -5,6 +5,7 @@
   "scripts": {
     "android": "ENVFILE=.env.dev react-native run-android",
     "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --simulator='iPhone 8' --port=8082",
+    "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --simulator='iPhone 8' --port=8082",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",

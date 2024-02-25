@@ -4,7 +4,7 @@ import { getImplementationAddress } from "@openzeppelin/upgrades-core";
 
 import { localConfig } from "../local-config";
 import { saveDeployment } from "../helpers/saveDeployment";
-import { Heritage } from "../typechain-types";
+import { HeritageAdmin } from "../typechain-types";
 import { Contract } from "ethers";
 const { RainbowAccountAddress } = localConfig;
 
@@ -44,7 +44,7 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
   // Check if HeritageWallet was updated
   let heritageProxyContract =
     deployment &&
-    (new ethers.Contract(deployment?.address as string, heritageFactory?.interface, owner) as unknown as Heritage);
+    (new ethers.Contract(deployment?.address as string, heritageFactory?.interface, owner) as unknown as HeritageAdmin);
 
   const heritageWalletAddrOnDeployedContract = await heritageProxyContract?.heritageWalletAddr();
 
@@ -72,7 +72,7 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
         initializer: "initialize",
         kind: "uups",
       },
-    )) as unknown as Heritage;
+    )) as unknown as HeritageAdmin;
 
     await heritageProxyContract.waitForDeployment();
 
@@ -107,7 +107,7 @@ const deployHeritageContract: DeployFunction = async function (hre: HardhatRunti
       deployment.address,
       heritageFactory,
       {},
-    )) as unknown as Heritage;
+    )) as unknown as HeritageAdmin;
 
     heritageProxyContract = await upgradedHeritageProxyContract.waitForDeployment();
 
