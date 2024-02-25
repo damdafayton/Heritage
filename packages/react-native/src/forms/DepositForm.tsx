@@ -1,5 +1,5 @@
 import {Formik, FormikHelpers} from 'formik';
-import {FormEvent} from 'react';
+import {FormEvent, useState} from 'react';
 import {View, StyleSheet} from 'react-native';
 
 import {TextInput} from '../ui/TextInput';
@@ -7,6 +7,7 @@ import {Text} from '../ui/Text';
 import {HelperText} from '../ui/HelperText';
 import {SegmentedButtons} from '../ui/SegmentedButtons';
 import {Button} from '../ui/Button';
+import {sleep} from '../utils/utils';
 
 export type DepositFormVals = {
   depositType: string;
@@ -24,9 +25,11 @@ export type DepositFormSubmit = (
 ) => void | Promise<any>;
 
 export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
-  const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
+  const [validateOnChange, setValidateOnChange] = useState(false);
 
   const validate = values => {
+    setValidateOnChange(true);
+
     return sleep(1000).then(() => {
       const errors: any = {};
 
@@ -56,7 +59,7 @@ export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
     <Formik
       validate={validate}
       validateOnMount={false}
-      validateOnChange={false}
+      validateOnChange={validateOnChange}
       initialValues={{depositType: 'USD', depositAmount: ''}}
       onSubmit={onSubmit}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (

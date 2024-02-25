@@ -36,9 +36,10 @@ export function HomeStack() {
         screenOptions={{
           contentStyle: {
             backgroundColor: theme.colors.background,
-            paddingTop: 4,
+            // paddingTop: 4,
             flexDirection: 'column',
             rowGap: 2,
+            marginBottom: 16,
           },
         }}>
         <Stack.Screen

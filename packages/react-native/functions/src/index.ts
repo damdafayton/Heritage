@@ -89,16 +89,16 @@ export const encryptedData = onRequest(async (req, res) => {
 
       logger.debug({encryptedData});
 
-      res.send({encryptedData});
+      res.send({encryptedData, emails: docData.emails});
       break;
     case 'POST':
       const data = body.data ? JSON.parse(body.data) : {};
       //@ts-ignore
-      var {address, signedToken, encryptedData} = data;
+      var {address, signedToken, encryptedData, emails} = data;
 
-      if (!address || !signedToken || !encryptedData) return;
+      if (!address || !signedToken || !encryptedData || !emails.length) return;
 
-      logger.debug({address, signedToken, encryptedData});
+      logger.debug({address, signedToken, encryptedData, emails});
 
       if (!(await verifySigner(address as string, signedToken as string))) {
         res.sendStatus(403);
@@ -114,7 +114,7 @@ export const encryptedData = onRequest(async (req, res) => {
       await db
         .collection('encrypted-data')
         .doc(address)
-        .set({address, encryptedData: serverEncryptedData});
+        .set({address, encryptedData: serverEncryptedData, emails});
 
       res.sendStatus(201);
       break;

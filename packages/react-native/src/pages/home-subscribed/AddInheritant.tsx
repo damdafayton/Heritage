@@ -9,7 +9,7 @@ import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {useContext, useEffect, useState} from 'react';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {isSubscribed} from '../../helpers/isSubscribed';
-import {List, Tooltip} from '../../ui';
+import {List, Text, Tooltip} from '../../ui';
 import {AppStateContext} from '../../context/AppState.context';
 
 export function AddInheritant() {
@@ -75,7 +75,7 @@ export function AddInheritant() {
   useEffect(() => {
     if (!isSubscribed(subscriptionData) || !address || !userAddr) return;
 
-    if (inheritants.length && !isSuccess) return;
+    if (!inheritants.length || !isSuccess) return;
 
     getInheritants(address, abi, userAddr).then(
       inheritants =>
@@ -84,32 +84,31 @@ export function AddInheritant() {
     );
   }, [subscriptionData, address, isSuccess]);
 
-  const Inheritants = () =>
-    inheritants.length && (
-      <List.Section title="Inheritants" style={{marginTop: 20}}>
-        {inheritants?.map((inheritant: string[], idx) => (
-          <List.Accordion
-            title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
-            left={props => <List.Icon {...props} icon="human" />}>
-            <Tooltip title={inheritant[0]}>
-              <List.Item
-                title={`Address: ${
-                  inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
-                }`}
-              />
-            </Tooltip>
-          </List.Accordion>
-        ))}
-      </List.Section>
-    );
-
   return (
     <>
       <AddInheritantForm
         onSubmit={onSubmitAddInheritant}
         isLoading={isLoading}
       />
-      <Inheritants />
+      {inheritants.length ? <Inheritants inheritants={inheritants} /> : null}
     </>
   );
 }
+
+const Inheritants = ({inheritants}) => (
+  <List.Section title="Inheritants" style={{marginTop: 20}}>
+    {inheritants?.map((inheritant: string[], idx) => (
+      <List.Accordion
+        title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
+        left={props => <List.Icon {...props} icon="human" />}>
+        <Tooltip title={inheritant[0]}>
+          <List.Item
+            title={`Address: ${
+              inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
+            }`}
+          />
+        </Tooltip>
+      </List.Accordion>
+    ))}
+  </List.Section>
+);

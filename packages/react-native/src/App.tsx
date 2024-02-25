@@ -121,7 +121,7 @@ const App = () => {
           feeThousandagePerYear,
         }}>
         <Appbar key={appBarKey} />
-        <W3mButton balance="show" />
+        <W3mButton balance="hide" />
         <Tabs
           isConnected={isConnected}
           isSubscribed={isSubscribed}

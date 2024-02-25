@@ -4,57 +4,85 @@ import axios from 'axios';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('EncryptedData');
 
-import {Address, useAccount, useSignMessage} from 'wagmi';
+import {useAccount, useSignMessage} from 'wagmi';
 
-import {
-  EncryptedDataForm,
-  EncryptedDataFormVals,
-} from '../../forms/EncryptedDataForm';
 import {decryptText, deriveKey, encryptText} from '../../helpers/crpyto';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
+import {reqToken} from '../../utils/api';
+import {AppStateContext} from '../../context/AppState.context';
+import {Loading} from '../../molecules/Loading';
+import {
+  DataEncryptionForm,
+  EncryptedDataFormVals,
+} from '../../forms/DataEncryptionForm';
+import {
+  DataDecryptionForm,
+  DataDecryptionFormVals,
+} from '../../forms/DataDecryptionForm';
 
 export function EncryptedData() {
+  const {setError, setSuccess} = useContext(AppStateContext);
+
   const [encryptedText, setEncryptedText] = useState('');
-  const [text, setText] = useState('');
+  const [initialText, setInitialText] = useState('');
+  const [initialEmails, setInitialEmails] = useState(['']);
+  const [showEditForm, setShowEditForm] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isPageLoading, setIsPageLoading] = useState(true);
 
   const {address} = useAccount();
 
   const {hostName} = useContext(HerritageWalletContext);
 
-  const {isLoading, signMessageAsync} = useSignMessage();
+  const {isLoading: isLoadingSign, signMessageAsync} = useSignMessage();
 
   useEffect(() => {
     (async () => {
-      if (!address) return;
+      try {
+        if (!address) {
+          setError({message: 'An error occured. Refresh the page.'});
+          return;
+        }
 
-      const token = await reqToken(hostName, address);
-      const signedToken = await signMessageAsync({message: token});
+        const token = await reqToken(hostName, address);
 
-      log.info({signedToken});
+        if (!token) {
+          setIsPageLoading(false);
+          return;
+        }
 
-      const {data, status} = await axios.get(
-        `${hostName}encryptedData?address=${address}&signedToken=${signedToken}`,
-      );
+        const signedToken = await signMessageAsync({message: token});
 
-      log.info({data, status});
+        log.info({signedToken});
 
-      if (status === 200) {
-        setEncryptedText(data.encryptedData);
+        const {data, status} = await axios.get(
+          `${hostName}encryptedData?address=${address}&signedToken=${signedToken}`,
+        );
+
+        log.info({data: JSON.stringify(data), status});
+
+        if (status === 200) {
+          setEncryptedText(data.encryptedData);
+          setInitialEmails(data.emails);
+          setShowEditForm(false);
+        }
+
+        setIsPageLoading(false);
+      } catch (e) {
+        log.error(e);
+        setIsPageLoading(false);
       }
     })();
   }, []);
 
   const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
-    if (!address) return;
+    if (!address || !vals.clientEncryptedText) return;
 
-    if (vals.text) {
-      if (!vals.secretKey) return;
+    setIsLoading(true);
 
-      const cipher = await deriveKeyAndEncryptText(vals.text, vals.secretKey);
-
-      log.info({cipher});
-
+    try {
       const token = await reqToken(hostName, address);
+
       const signedToken = await signMessageAsync({message: token});
 
       const {status: statusSaveData} = await axios.post(
@@ -63,7 +91,8 @@ export function EncryptedData() {
           data: JSON.stringify({
             signedToken,
             address,
-            encryptedData: cipher,
+            encryptedData: vals.clientEncryptedText,
+            emails: vals.emails,
           }),
         },
       );
@@ -71,19 +100,35 @@ export function EncryptedData() {
       log.info({statusSaveData});
 
       if (statusSaveData === 201) {
-        setEncryptedText(cipher);
-        setText('');
+        setEncryptedText(vals.clientEncryptedText);
+        setInitialEmails(vals.emails);
+        setShowEditForm(false);
       }
-    } else {
-      if (!vals.secretKey) return;
 
+      setIsLoading(false);
+    } catch (e) {
+      log.error(e);
+      setIsLoading(false);
+    }
+  };
+
+  const onSubmitDecrypt = async (vals: DataDecryptionFormVals) => {
+    if (!vals.secretKey) return;
+
+    setIsLoading(true);
+
+    try {
       const key = await deriveKey(vals.secretKey);
 
-      const text = await decryptText(key, encryptedText);
-      log.info({text});
+      const decryptedText = await decryptText(key, encryptedText);
+      log.info({decryptedText});
 
-      setText(text);
-      setEncryptedText('');
+      setInitialText(decryptedText);
+      setShowEditForm(true);
+      setIsLoading(false);
+    } catch (e) {
+      log.error(e);
+      setIsLoading(false);
     }
   };
 
@@ -95,27 +140,24 @@ export function EncryptedData() {
     return cipher;
   };
 
+  if (isPageLoading) return <Loading />;
+
+  if (showEditForm)
+    return (
+      <DataEncryptionForm
+        onSubmit={onSubmitEncryptedData}
+        deriveKeyAndEncryptText={deriveKeyAndEncryptText}
+        initialText={initialText}
+        initialEmails={initialEmails}
+        loading={isLoadingSign || isLoading}
+      />
+    );
+
   return (
-    <EncryptedDataForm
-      onSubmit={onSubmitEncryptedData}
-      deriveKeyAndEncryptText={deriveKeyAndEncryptText}
-      encryptedText={encryptedText}
-      text={text}
+    <DataDecryptionForm
+      initialEncryptedText={encryptedText}
+      onSubmitDecrypt={onSubmitDecrypt}
+      loading={isLoadingSign || isLoading}
     />
   );
-}
-
-async function reqToken(hostName, address: Address) {
-  const {data, status} =
-    (await axios
-      .get(`${hostName}auth?address=${address}`)
-      .catch(e =>
-        log.error(Object.keys(e), e.code, e?.message, 'config:', e?.config),
-      )) || {};
-
-  if (status !== 200) return;
-
-  const token = data?.token;
-
-  return token;
 }
