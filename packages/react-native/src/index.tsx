@@ -28,9 +28,16 @@ const lightTheme = {
     ...DefaultTheme.colors,
     primary: 'tomato',
     secondary: 'yellow',
+    success: 'green',
   },
 };
-const darkTheme = {...MD3DarkTheme};
+const darkTheme = {
+  ...MD3DarkTheme,
+  colors: {
+    ...MD3DarkTheme.colors,
+    success: 'rgb(116 194 119)',
+  },
+};
 const theme = Appearance.getColorScheme() === 'dark' ? darkTheme : lightTheme;
 
 // 3. Create modal

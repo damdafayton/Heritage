@@ -64,10 +64,10 @@ export const auth = onRequest((req, res) => {
           token,
         } as Auth)
         .then(() => {
-          console.log('Document successfully written!');
+          logger.log('Document successfully written!');
         })
         .catch((error: any) => {
-          console.error('Error writing document: ', error);
+          logger.error('Error writing document: ', error);
         });
 
       res.send({token});

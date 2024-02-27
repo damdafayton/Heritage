@@ -7,7 +7,8 @@ import {DepositForm, DepositFormVals} from '../../forms/DepositForm';
 import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {logger} from '../../utils/logger';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import {Text} from '../../ui';
 
 const log = logger('Deposit');
 

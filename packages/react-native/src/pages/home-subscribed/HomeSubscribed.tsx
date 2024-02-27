@@ -1,5 +1,5 @@
 import {useContext, useState} from 'react';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -13,6 +13,8 @@ import {useContractWrite} from 'wagmi';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {Button} from '../../ui/Button';
 import {Divider} from '../../ui/Divider';
+import {Text} from '../../ui';
+import {useTheme} from 'react-native-paper';
 
 export function HomeSubscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -44,6 +46,8 @@ export function HomeSubscribed() {
     refetchSubscriptionData();
   };
 
+  const theme = useTheme();
+
   return (
     <>
       <View style={styles.contractDataRow}>
@@ -55,9 +59,9 @@ export function HomeSubscribed() {
         <Text>Last year paid: </Text>
         <Text>
           {lastYearPaid ? (
-            <Ant name="checkcircle" size={20} color="green" />
+            <Ant name="checkcircle" size={20} color={theme.colors.success} />
           ) : (
-            <MaterialIcons name="cancel" size={20} color="red" />
+            <MaterialIcons name="cancel" size={20} color={theme.colors.error} />
           )}
         </Text>
       </View>

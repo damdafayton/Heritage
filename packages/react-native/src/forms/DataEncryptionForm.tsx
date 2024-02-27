@@ -98,6 +98,8 @@ export function DataEncryptionForm({
     await onSubmit(values);
   };
 
+  const theme = useTheme();
+
   return (
     <ScrollView>
       <Formik
@@ -206,7 +208,11 @@ export function DataEncryptionForm({
                 gap: 6,
                 alignItems: 'center',
               }}>
-              <AntDesign name="pluscircle" size={20} />
+              <AntDesign
+                name="pluscircle"
+                size={20}
+                color={theme.colors.tertiary}
+              />
               <Text>Add another email</Text>
             </TouchableOpacity>
             {clientEncryptedText ? (
