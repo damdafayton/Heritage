@@ -25,6 +25,25 @@ const {deriveKey, encryptText, decryptText} = require('./utils/crypto');
 
 const KEY = 'HELLO_WORLD';
 
+type Auth = {
+  token: string;
+  address: string;
+  timeOut: number;
+};
+
+type EncryptedData = {
+  address: string;
+  encryptedData: string;
+  emails: string[];
+};
+
+type User = {
+  timestamp: number;
+  address: string;
+  token: string;
+  count: number; // to keep track of updates easily on development
+};
+
 export const auth = onRequest((req, res) => {
   const {method, url} = req;
   logger.log({method, url}, {structuredData: true});
@@ -75,7 +94,7 @@ export const encryptedData = onRequest(async (req, res) => {
 
       var doc = await db.collection('encrypted-data').doc(address).get();
 
-      const docData = doc.data();
+      const docData: EncryptedData = doc.data();
 
       if (!docData) {
         res.sendStatus(403);
@@ -121,11 +140,42 @@ export const encryptedData = onRequest(async (req, res) => {
   }
 });
 
-type Auth = {
-  token: string;
-  address: string;
-  timeOut: number;
-};
+export const user = onRequest(async (req, res) => {
+  const {method, body} = req;
+  logger.log({method, body});
+
+  switch (method) {
+    case 'POST':
+      const data = body.data ? JSON.parse(body.data) : {};
+      //@ts-ignore
+      var {timestamp, address, token} = data;
+
+      logger.debug({timestamp, address, token});
+
+      if (!timestamp || !address) return;
+
+      const doc = await db.collection('user').doc(address).get();
+      const docData: User = doc.data();
+      // setting new token
+      let isAuthorized = await verifySigner(address, token);
+      // confirming existing token
+      if (docData.token === token) {
+        isAuthorized = true;
+      }
+
+      if (!isAuthorized) {
+        res.sendStatus(403);
+      }
+
+      await db
+        .collection('user')
+        .doc(address)
+        .set({timestamp, address, token, count: docData?.count || 0 + 1});
+
+      res.sendStatus(201);
+      break;
+  }
+});
 
 async function verifySigner(address: string, signedToken: string) {
   var authDoc = await db.collection('auth').doc(address).get();

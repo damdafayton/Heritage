@@ -17,7 +17,9 @@ export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
         <Text style={styles.text}>
           You are not registered. Click button below to register.
         </Text>
-        <Button onPress={() => setVisible(true)}>Register</Button>
+        <Button mode="contained" onPress={() => setVisible(true)}>
+          Register
+        </Button>
       </View>
     );
   };

@@ -8,6 +8,7 @@ import {w3mConnectors} from '@web3modal/ethereum';
 import {getTargetNetwork} from '../helpers/network';
 import {appConfig} from '../../app.config';
 import {burnerWalletConfig} from './wagmi-burner/burnerWalletConfig';
+import {Platform} from 'react-native';
 
 const configuredNetwork = getTargetNetwork();
 // We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
@@ -21,11 +22,6 @@ const {chains, publicClient} = configureChains(enabledChains, [
   alchemyProvider({apiKey: appConfig.alchemyApiKey}),
   publicProvider(),
 ]);
-
-const burnerWallet =
-  configuredNetwork.id === hardhat.id
-    ? [burnerWalletConfig({chains: [chains[0]]})]
-    : [];
 
 // const wagmiConfig = createConfig({
 //   autoConnect: true,
@@ -45,7 +41,11 @@ const metadata = {
   },
 };
 
-const burnerWalletConnector = burnerWallet
+const allowBurner = appConfig.onlyLocalBurnerWallet
+  ? configuredNetwork.id === hardhat.id
+  : true;
+
+const burnerWalletConnector = allowBurner
   ? [
       burnerWalletConfig({
         chains: [chains[0]],
@@ -58,9 +58,13 @@ const connectors = [
   ...burnerWalletConnector,
 ];
 
+const removeInjected = connectors.filter(
+  c => Platform.OS === 'web' || c.id !== 'injected',
+);
+
 const wagmiConfig = createConfig({
   autoConnect: false,
-  connectors,
+  connectors: removeInjected,
   publicClient,
 });
 

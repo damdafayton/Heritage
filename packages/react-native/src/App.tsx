@@ -12,9 +12,6 @@ import {W3mButton, Web3Modal} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
 
-import {logger} from './utils/logger';
-const log = logger('App');
-
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
 import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
@@ -27,10 +24,13 @@ import {Tabs} from './molecules/Tabs';
 import {SuccessSnackbar} from './molecules/SuccessSnackbar';
 import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
+import {logger} from './utils/logger';
+import {useBackgroundWork} from './hooks/useBackgroundWork';
+import {Tasks} from './molecules/Tasks';
+const log = logger('App');
 
 const App = () => {
   useAutoConnect();
-  log.debug(JSON.stringify(Config));
 
   const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
@@ -122,6 +122,7 @@ const App = () => {
           minFeePerYear,
           feeThousandagePerYear,
         }}>
+        <Tasks />
         <Appbar key={appBarKey} />
         <W3mButton balance="show" />
         <Web3Modal />

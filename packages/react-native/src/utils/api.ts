@@ -1,7 +1,7 @@
 import axios from 'axios';
 import {Address} from 'wagmi';
 import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('reqToken');
+const log = logger.createLogger().extend('api');
 
 export async function reqToken(hostName, address: Address) {
   const {data, status} =
@@ -16,4 +16,16 @@ export async function reqToken(hostName, address: Address) {
   const token = data?.token;
 
   return token;
+}
+
+export async function pingServer(hostName, address, token) {
+  log.debug('pinging', {address, token});
+  const timestamp = Date.now();
+  return await axios.post(`${hostName}user`, {
+    data: JSON.stringify({
+      timestamp,
+      address,
+      token,
+    }),
+  });
 }

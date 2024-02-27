@@ -4,18 +4,34 @@ import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {NavigationContainer} from '@react-navigation/native';
-import {MD3LightTheme as DefaultTheme, PaperProvider} from 'react-native-paper';
+import {
+  MD3LightTheme as DefaultTheme,
+  MD3DarkTheme,
+  PaperProvider,
+} from 'react-native-paper';
 
 import '../shim';
 import App from './App';
 import {wagmiConfig, chains} from './services/wagmiConfig';
 import {appConfig} from '../app.config';
+import {Appearance} from 'react-native';
 
 const clipboardClient = {
   setString: async (value: string) => {
     Clipboard.setString(value);
   },
 };
+
+const lightTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    primary: 'tomato',
+    secondary: 'yellow',
+  },
+};
+const darkTheme = {...MD3DarkTheme};
+const theme = Appearance.getColorScheme() === 'dark' ? darkTheme : lightTheme;
 
 // 3. Create modal
 createWeb3Modal({
@@ -38,15 +54,6 @@ createWeb3Modal({
   //   },
   // },
 });
-
-const theme = {
-  ...DefaultTheme,
-  colors: {
-    ...DefaultTheme.colors,
-    primary: 'tomato',
-    secondary: 'yellow',
-  },
-};
 
 export const index = () => {
   return (

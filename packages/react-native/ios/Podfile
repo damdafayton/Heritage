@@ -65,6 +65,7 @@ target 'HeritageProject' do
   target 'HeritageProjectTests' do
     inherit! :complete
     # Pods for testing
+    pod 'RNSentry', :podspec => '../node_modules/@sentry/react-native/RNSentry.podspec' # or your path to node_modules
   end
 
   post_install do |installer|

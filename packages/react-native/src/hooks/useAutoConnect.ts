@@ -13,6 +13,7 @@ import {logger} from '../utils/logger';
 
 const WALLET_ID_KEY = 'heritage.wallet';
 const log = logger('useAutoConnect');
+
 /**
  * This function will get the initial wallet connector (if any), the app will connect to
  * @param previousWalletId
@@ -74,8 +75,6 @@ export function useAutoConnect() {
         await AsyncStorage.getItem(WALLET_ID_KEY),
         connectState.connectors,
       );
-
-      log.debug('initialConnector', initialConnector);
 
       if (initialConnector?.connector) {
         connectState.connect({

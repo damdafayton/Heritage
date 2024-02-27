@@ -2,7 +2,7 @@ import {Hex} from 'viem';
 import * as chains from 'wagmi/chains';
 import Config from 'react-native-config';
 
-console.log('appConfig', Config);
+console.log('appConfig', JSON.stringify(Config));
 
 export type ScaffoldConfig = {
   targetNetwork: chains.Chain;
@@ -15,7 +15,7 @@ export type ScaffoldConfig = {
   logSeverity: string;
 };
 
-export const appConfig = {
+export const appConfig: ScaffoldConfig = {
   // The network where your DApp lives in
   logSeverity: Config.LOG_SEVERITY,
   targetNetwork: chains[Config.CHAIN],
@@ -49,4 +49,4 @@ export const appConfig = {
    * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
    */
   walletAutoConnect: true,
-} satisfies ScaffoldConfig;
+};
