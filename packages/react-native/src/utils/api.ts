@@ -6,7 +6,7 @@ const log = logger.createLogger().extend('api');
 export async function reqToken(hostName, address: Address) {
   const {data, status} =
     (await axios
-      .get(`${hostName}auth?address=${address}`)
+      .get(`${hostName}/auth?address=${address}`)
       .catch(e =>
         log.error(Object.keys(e), e.code, e?.message, 'config:', e?.config),
       )) || {};
@@ -21,7 +21,7 @@ export async function reqToken(hostName, address: Address) {
 export async function pingServer(hostName, address, token) {
   log.debug('pinging', {address, token});
   const timestamp = Date.now();
-  return await axios.post(`${hostName}user`, {
+  return await axios.post(`${hostName}/user`, {
     data: JSON.stringify({
       timestamp,
       address,

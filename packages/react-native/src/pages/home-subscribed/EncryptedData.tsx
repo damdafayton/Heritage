@@ -56,7 +56,7 @@ export function EncryptedData() {
         log.info({signedToken});
 
         const {data, status} = await axios.get(
-          `${hostName}encryptedData?address=${address}&signedToken=${signedToken}`,
+          `${hostName}/encryptedData?address=${address}&signedToken=${signedToken}`,
         );
 
         log.info({data: JSON.stringify(data), status});
@@ -86,7 +86,7 @@ export function EncryptedData() {
       const signedToken = await signMessageAsync({message: token});
 
       const {status: statusSaveData} = await axios.post(
-        `${hostName}encryptedData`,
+        `${hostName}/encryptedData`,
         {
           data: JSON.stringify({
             signedToken,

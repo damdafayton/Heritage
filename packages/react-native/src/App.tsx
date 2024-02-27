@@ -27,6 +27,12 @@ import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
 import {useBackgroundWork} from './hooks/useBackgroundWork';
 import {Tasks} from './molecules/Tasks';
+import * as Sentry from '@sentry/react-native';
+import {Button} from 'react-native';
+
+Sentry.init({
+  dsn: 'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
+});
 const log = logger('App');
 
 const App = () => {
