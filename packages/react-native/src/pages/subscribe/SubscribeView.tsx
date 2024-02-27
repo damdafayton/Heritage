@@ -4,13 +4,14 @@ import {ContractData} from '../../molecules/ContractData';
 
 type PropTypes = {
   handleFormSubmit: DepositFormSubmit;
+  isLoading: boolean;
 };
 
-export function SubscribeView({handleFormSubmit}: PropTypes) {
+export function SubscribeView({handleFormSubmit, isLoading}: PropTypes) {
   return (
     <ScrollView>
       <ContractData />
-      <DepositForm onSubmit={handleFormSubmit} />
+      <DepositForm onSubmit={handleFormSubmit} isLoading={isLoading} />
     </ScrollView>
   );
 }

@@ -35,13 +35,15 @@ export function Subscribe({visible, setVisible}) {
 
   const {address, abi} = useHeritageWalletContract();
 
-  const {writeAsync, isSuccess: registerSubscriberIsSuccess} = useContractWrite(
-    {
-      abi,
-      address,
-      functionName: 'registerSubscriber',
-    },
-  );
+  const {
+    writeAsync,
+    isSuccess: registerSubscriberIsSuccess,
+    isLoading,
+  } = useContractWrite({
+    abi,
+    address,
+    functionName: 'registerSubscriber',
+  });
 
   useEffect(() => {
     if (registerSubscriberIsSuccess) refetchSubscriptionData();
@@ -49,7 +51,10 @@ export function Subscribe({visible, setVisible}) {
 
   return (
     <PortalWithModal visible={visible} onDismiss={() => setVisible(false)}>
-      <SubscribeView handleFormSubmit={handleFormSubmit} />
+      <SubscribeView
+        handleFormSubmit={handleFormSubmit}
+        isLoading={isLoading}
+      />
     </PortalWithModal>
   );
 }
