@@ -1,14 +1,14 @@
-var window = global.window || {};
+const window = global.window || {};
 
-function getCrypto() {
+function getCrypto(): any {
   let crypto;
   try {
     // To make it work in web
-    crypto = window.crypto || require('crypto');
+    crypto = window.crypto || require("crypto");
   } catch {
     // In mobile use the polyfill
     // import 'react-native-webview-crypto' wherever you want to use .subtle()
-    crypto = require('react-native-crypto');
+    crypto = require("react-native-crypto");
   }
 
   return crypto;
@@ -24,24 +24,26 @@ export async function deriveKey(password: string, salt = new Uint8Array([1])) {
   const passwordData = encoder.encode(password);
 
   const key = await crypto.subtle.importKey(
-    'raw',
+    "raw",
     passwordData,
-    {name: 'PBKDF2'},
+    {name: "PBKDF2"},
     false,
-    ['deriveBits', 'deriveKey'],
+    ["deriveBits", "deriveKey"],
   );
 
   const derivedKey = await crypto.subtle.deriveKey(
     {
-      name: 'PBKDF2',
+      name: "PBKDF2",
       salt,
-      iterations: 100000, // Adjust the number of iterations as needed for your security requirements
-      hash: 'SHA-256',
+      // Adjust the number of iterations as needed
+      // for your security requirements
+      iterations: 100000,
+      hash: "SHA-256",
     },
     key,
-    {name: 'AES-GCM', length: keyLength},
+    {name: "AES-GCM", length: keyLength},
     true,
-    ['encrypt', 'decrypt'],
+    ["encrypt", "decrypt"],
   );
 
   return derivedKey;
@@ -52,13 +54,13 @@ export async function encryptText(key: CryptoKey, text: string, test = false) {
 
   const encoder = new TextEncoder();
   const byteArr = encoder.encode(text);
-  const iv = test
-    ? new Uint8Array([165, 156, 16, 86, 74, 65, 157, 255, 140, 103, 173, 12])
-    : crypto.getRandomValues(new Uint8Array(12)); // Generate a random 12-byte IV
+  const iv = test ?
+    new Uint8Array([165, 156, 16, 86, 74, 65, 157, 255, 140, 103, 173, 12]) :
+    crypto.getRandomValues(new Uint8Array(12)); // Generate a random 12-byte IV
 
   const cipherText = await crypto.subtle.encrypt(
     {
-      name: 'AES-GCM',
+      name: "AES-GCM",
       iv: iv,
     },
     key,
@@ -79,8 +81,8 @@ export async function encryptText(key: CryptoKey, text: string, test = false) {
 
 function _byteToHex(byteArr: Uint8Array) {
   const result = Array.from(byteArr)
-    .map(byte => byte.toString(16).padStart(2, '0'))
-    .join('');
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 
   return result;
 }
@@ -89,7 +91,7 @@ export async function decryptText(key: CryptoKey, ciphertext: string) {
   const crypto = getCrypto();
 
   const combined = new Uint8Array(
-    (ciphertext.match(/[\da-f]{2}/gi) || []).map(h => parseInt(h, 16)),
+    (ciphertext.match(/[\da-f]{2}/gi) || []).map((h) => parseInt(h, 16)),
   );
 
   // Extract the IV from the combined array (first 16 bytes)
@@ -101,7 +103,7 @@ export async function decryptText(key: CryptoKey, ciphertext: string) {
   try {
     const decryptedData = await crypto.subtle.decrypt(
       {
-        name: 'AES-GCM',
+        name: "AES-GCM",
         iv,
       },
       key,
@@ -112,7 +114,7 @@ export async function decryptText(key: CryptoKey, ciphertext: string) {
     const plaintext = decoder.decode(decryptedData);
     return plaintext;
   } catch (error) {
-    console.error('Error decrypting ciphertext:', error);
+    console.error("Error decrypting ciphertext:", error);
     throw error;
   }
 }

@@ -42,19 +42,20 @@ export function SuccessSnackbar() {
             // Do something
           },
         }}>
-        <Text
-          style={{
-            color: theme.colors.inverseOnSurface,
-            marginVertical: 0,
-          }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <Ant
             name="checkcircle"
             size={20}
             color={theme.colors.inverseOnSurface}
+            style={{marginRight: 10}}
           />
-          {'  '}
-          {successes}
-        </Text>
+          <Text
+            style={{
+              color: theme.colors.inverseOnSurface,
+            }}>
+            {successes}
+          </Text>
+        </View>
       </Snackbar>
     </View>
   );

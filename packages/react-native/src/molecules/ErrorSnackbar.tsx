@@ -40,19 +40,20 @@ export function ErrorSnackbar() {
             // Do something
           },
         }}>
-        <Text
-          style={{
-            color: theme.colors.inverseOnSurface,
-            marginVertical: 0,
-          }}>
+        <View style={{flexDirection: 'row', alignItems: 'center'}}>
           <MaterialCommunityIcons
             name="warning"
-            size={20}
-            color={theme.colors.inverseOnSurface}
+            size={30}
+            color={theme.colors.errorContainer}
+            style={{marginRight: 10}}
           />
-          {'  '}
-          {errors}
-        </Text>
+          <Text
+            style={{
+              color: theme.colors.inverseOnSurface,
+            }}>
+            {errors}
+          </Text>
+        </View>
       </Snackbar>
     </View>
   );

@@ -13,6 +13,7 @@ export type ScaffoldConfig = {
   onlyLocalBurnerWallet: boolean;
   walletAutoConnect: boolean;
   logSeverity: string;
+  nodeEnv?: 'production';
 };
 
 export const appConfig: ScaffoldConfig = {
@@ -20,7 +21,7 @@ export const appConfig: ScaffoldConfig = {
   logSeverity: Config.LOG_SEVERITY,
   targetNetwork: chains[Config.CHAIN],
   burnerPrivateKey: Config.BURNER_PRIVATE_KEY,
-
+  nodeEnv: Config.NODE_ENV,
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect on the local network
   pollingInterval: 30000,

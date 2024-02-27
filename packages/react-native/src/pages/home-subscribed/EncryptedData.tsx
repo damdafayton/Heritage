@@ -8,7 +8,7 @@ import {useAccount, useSignMessage} from 'wagmi';
 
 import {decryptText, deriveKey, encryptText} from '../../helpers/crpyto';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
-import {reqToken} from '../../utils/api';
+import {getUrl, reqToken} from '../../utils/api';
 import {AppStateContext} from '../../context/AppState.context';
 import {Loading} from '../../molecules/Loading';
 import {
@@ -21,7 +21,7 @@ import {
 } from '../../forms/DataDecryptionForm';
 
 export function EncryptedData() {
-  const {setError} = useContext(AppStateContext);
+  const {setError, setSuccess} = useContext(AppStateContext);
 
   const [encryptedText, setEncryptedText] = useState('');
   const [initialText, setInitialText] = useState('');
@@ -55,8 +55,10 @@ export function EncryptedData() {
 
         log.info({signedToken});
 
+        const url = getUrl(hostName, 'encryptedData');
+
         const {data, status} = await axios.get(
-          `${hostName}/encryptedData?address=${address}&signedToken=${signedToken}`,
+          `${url}?address=${address}&signedToken=${signedToken}`,
         );
 
         log.info({data: JSON.stringify(data), status});
@@ -85,21 +87,20 @@ export function EncryptedData() {
 
       const signedToken = await signMessageAsync({message: token});
 
-      const {status: statusSaveData} = await axios.post(
-        `${hostName}/encryptedData`,
-        {
-          data: JSON.stringify({
-            signedToken,
-            address,
-            encryptedData: vals.clientEncryptedText,
-            emails: vals.emails,
-          }),
-        },
-      );
+      const url = getUrl(hostName, 'encryptedData');
+      const {status: statusSaveData} = await axios.post(url, {
+        data: JSON.stringify({
+          signedToken,
+          address,
+          encryptedData: vals.clientEncryptedText,
+          emails: vals.emails,
+        }),
+      });
 
       log.info({statusSaveData});
 
       if (statusSaveData === 201) {
+        setSuccess({message: 'Data is encryptes and saved successfully.'});
         setEncryptedText(vals.clientEncryptedText);
         setInitialEmails(vals.emails);
         setShowEditForm(false);
@@ -108,6 +109,7 @@ export function EncryptedData() {
       setIsLoading(false);
     } catch (e) {
       log.error(e);
+      setError({message: 'An error occured. Try again.'});
       setIsLoading(false);
     }
   };

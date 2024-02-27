@@ -93,7 +93,6 @@ export function DataEncryptionForm({
   const handleOnSubmit = async (values, {resetForm}) => {
     values.emails = emails;
     values.clientEncryptedText = clientEncryptedText;
-    delete values.text;
 
     await onSubmit(values);
   };

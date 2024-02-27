@@ -1,35 +1,27 @@
 {
   "name": "@se-2/functions",
   "scripts": {
-    "lint": "eslint --ext .js,.ts .",
+    "lint": "eslint --fix --ext .js,.ts .",
     "build": "tsc -p ./tsconfig.json",
     "build:watch": "tsc --watch",
     "serve": "npm run build && firebase emulators:start --only functions",
     "shell": "npm run build && firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
-    "logs": "firebase functions:log",
-    "postinstall": "path-package"
+    "logs": "firebase functions:log"
   },
   "engines": {
     "node": "18"
   },
   "main": "lib/index.js",
   "private": true,
-  "resolutions": {
-    "semver@^7.3.7": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "semver@^7.5.3": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "semver@^6.3.1": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "semver@^7.5.4": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "semver@^7.1.2": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "jsonwebtoken/semver": "file:./node_modules/semver"
-  },
   "dependencies": {
+    "ethers": "^6.9.1",
     "firebase-admin": "^11.8.0",
-    "firebase-functions": "^4.3.1",
-    "patch-package": "^8.0.0"
+    "firebase-functions": "^4.7.0"
   },
   "devDependencies": {
+    "@types/semver": "^6",
     "@typescript-eslint/eslint-plugin": "^5.12.0",
     "@typescript-eslint/parser": "^5.12.0",
     "eslint": "^8.9.0",

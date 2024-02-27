@@ -15,7 +15,8 @@
     "pod:reset": "cd ios && && pod deintegrate && pod cache clean --all && pod install && cd ..",
     "pod": "cd ios && pod install --repo-update && cd ..",
     "server": "cd functions && yarn build:watch",
-    "fire": "firebase emulators:start"
+    "fire": "firebase emulators:start",
+    "fire:deploy": "firebase deploy --only functions"
   },
   "resolutions": {
     "semver@7.5.4": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
