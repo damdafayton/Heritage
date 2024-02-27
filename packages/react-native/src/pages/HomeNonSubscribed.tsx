@@ -15,7 +15,7 @@ export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
     return (
       <View>
         <Text style={styles.text}>
-          You are not registered. Click button below to register.
+          You are not registered. Click below button to register.
         </Text>
         <Button mode="contained" onPress={() => setVisible(true)}>
           Register
@@ -52,6 +52,5 @@ const styles = StyleSheet.create({
   },
   text: {
     alignSelf: 'center',
-    paddingBottom: 15,
   },
 });

@@ -9,16 +9,8 @@ type PropTypes = {
 export function SubscribeView({handleFormSubmit}: PropTypes) {
   return (
     <ScrollView>
-      <View style={styles.contract}>
-        <ContractData />
-      </View>
+      <ContractData />
       <DepositForm onSubmit={handleFormSubmit} />
     </ScrollView>
   );
 }
-
-const styles = StyleSheet.create({
-  contract: {
-    marginBottom: 10,
-  },
-});
