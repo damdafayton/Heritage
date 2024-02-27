@@ -9,6 +9,8 @@ import {SegmentedButtons} from '../ui/SegmentedButtons';
 import {Button} from '../ui/Button';
 import {sleep} from '../utils/utils';
 
+import {styles as globalStyles} from '../ui/styles';
+
 export type DepositFormVals = {
   depositType: string;
   depositAmount: string;
@@ -74,7 +76,7 @@ export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
           {errors.depositAmount && (
             <HelperText type="error">{errors.depositAmount}</HelperText>
           )}
-          <Text style={{marginTop: 14}}>Please choose deposit type</Text>
+          <Text style={{...globalStyles.global}}>Choose deposit type</Text>
           <SegmentedButtons
             value={values.depositType}
             onValueChange={handleChange('depositType')}

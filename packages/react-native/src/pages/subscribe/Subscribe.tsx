@@ -26,8 +26,8 @@ export function Subscribe({visible, setVisible}) {
     } catch (e) {
       log.error(e);
       setError({
-        errors: ['Something went wrong, please try again.'],
-        modalError: true,
+        message: 'Something went wrong, please try again.',
+        isModalVisible: true,
       });
       return {error: e};
     }

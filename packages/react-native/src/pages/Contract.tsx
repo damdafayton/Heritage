@@ -2,13 +2,14 @@ import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('Contract');
 
 import {ContractData} from '../molecules/ContractData';
-import {Text} from '../ui';
+import {Divider, Text} from '../ui';
 
 export function Contract() {
   return (
     <>
       <ContractData />
-      <Text variant="titleMedium">Example fees</Text>
+      <Divider />
+      <Text variant="titleMedium">Fee examples</Text>
       <Text variant="titleSmall">For 1000$</Text>
       <Text>
         {`Calculated fee = 1000 * 0.001 = 1$

@@ -1,15 +1,15 @@
 import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {logger} from '../utils/logger';
-const log = logger('ContractData');
+import {useNetwork} from 'wagmi';
 
 import {ActivityIndicator} from '../ui/ActivityIndicator';
 import {Text} from '../ui/Text';
 import {useContext} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
-import {useNetwork} from 'wagmi';
+import {logger} from '../utils/logger';
+const log = logger('ContractData');
 
-export function ContractData() {
+export function ContractData({style}: {style?: any}) {
   const {minFeePerYear, feeThousandagePerYear} = useContext(
     HerritageWalletContext,
   );
@@ -26,7 +26,7 @@ export function ContractData() {
   }etherscan.io/address/${address}`;
 
   return (
-    <View style={styles.contractData}>
+    <View style={[styles.contractData, style]}>
       {contractIsLoaded ? (
         <View style={styles.contractDataCell}>
           <View style={styles.contractDataRow}>
@@ -61,7 +61,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     columnGap: 2,
-    marginBottom: 5,
   },
   contractDataCell: {
     flex: 1,
