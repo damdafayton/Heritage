@@ -4,8 +4,8 @@
   "private": true,
   "scripts": {
     "android": "ENVFILE=.env.dev react-native run-android",
-    "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --simulator='iPhone 8' --port=8082",
-    "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --simulator='iPhone 8' --port=8082",
+    "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
+    "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
     "lint": "eslint .",
     "start": "react-native start",
     "test": "jest",
@@ -37,7 +37,7 @@
     "@ethersproject/providers": "^5.7.2",
     "@react-native-async-storage/async-storage": "^1.21.0",
     "@react-native-clipboard/clipboard": "^1.13.2",
-    "@react-native-community/netinfo": "^11.2.1",
+    "@react-native-community/netinfo": "^11.3.0",
     "@react-native-firebase/app": "^18.7.3",
     "@react-native-picker/picker": "^2.6.1",
     "@react-navigation/native": "^6.1.9",
@@ -46,7 +46,7 @@
     "@tradle/react-native-http": "^2.0.1",
     "@walletconnect/react-native-compat": "^2.10.6",
     "@web3modal/ethereum": "^2.7.1",
-    "@web3modal/wagmi-react-native": "^1.0.1",
+    "@web3modal/wagmi-react-native": "^1.2.0",
     "assert": "^1.5.1",
     "axios": "^1.6.7",
     "browserify-zlib": "^0.1.4",
@@ -90,9 +90,9 @@
     "tty-browserify": "^0.0.0",
     "url": "^0.10.3",
     "util": "~0.10.3",
-    "viem": "^1.19.13",
+    "viem": "^1.21.4",
     "vm-browserify": "^0.0.4",
-    "wagmi": "^1.4.10"
+    "wagmi": "^1.4.13"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",

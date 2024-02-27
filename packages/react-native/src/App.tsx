@@ -8,7 +8,7 @@
 
 import 'react';
 
-import {W3mButton} from '@web3modal/wagmi-react-native';
+import {W3mButton, Web3Modal} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
 
@@ -26,9 +26,11 @@ import {AppStateContext} from './context/AppState.context';
 import {Tabs} from './molecules/Tabs';
 import {SuccessSnackbar} from './molecules/SuccessSnackbar';
 import {ErrorSnackbar} from './molecules/ErrorSnackbar';
+import {useAutoConnect} from './hooks/useAutoConnect';
 
 const App = () => {
-  log.debug({Config});
+  useAutoConnect();
+  log.debug(JSON.stringify(Config));
 
   const {address: userAddress, isConnecting, isDisconnected} = useAccount();
 
@@ -76,11 +78,13 @@ const App = () => {
       `Connection error to contract at ${heritageAddress}. Will try again in 4 seconds`,
     );
 
-    setTimeout(() => {
+    const timeoutId = setTimeout(() => {
       refetch();
       refetch2();
       forceUpdate();
-    }, 2000);
+    }, 10000);
+
+    return () => clearTimeout(timeoutId);
   }, [key]);
 
   const [errors, setError] = useState<string[]>([]);
@@ -119,7 +123,8 @@ const App = () => {
           feeThousandagePerYear,
         }}>
         <Appbar key={appBarKey} />
-        <W3mButton balance="hide" />
+        <W3mButton balance="show" />
+        <Web3Modal />
         <Tabs
           isConnected={isConnected}
           isSubscribed={isSubscribed}

@@ -4,6 +4,8 @@ declare module 'react-native-config' {
     FIRESTORE_HOST: string;
     LOG_SEVERITY: string;
     CHAIN: string;
+    PUBLIC_ALCHEMY_API_KEY: string;
+    BURNER_PRIVATE_KEY: `0x${string}`;
   }
 
   export const Config: NativeConfig;

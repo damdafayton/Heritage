@@ -16,7 +16,7 @@ export type FindHeritageWalletFunction = (functionName: Names) => AbiFunction;
 
 export function useHeritageWalletContract() {
   const {chain, chains} = useNetwork();
-
+  console.log('chain', chain);
   if (!chain?.id) {
     const error = 'Chain or chain ID can not be found.';
     log.error(error);

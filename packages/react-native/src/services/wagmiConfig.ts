@@ -59,7 +59,7 @@ const connectors = [
 ];
 
 const wagmiConfig = createConfig({
-  autoConnect: appConfig.onlyLocalBurnerWallet,
+  autoConnect: false,
   connectors,
   publicClient,
 });
