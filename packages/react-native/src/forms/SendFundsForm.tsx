@@ -78,8 +78,9 @@ export function SendFundsForm({
           {errors.depositAmount && (
             <HelperText type="error">{errors.depositAmount}</HelperText>
           )}
-          <Text style={{marginTop: 14}}>Please choose deposit type</Text>
+          <Text style={{marginTop: 14}}>Choose deposit type</Text>
           <SegmentedButtons
+            withLabel={true}
             value={values.depositType}
             onValueChange={handleChange('depositType')}
             buttons={[

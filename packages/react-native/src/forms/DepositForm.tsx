@@ -78,7 +78,7 @@ export function DepositForm({onSubmit, isLoading}: DepositFormProps) {
           )}
           <Text style={{...globalStyles.global}}>Choose deposit type</Text>
           <SegmentedButtons
-            style={{marginTop: 10}}
+            withLabel={true}
             value={values.depositType}
             onValueChange={handleChange('depositType')}
             buttons={[

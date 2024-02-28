@@ -6,7 +6,8 @@ import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {useConvertDepositToWei} from '../../forms/hooks/useConvertDepositToWei';
 import {SendFundsForm, SendFundsFormVals} from '../../forms/SendFundsForm';
 import {logger} from '../../utils/logger';
-import {StyleSheet, Text, View} from 'react-native';
+import {StyleSheet, View} from 'react-native';
+import {Text} from '../../ui';
 const log = logger('SendFunds');
 
 export function SendFunds(props) {

@@ -101,150 +101,148 @@ export function DataEncryptionForm({
   const theme = useTheme();
 
   return (
-    <ScrollView>
-      <Formik
-        enableReinitialize={true}
-        initialValues={{
-          secretKey: '',
-          text: initialText,
-          emails: initialEmails,
-          clientEncryptedText: '',
-        }}
-        validateOnChange={validateOnChange}
-        validateOnBlur={validateOnChange}
-        validateOnMount={false}
-        validate={validate}
-        onSubmit={handleOnSubmit}>
-        {({handleChange, handleBlur, handleSubmit, values, errors}) => (
-          <View>
+    <Formik
+      enableReinitialize={true}
+      initialValues={{
+        secretKey: '',
+        text: initialText,
+        emails: initialEmails,
+        clientEncryptedText: '',
+      }}
+      validateOnChange={validateOnChange}
+      validateOnBlur={validateOnChange}
+      validateOnMount={false}
+      validate={validate}
+      onSubmit={handleOnSubmit}>
+      {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+        <View>
+          <TextInput
+            style={styles.data}
+            label={'Data'}
+            multiline={true}
+            placeholder={'Type your data'}
+            value={values.text}
+            onChangeText={async text => {
+              handleChange('text')(text);
+
+              if (text) {
+                try {
+                  const encryptedText = await deriveKeyAndEncryptText(
+                    text,
+                    values.secretKey,
+                  );
+
+                  setClientEncryptedText(encryptedText);
+                } catch (e) {
+                  log.error(e);
+                }
+              } else {
+                setClientEncryptedText('');
+              }
+            }}
+            onBlur={handleBlur('text')}
+          />
+          {errors.text && <HelperText type="error">{errors.text}</HelperText>}
+          <Tooltip
+            title={
+              'You must give this key to the owner of the email addresses that you declare'
+            }>
             <TextInput
-              style={styles.data}
-              label={'Data'}
-              multiline={true}
-              placeholder={'Type your data'}
-              value={values.text}
-              onChangeText={async text => {
-                handleChange('text')(text);
+              label={'Key'}
+              placeholder="Type a secret key"
+              value={values.secretKey}
+              onChangeText={async key => {
+                handleChange('secretKey')(key);
 
-                if (text) {
-                  try {
-                    const encryptedText = await deriveKeyAndEncryptText(
-                      text,
-                      values.secretKey,
-                    );
+                if (!values.text) return;
 
-                    setClientEncryptedText(encryptedText);
-                  } catch (e) {
-                    log.error(e);
-                  }
-                } else {
-                  setClientEncryptedText('');
+                try {
+                  const encryptedText = await deriveKeyAndEncryptText(
+                    values.text,
+                    key,
+                  );
+
+                  setClientEncryptedText(encryptedText);
+                } catch (e) {
+                  log.error(e);
                 }
               }}
-              onBlur={handleBlur('text')}
+              onBlur={handleBlur('secretKey')}
             />
-            {errors.text && <HelperText type="error">{errors.text}</HelperText>}
-            <Tooltip
-              title={
-                'You must give this key to the owner of the email addresses that you declare'
-              }>
+          </Tooltip>
+          {errors.secretKey && (
+            <HelperText type="error">{errors.secretKey}</HelperText>
+          )}
+          {emails.map((email, idx) => (
+            <View key={`email${idx}`}>
               <TextInput
-                label={'Key'}
-                placeholder="Type a secret key"
-                value={values.secretKey}
-                onChangeText={async key => {
-                  handleChange('secretKey')(key);
-
-                  if (!values.text) return;
-
-                  try {
-                    const encryptedText = await deriveKeyAndEncryptText(
-                      values.text,
-                      key,
-                    );
-
-                    setClientEncryptedText(encryptedText);
-                  } catch (e) {
-                    log.error(e);
-                  }
+                label={emails.length > 1 ? `Email-${idx + 1}` : 'Email'}
+                onChangeText={text => {
+                  setEmail(idx, text);
                 }}
-                onBlur={handleBlur('secretKey')}
+                onBlur={handleBlur(`email${idx}`)}
+                placeholder="Type an email address"
+                value={emails[idx]}
+                right={
+                  idx && (
+                    <TextInput.Icon
+                      icon="minus"
+                      onPress={() => deleteEmail(idx)}
+                    />
+                  )
+                }
               />
-            </Tooltip>
-            {errors.secretKey && (
-              <HelperText type="error">{errors.secretKey}</HelperText>
-            )}
-            {emails.map((email, idx) => (
-              <View key={`email${idx}`}>
-                <TextInput
-                  label={emails.length > 1 ? `Email-${idx + 1}` : 'Email'}
-                  onChangeText={text => {
-                    setEmail(idx, text);
-                  }}
-                  onBlur={handleBlur(`email${idx}`)}
-                  placeholder="Type an email address"
-                  value={emails[idx]}
-                  right={
-                    idx && (
-                      <TextInput.Icon
-                        icon="minus"
-                        onPress={() => deleteEmail(idx)}
-                      />
-                    )
-                  }
-                />
-                {errors[`email${idx}`] && (
-                  <HelperText key={`error${idx}`} type="error">
-                    {errors[`email${idx}`]}
-                  </HelperText>
-                )}
-              </View>
-            ))}
+              {errors[`email${idx}`] && (
+                <HelperText key={`error${idx}`} type="error">
+                  {errors[`email${idx}`]}
+                </HelperText>
+              )}
+            </View>
+          ))}
 
-            <TouchableOpacity
-              onPress={onPressAddAnotherEmail}
-              style={{
-                marginTop: 16,
-                flexDirection: 'row',
-                gap: 6,
-                alignItems: 'center',
-              }}>
-              <AntDesign
-                name="pluscircle"
-                size={20}
-                color={theme.colors.tertiary}
-              />
-              <Text>Add another email</Text>
-            </TouchableOpacity>
-            {clientEncryptedText ? (
-              <Tooltip title={'Encryption is done on the client side.'}>
-                <>
-                  <Text style={{marginTop: 16}}>
-                    This is what we will see and save:
-                  </Text>
-                  <Text
-                    style={{
-                      ...globalStyles.encryptedDataBox,
-                      backgroundColor: colors.primaryContainer,
-                    }}>
-                    {clientEncryptedText}
-                  </Text>
-                </>
-              </Tooltip>
-            ) : (
-              ''
-            )}
-            <Button
-              loading={loading}
-              mode={'contained'}
-              onPress={e =>
-                handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
-              }>
-              Save
-            </Button>
-          </View>
-        )}
-      </Formik>
-    </ScrollView>
+          <TouchableOpacity
+            onPress={onPressAddAnotherEmail}
+            style={{
+              marginTop: 16,
+              flexDirection: 'row',
+              gap: 6,
+              alignItems: 'center',
+            }}>
+            <AntDesign
+              name="pluscircle"
+              size={20}
+              color={theme.colors.tertiary}
+            />
+            <Text>Add another email</Text>
+          </TouchableOpacity>
+          {clientEncryptedText ? (
+            <Tooltip title={'Encryption is done on the client side.'}>
+              <>
+                <Text style={{marginTop: 16}}>
+                  This is what we will see and save:
+                </Text>
+                <Text
+                  style={{
+                    ...globalStyles.encryptedDataBox,
+                    backgroundColor: colors.primaryContainer,
+                  }}>
+                  {clientEncryptedText}
+                </Text>
+              </>
+            </Tooltip>
+          ) : (
+            ''
+          )}
+          <Button
+            loading={loading}
+            mode={'contained'}
+            onPress={e =>
+              handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
+            }>
+            Save
+          </Button>
+        </View>
+      )}
+    </Formik>
   );
 }

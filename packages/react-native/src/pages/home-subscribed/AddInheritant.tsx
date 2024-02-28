@@ -9,7 +9,7 @@ import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {useContext, useEffect, useState} from 'react';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {isSubscribed} from '../../helpers/isSubscribed';
-import {List, Text, Tooltip} from '../../ui';
+import {List, Tooltip} from '../../ui';
 import {AppStateContext} from '../../context/AppState.context';
 
 export function AddInheritant() {

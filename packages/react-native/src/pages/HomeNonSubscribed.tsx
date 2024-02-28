@@ -1,4 +1,4 @@
-import {StyleSheet, Text, View, ScrollView} from 'react-native';
+import {StyleSheet, View, ScrollView} from 'react-native';
 import {useState} from 'react';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('HomeNonSubscribed');
@@ -9,6 +9,7 @@ import {ActivityIndicator} from '../ui/ActivityIndicator';
 import {Subscribe} from './subscribe/Subscribe';
 import {W3mConnectButton} from '@web3modal/wagmi-react-native';
 import {useAccount} from 'wagmi';
+import {Text} from '../ui';
 
 export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
   const [visible, setVisible] = useState(false);
@@ -29,7 +30,9 @@ export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
 
   return (
     <ScrollView style={styles.view}>
-      <Text style={styles.title}>HERITAGE</Text>
+      <Text variant="titleMedium" style={styles.title}>
+        HERITAGE
+      </Text>
       {isUserDisconnected ? (
         <W3mConnectButton
           label="Connect your wallet"

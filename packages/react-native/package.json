@@ -61,7 +61,7 @@
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
     "ethers": "^6.9.1",
-    "events": "^1.0.0",
+    "events": "^3.3.0",
     "formik": "^2.4.5",
     "https-browserify": "^0.0.1",
     "patch-package": "^8.0.0",

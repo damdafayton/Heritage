@@ -57,6 +57,8 @@ export function useAutoConnect() {
   const accountState = useAccount();
 
   useEffect(() => {
+    log.debug('accountState.isConnected', accountState.isConnected);
+
     (async () => {
       if (accountState.isConnected) {
         // user is connected, set walletName
@@ -73,8 +75,12 @@ export function useAutoConnect() {
 
   useEffect(() => {
     (async () => {
+      const previousWalletId = await AsyncStorage.getItem(WALLET_ID_KEY);
+      log.debug('previousWalletId', previousWalletId);
+      log.debug('accountState', accountState);
+
       const initialConnector = getInitialConnector(
-        await AsyncStorage.getItem(WALLET_ID_KEY),
+        previousWalletId,
         connectState.connectors,
       );
 

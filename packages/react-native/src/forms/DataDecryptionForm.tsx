@@ -42,50 +42,48 @@ export function DataDecryptionForm({
   };
 
   return (
-    <ScrollView>
-      <Formik
-        enableReinitialize={true}
-        initialValues={{
-          secretKey: '',
-        }}
-        validateOnChange={validateOnChange}
-        validateOnBlur={validateOnChange}
-        validateOnMount={false}
-        validate={validate}
-        onSubmit={async (values, {resetForm}) => {
-          await onSubmitDecrypt(values);
+    <Formik
+      enableReinitialize={true}
+      initialValues={{
+        secretKey: '',
+      }}
+      validateOnChange={validateOnChange}
+      validateOnBlur={validateOnChange}
+      validateOnMount={false}
+      validate={validate}
+      onSubmit={async (values, {resetForm}) => {
+        await onSubmitDecrypt(values);
 
-          resetForm();
-        }}>
-        {({handleChange, handleBlur, handleSubmit, values, errors}) => (
-          <View>
-            <Text
-              style={{
-                ...globalStyles.encryptedDataBox,
-                backgroundColor: colors.primaryContainer,
-              }}>
-              {initialEncryptedText}
-            </Text>
-            <TextInput
-              placeholder="Type your secret key"
-              value={values.secretKey}
-              onChangeText={handleChange('secretKey')}
-              onBlur={handleBlur('secretKey')}
-            />
-            {errors.secretKey && (
-              <HelperText type="error">{errors.secretKey}</HelperText>
-            )}
-            <Button
-              loading={loading}
-              mode={'contained'}
-              onPress={e =>
-                handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
-              }>
-              Decrypt
-            </Button>
-          </View>
-        )}
-      </Formik>
-    </ScrollView>
+        resetForm();
+      }}>
+      {({handleChange, handleBlur, handleSubmit, values, errors}) => (
+        <View>
+          <Text
+            style={{
+              ...globalStyles.encryptedDataBox,
+              backgroundColor: colors.primaryContainer,
+            }}>
+            {initialEncryptedText}
+          </Text>
+          <TextInput
+            placeholder="Type your secret key"
+            value={values.secretKey}
+            onChangeText={handleChange('secretKey')}
+            onBlur={handleBlur('secretKey')}
+          />
+          {errors.secretKey && (
+            <HelperText type="error">{errors.secretKey}</HelperText>
+          )}
+          <Button
+            loading={loading}
+            mode={'contained'}
+            onPress={e =>
+              handleSubmit(e as unknown as FormEvent<HTMLFormElement>)
+            }>
+            Decrypt
+          </Button>
+        </View>
+      )}
+    </Formik>
   );
 }

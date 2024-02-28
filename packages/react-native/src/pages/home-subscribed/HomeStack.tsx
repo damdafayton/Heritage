@@ -12,6 +12,9 @@ import {useTheme} from 'react-native-paper';
 import {SendFunds} from './SendFunds';
 import {Deposit} from './Deposit';
 import {AddInheritant} from './AddInheritant';
+import {ScrollView} from 'react-native';
+import {styles} from '../../ui/styles';
+import {Text} from '../../ui';
 
 const log = logger('HomeStack');
 
@@ -28,6 +31,15 @@ export function HomeStack() {
 
   const globalScreenOptions = {headerShown: false};
 
+  const StyledScrollView = ({children, ...props}) => {
+    return (
+      <ScrollView {...props}>
+        {children}
+        <Text style={{marginBottom: 24}}>{''}</Text>
+      </ScrollView>
+    );
+  };
+
   return (
     <>
       <PolyfillCrypto />
@@ -38,34 +50,53 @@ export function HomeStack() {
             // paddingTop: 4,
             flexDirection: 'column',
             rowGap: 2,
-            marginBottom: 16,
           },
         }}>
         <Stack.Screen
           name={HomeSubscribedType.HOME}
-          component={HomeSubscribed}
-          options={{...globalScreenOptions}}
-        />
+          options={{...globalScreenOptions}}>
+          {props => (
+            <StyledScrollView {...props}>
+              <HomeSubscribed />
+            </StyledScrollView>
+          )}
+        </Stack.Screen>
         <Stack.Screen
           name={HomeSubscribedType.DEPOSIT}
           options={{...globalScreenOptions}}>
-          {props => <Deposit {...props} />}
+          {props => (
+            <StyledScrollView {...props}>
+              <Deposit />
+            </StyledScrollView>
+          )}
         </Stack.Screen>
         <Stack.Screen
           options={globalScreenOptions}
-          name={HomeSubscribedType.ENCRYPTED_DATA}
-          component={EncryptedData}
-        />
+          name={HomeSubscribedType.ENCRYPTED_DATA}>
+          {props => (
+            <StyledScrollView {...props}>
+              <EncryptedData></EncryptedData>
+            </StyledScrollView>
+          )}
+        </Stack.Screen>
         <Stack.Screen
           name={HomeSubscribedType.SEND}
           options={globalScreenOptions}>
-          {props => <SendFunds {...props} />}
+          {props => (
+            <StyledScrollView {...props}>
+              <SendFunds />
+            </StyledScrollView>
+          )}
         </Stack.Screen>
         <Stack.Screen
           name={HomeSubscribedType.ADD_INHERITANT}
-          options={globalScreenOptions}
-          component={AddInheritant}
-        />
+          options={globalScreenOptions}>
+          {props => (
+            <StyledScrollView {...props}>
+              <AddInheritant />
+            </StyledScrollView>
+          )}
+        </Stack.Screen>
       </Stack.Navigator>
     </>
   );

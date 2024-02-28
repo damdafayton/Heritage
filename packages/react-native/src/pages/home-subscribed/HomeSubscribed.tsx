@@ -1,5 +1,5 @@
 import {useContext, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -119,6 +119,7 @@ export function HomeSubscribed() {
           },
         ]}
       />
+      <Divider />
       <BackgroundTask />
     </>
   );

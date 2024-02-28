@@ -8,7 +8,7 @@ const log = logger.createLogger().extend('utils/api');
 const hostName = appConfig.hostName;
 
 export function getUrl(endPoint: string) {
-  const isProd = appConfig.nodeEnv === 'production';
+  const isProd = hostName.startsWith('https://');
   const url = isProd
     ? 'https://' + endPoint.toLowerCase() + '-' + hostName.split('https://')[1]
     : hostName + '/' + endPoint;
@@ -43,4 +43,12 @@ export async function pingServer(address, token) {
       token,
     }),
   });
+}
+
+export async function getUserData(address: Address, signedToken) {
+  const url = getUrl('user');
+
+  return await axios.get(
+    `${url}?address=${address}&signedToken=${signedToken}`,
+  );
 }

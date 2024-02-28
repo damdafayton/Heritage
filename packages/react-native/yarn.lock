@@ -3884,7 +3884,7 @@ __metadata:
     domain-browser: ^1.2.0
     eslint: ^8.19.0
     ethers: ^6.9.1
-    events: ^1.0.0
+    events: ^3.3.0
     firebase-admin: ^12.0.0
     formik: ^2.4.5
     https-browserify: ^0.0.1
@@ -9274,7 +9274,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"events@npm:^1.0.0, events@npm:^1.0.2":
+"events@npm:^1.0.2":
   version: 1.1.1
   resolution: "events@npm:1.1.1"
   checksum: 40431eb005cc4c57861b93d44c2981a49e7feb99df84cf551baed299ceea4444edf7744733f6a6667e942af687359b1f4a87ec1ec4f21d5127dac48a782039b9

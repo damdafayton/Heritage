@@ -1,12 +1,16 @@
-import {View} from 'react-native';
-import {Button, Tooltip} from '../ui';
-import {useEffect, useState} from 'react';
+import {TouchableOpacity, View} from 'react-native';
+import {Button, Text, Tooltip} from '../ui';
+import {useCallback, useEffect, useState} from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import AntDesign from 'react-native-vector-icons/AntDesign';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+
 import {useAccount, useSignMessage} from 'wagmi';
-import {pingServer, reqToken} from '../utils/api';
+import {getUserData, pingServer, reqToken} from '../utils/api';
 import {logger} from '../utils/logger';
 import {useTheme} from 'react-native-paper';
+import {styles} from '../ui/styles';
 const log = logger('BackgroundTask');
 
 const BACKGROUND_TRACKING_KEY = 'com.herritage.backgroundTracking';
@@ -16,6 +20,7 @@ export function BackgroundTask() {
 
   const [canPingServer, setCanPingServer] = useState(false);
   const [isChecking, setIsChecking] = useState(true);
+  const [lastPingTimestamp, setLastPingTimestamp] = useState('');
 
   useEffect(() => {
     if (!address) {
@@ -69,47 +74,79 @@ export function BackgroundTask() {
     setCanPingServer(false);
   };
 
+  const refreshTimestamp = useCallback(async () => {
+    const signedToken = (await AsyncStorage.getItem(
+      BACKGROUND_TRACKING_KEY,
+    )) as `0x${string}`;
+
+    const {data} = await getUserData(address as `0x${string}`, signedToken);
+
+    setLastPingTimestamp(data?.timestamp);
+  }, [setLastPingTimestamp]);
+
   useEffect(() => {
     if (canPingServer) {
       (async () => {
-        const signedToken = (await AsyncStorage.getItem(
-          BACKGROUND_TRACKING_KEY,
-        )) as `0x${string}`;
-
-        startBackgroundFetch(address, signedToken);
+        await refreshTimestamp();
       })();
     }
-  }, [canPingServer]);
+  }, [canPingServer, setLastPingTimestamp]);
 
   const theme = useTheme();
 
   if (isChecking) return <></>;
 
   return (
-    <View>
+    <View style={styles.global}>
       {!canPingServer ? (
-        <Tooltip
-          title={
-            'This button enables the app to send a ping to the server every 15 minutes to confirm that you are still alive.'
-          }>
+        <>
+          <Text style={{marginTop: 0}}>
+            <AntDesign name="warning" color={theme.colors.error} /> Your app is
+            not pinging the server to confirm that you are alive. If an account
+            is inactive for 30 days:
+          </Text>
+          <Text>1) It's inheritance will be distributed. </Text>
+          <Text>
+            2) It's encrypted data will be delivered to registered receivers.
+          </Text>
+          <Text>
+            This button enables the app to send a ping in the background to the
+            server every 15 minutes to confirm that you are still alive.
+          </Text>
           <Button
             loading={isLoadingSign}
             mode="contained-tonal"
             buttonColor={theme.colors.success}
             textColor={theme.colors.background}
             onPress={startTracking}>
-            Start tracking if I'm alive
+            Start I'm alive tracker
           </Button>
-        </Tooltip>
+        </>
       ) : (
-        <Button
-          loading={isLoadingSign}
-          mode="contained-tonal"
-          onPress={stopTracking}
-          textColor={theme.colors.background}
-          buttonColor={theme.colors.error}>
-          Stop tracking that I'm alive
-        </Button>
+        <>
+          <Text style={{marginTop: 0}}>
+            <AntDesign size={14} name="check" color={theme.colors.success} />{' '}
+            App is pinging the server to notify that you are alive.
+          </Text>
+          {lastPingTimestamp && (
+            <Text>
+              Last ping: {new Date(lastPingTimestamp).toLocaleString()}{' '}
+              <TouchableOpacity
+                onPress={refreshTimestamp}
+                style={{marginBottom: -1}}>
+                <MaterialCommunityIcons size={14} name="refresh" />
+              </TouchableOpacity>
+            </Text>
+          )}
+          <Button
+            loading={isLoadingSign}
+            mode="contained-tonal"
+            onPress={stopTracking}
+            textColor={theme.colors.background}
+            buttonColor={theme.colors.error}>
+            Stop I'm alive tracker
+          </Button>
+        </>
       )}
     </View>
   );
@@ -123,7 +160,6 @@ async function startBackgroundFetch(address, signedToken) {
     // await this.addEvent(taskId);
     // IMPORTANT:  You must signal to the OS that your task is complete.
     await pingServer(address as `0x${string}`, signedToken);
-
     BackgroundFetch.finish(taskId);
   };
 
