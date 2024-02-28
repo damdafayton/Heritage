@@ -6,6 +6,7 @@
     "android": "ENVFILE=.env.dev react-native run-android",
     "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
     "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
+    "ios:build": "yarn pod && ENVFILE=.env.prod react-native run-ios --port=8082 --device 'yucel’s iPhone' --mode Release",
     "lint": "eslint .",
     "start": "react-native start --port=8082 --reset-cache",
     "test": "jest",

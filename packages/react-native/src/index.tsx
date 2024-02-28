@@ -16,10 +16,10 @@ Promise.allSettled =
       ),
     ));
 
-import 'react';
 import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
+import React from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {NavigationContainer} from '@react-navigation/native';
 import {

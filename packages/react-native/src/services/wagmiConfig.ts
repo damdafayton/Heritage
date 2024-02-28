@@ -3,11 +3,11 @@ import {alchemyProvider} from 'wagmi/providers/alchemy';
 import {publicProvider} from 'wagmi/providers/public';
 import {mainnet, hardhat} from 'wagmi/chains';
 import {WalletConnectConnector} from '@web3modal/wagmi-react-native/src/connectors/WalletConnectConnector';
+import {Platform} from 'react-native';
 
 import {getTargetNetwork} from '../helpers/network';
 import {appConfig} from '../../app.config';
 import {burnerWalletConfig} from './wagmi-burner/burnerWalletConfig';
-import {Platform} from 'react-native';
 
 const configuredNetwork = getTargetNetwork();
 // We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
@@ -21,12 +21,6 @@ const {chains, publicClient} = configureChains(enabledChains, [
   alchemyProvider({apiKey: appConfig.alchemyApiKey}),
   publicProvider(),
 ]);
-
-// const wagmiConfig = createConfig({
-//   autoConnect: true,
-//   // connectors,
-//   publicClient,
-// });
 
 // 2. Create config
 const metadata = {
@@ -60,6 +54,7 @@ const connectors = [
   ...burnerWalletConnector,
 ];
 
+// Remove injected connector on mobile
 const removeInjected = connectors.filter(
   c => Platform.OS === 'web' || c.id !== 'injected',
 );

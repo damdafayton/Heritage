@@ -4,10 +4,10 @@ import {logger} from 'react-native-logs';
 import {appConfig} from '../../app.config';
 const log = logger.createLogger().extend('api');
 
-export function getUrl(hostName, endPoint) {
+export function getUrl(hostName: string, endPoint: string) {
   const isProd = appConfig.nodeEnv === 'production';
   const url = isProd
-    ? 'https://' + endPoint + '-' + hostName.split('https://')[1]
+    ? 'https://' + endPoint.toLowerCase() + '-' + hostName.split('https://')[1]
     : hostName + '/' + endPoint;
 
   return url;
