@@ -34,6 +34,10 @@
     "semver@^5.6.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch"
   },
   "dependencies": {
+    "@walletconnect/react-native-compat": "^2.10.6",
+    "@web3modal/wagmi-react-native": "^1.0.1",
+    "wagmi": "^1.4.10",
+    "viem": "^1.19.13",
     "@ethersproject/providers": "^5.7.2",
     "@react-native-async-storage/async-storage": "1.21.0",
     "@react-native-clipboard/clipboard": "1.12.1",
@@ -44,10 +48,8 @@
     "@react-navigation/native-stack": "^6.9.17",
     "@sentry/react-native": "^5.19.1",
     "@tradle/react-native-http": "^2.0.1",
-    "@walletconnect/react-native-compat": "2.11.2",
     "@web3modal/coinbase-wagmi-react-native": "1.3.0-alpha.0",
     "@web3modal/ethereum": "^2.7.1",
-    "@web3modal/wagmi-react-native": "1.3.0-alpha.1",
     "assert": "^1.5.1",
     "axios": "^1.6.7",
     "browserify-zlib": "^0.1.4",
@@ -93,9 +95,7 @@
     "tty-browserify": "^0.0.0",
     "url": "^0.10.3",
     "util": "~0.10.3",
-    "viem": "^1.21.4",
-    "vm-browserify": "^0.0.4",
-    "wagmi": "^1.4.13"
+    "vm-browserify": "^0.0.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
