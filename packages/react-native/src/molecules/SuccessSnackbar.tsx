@@ -15,8 +15,6 @@ export function SuccessSnackbar() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    log.debug(successes);
-
     if (successes.length) {
       setVisible(true);
       return;

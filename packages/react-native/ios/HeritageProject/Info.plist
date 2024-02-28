@@ -29,6 +29,7 @@
 	<string>????</string>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>
+		<string>metamask</string>
 		<string>rainbow</string>
 		<string>trust</string>
 		<string>safe</string>
@@ -70,7 +71,6 @@
 		<string>haha</string>
 		<string>modularwallet</string>
 		<string>coinomi</string>
-		<!-- <string>metamask</string> -->
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>

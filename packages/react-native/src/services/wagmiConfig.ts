@@ -2,8 +2,7 @@ import {configureChains, createConfig} from 'wagmi';
 import {alchemyProvider} from 'wagmi/providers/alchemy';
 import {publicProvider} from 'wagmi/providers/public';
 import {mainnet, hardhat} from 'wagmi/chains';
-import {defaultWagmiConfig} from '@web3modal/wagmi-react-native';
-import {w3mConnectors} from '@web3modal/ethereum';
+import {WalletConnectConnector} from '@web3modal/wagmi-react-native/src/connectors/WalletConnectConnector';
 
 import {getTargetNetwork} from '../helpers/network';
 import {appConfig} from '../../app.config';
@@ -54,7 +53,10 @@ const burnerWalletConnector = allowBurner
   : [];
 
 const connectors = [
-  ...w3mConnectors({chains, projectId: appConfig.walletConnectProjectId}),
+  new WalletConnectConnector({
+    chains,
+    options: {projectId: appConfig.walletConnectProjectId, metadata},
+  }),
   ...burnerWalletConnector,
 ];
 
@@ -67,11 +69,5 @@ const wagmiConfig = createConfig({
   connectors: removeInjected,
   publicClient,
 });
-
-// const wagmiConfig = defaultWagmiConfig({
-//   chains,
-//   projectId: appConfig.walletConnectProjectId,
-//   metadata,
-// });
 
 export {wagmiConfig, chains};

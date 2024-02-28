@@ -75,15 +75,17 @@ const App = () => {
   const [key, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    if (isConnected) return;
+    log.debug({isConnected, isUserDisconnected});
+    if (isConnected || isUserDisconnected) return;
 
     if (minFeePerYear && feeThousandagePerYear) {
       setIsConnected(true);
+      log.debug('Connected to contract');
       return;
     }
 
     log.error(
-      `Connection error to contract at ${heritageAddress}. Will try again in 4 seconds`,
+      `Connection error to contract at ${heritageAddress}. Will try again in 10 seconds`,
     );
 
     const timeoutId = setTimeout(() => {
@@ -93,7 +95,7 @@ const App = () => {
     }, 10000);
 
     return () => clearTimeout(timeoutId);
-  }, [key]);
+  }, [key, isUserDisconnected]);
 
   const [errors, setError] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);

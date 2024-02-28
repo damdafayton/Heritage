@@ -1,3 +1,21 @@
+// @web3modal/wagmi-react-native polyfill
+Promise.allSettled =
+  Promise.allSettled ||
+  (promises =>
+    Promise.all(
+      promises.map(p =>
+        p
+          .then(value => ({
+            status: 'fulfilled',
+            value,
+          }))
+          .catch(reason => ({
+            status: 'rejected',
+            reason,
+          })),
+      ),
+    ));
+
 import 'react';
 import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
@@ -47,6 +65,7 @@ createWeb3Modal({
   wagmiConfig,
   clipboardClient,
   featuredWalletIds: [
+    'c57ca95b47569778a828d19178114f4db188b89b763c899ba0be274e97267d96', // MetaMask
     'f5b4eeb6015d66be3f5940a895cbaa49ef3439e518cd771270e6b553b48f31d2', // MEW
     '1ae92b26df02f0abca6304df07debccd18262fdf5fe82daa81593582dac9a369', // Rainbow
     '8a0ee50d1f22f6651afcae7eb4253e52a3310b90af5daef78a8c4929a9bb99d4', // Binance

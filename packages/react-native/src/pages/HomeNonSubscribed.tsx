@@ -37,7 +37,7 @@ export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
         />
       ) : !isConnected ? (
         <>
-          <Text style={styles.text}>
+          <Text style={[styles.text, {marginBottom: 14}]}>
             Waiting for connection to the contract
           </Text>
           <ActivityIndicator />
