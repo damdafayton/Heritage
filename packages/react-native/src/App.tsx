@@ -8,7 +8,7 @@
 
 import 'react';
 
-import {W3mButton, Web3Modal} from '@web3modal/wagmi-react-native';
+import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
 
@@ -25,10 +25,8 @@ import {SuccessSnackbar} from './molecules/SuccessSnackbar';
 import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
-import {useBackgroundWork} from './hooks/useBackgroundWork';
 import {Tasks} from './molecules/Tasks';
 import * as Sentry from '@sentry/react-native';
-import {Button} from 'react-native';
 
 Sentry.init({
   dsn: 'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
@@ -131,7 +129,6 @@ const App = () => {
         <Tasks />
         <Appbar key={appBarKey} />
         <W3mButton balance="show" />
-        <Web3Modal />
         <Tabs
           isConnected={isConnected}
           isSubscribed={isSubscribed}

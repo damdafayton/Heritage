@@ -9,6 +9,8 @@ import {AppStateContext} from '../context/AppState.context';
 import {useTheme} from 'react-native-paper';
 import {globalStyles} from '../styles';
 import {styles} from './styles';
+import {logger} from '../utils/logger';
+const log = logger('DataEncryptionForm');
 
 export type EncryptedDataFormVals = {
   secretKey: string;
@@ -74,7 +76,6 @@ export function DataEncryptionForm({
   };
 
   const onPressAddAnotherEmail = () => {
-    console.log({emails});
     if (emails.every(x => x)) {
       setEmails([...emails, '']);
     } else {
@@ -134,7 +135,7 @@ export function DataEncryptionForm({
 
                     setClientEncryptedText(encryptedText);
                   } catch (e) {
-                    console.error(e);
+                    log.error(e);
                   }
                 } else {
                   setClientEncryptedText('');
@@ -164,7 +165,7 @@ export function DataEncryptionForm({
 
                     setClientEncryptedText(encryptedText);
                   } catch (e) {
-                    console.error(e);
+                    log.error(e);
                   }
                 }}
                 onBlur={handleBlur('secretKey')}

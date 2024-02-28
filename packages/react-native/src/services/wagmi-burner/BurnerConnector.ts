@@ -20,6 +20,8 @@ import {
   BurnerConnectorOptions,
 } from './BurnerConnectorTypes';
 import {appConfig} from '../../../app.config';
+import {logger} from '../../utils/logger';
+const log = logger('BurnerConnector');
 
 export const burnerWalletId = 'burner-wallet';
 export const burnerWalletName = 'Burner Wallet';
@@ -111,7 +113,7 @@ export class BurnerConnector extends Connector<
   }
 
   disconnect(): Promise<void> {
-    console.log('disconnect from burnerwallet');
+    log.info('disconnect from burnerwallet');
     return Promise.resolve();
   }
 
@@ -166,6 +168,6 @@ export class BurnerConnector extends Connector<
     this.burnerWallet = client;
   }
   protected onDisconnect(error: Error): void {
-    if (error) console.warn(error);
+    if (error) log.warn(error);
   }
 }

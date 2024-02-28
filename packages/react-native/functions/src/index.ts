@@ -7,23 +7,23 @@
  * See a full list of supported triggers at https://firebase.google.com/docs/functions
  */
 
-import {onRequest} from "firebase-functions/v2/https";
-import * as functions from "firebase-functions";
+import {onRequest} from 'firebase-functions/v2/https';
+import * as functions from 'firebase-functions';
 
 const {logger} = functions;
 
-import {initializeApp} from "firebase-admin/app";
-import {getFirestore} from "firebase-admin/firestore";
+import {initializeApp} from 'firebase-admin/app';
+import {getFirestore} from 'firebase-admin/firestore';
 
 initializeApp();
 
 const db = getFirestore();
 
-import {ethers} from "ethers";
+import {ethers} from 'ethers';
 
-const {deriveKey, encryptText, decryptText} = require("./utils/crypto");
+const {deriveKey, encryptText, decryptText} = require('./utils/crypto');
 
-const KEY = "HELLO_WORLD";
+const KEY = 'HELLO_WORLD';
 
 type Auth = {
   token: string;
@@ -49,32 +49,32 @@ export const auth = onRequest((req, res) => {
   logger.log({method, url}, {structuredData: true});
 
   switch (method) {
-  case "GET": {
-    const {query} = req;
+    case 'GET': {
+      const {query} = req;
 
-    const {address} = query;
-    if (typeof address !== "string") return;
+      const {address} = query;
+      if (typeof address !== 'string') return;
 
-    const oneMinAfter = Date.now() + 60000;
-    const token = (Math.random() * 10 ** 18).toString(16);
+      const oneMinAfter = Date.now() + 60000;
+      const token = (Math.random() * 10 ** 18).toString(16);
 
-    db.collection("auth")
-      .doc(address)
-      .set({
-        address,
-        timeOut: oneMinAfter,
-        token,
-      } as Auth)
-      .then(() => {
-        logger.log("Document successfully written!");
-      })
-      .catch((error: any) => {
-        logger.error("Error writing document: ", error);
-      });
+      db.collection('auth')
+        .doc(address)
+        .set({
+          address,
+          timeOut: oneMinAfter,
+          token,
+        } as Auth)
+        .then(() => {
+          logger.log('Document successfully written!');
+        })
+        .catch((error: any) => {
+          logger.error('Error writing document: ', error);
+        });
 
-    res.send({token});
-    return;
-  }
+      res.send({token});
+      return;
+    }
   }
 });
 
@@ -83,73 +83,73 @@ export const encryptedData = onRequest(async (req, res) => {
   logger.log({method, body});
 
   switch (method) {
-  case "GET": {
-    const {query} = req;
+    case 'GET': {
+      const {query} = req;
 
-    const {address, signedToken} = query;
-    if (typeof address !== "string") return;
+      const {address, signedToken} = query;
+      if (typeof address !== 'string') return;
 
-    if (!(await verifySigner(address as string, signedToken as string))) {
-      res.sendStatus(403);
-      return;
+      if (!(await verifySigner(address as string, signedToken as string))) {
+        res.sendStatus(403);
+        return;
+      }
+
+      logger.debug({address, signedToken});
+
+      const doc = await db.collection('encrypted-data').doc(address).get();
+
+      const docData = doc.data() as EncryptedData;
+
+      if (!docData) {
+        res.sendStatus(403);
+
+        return;
+      }
+
+      const key = await deriveKey(KEY);
+
+      const encryptedData = await decryptText(key, docData.encryptedData);
+
+      logger.debug({encryptedData});
+
+      res.send({encryptedData, emails: docData.emails});
+      break;
     }
+    case 'POST': {
+      const data = body.data ? JSON.parse(body.data) : {};
 
-    logger.debug({address, signedToken});
+      const {address, signedToken, encryptedData, emails} = data;
 
-    const doc = await db.collection("encrypted-data").doc(address).get();
-
-    const docData = doc.data() as EncryptedData;
-
-    if (!docData) {
-      res.sendStatus(403);
-
-      return;
-    }
-
-    const key = await deriveKey(KEY);
-
-    const encryptedData = await decryptText(key, docData.encryptedData);
-
-    logger.debug({encryptedData});
-
-    res.send({encryptedData, emails: docData.emails});
-    break;
-  }
-  case "POST": {
-    const data = body.data ? JSON.parse(body.data) : {};
-
-    const {address, signedToken, encryptedData, emails} = data;
-
-    if (
-      typeof address !== "string" ||
+      if (
+        typeof address !== 'string' ||
         !signedToken ||
         !encryptedData ||
         !emails.length
-    ) {
-      return;
+      ) {
+        return;
+      }
+
+      logger.debug({address, signedToken, encryptedData, emails});
+
+      if (!(await verifySigner(address as string, signedToken as string))) {
+        res.sendStatus(403);
+        return;
+      }
+
+      const key = await deriveKey(KEY);
+
+      const serverEncryptedData = await encryptText(key, encryptedData);
+
+      logger.debug({serverEncryptedData});
+
+      await db
+        .collection('encrypted-data')
+        .doc(address)
+        .set({address, encryptedData: serverEncryptedData, emails});
+
+      res.sendStatus(201);
+      break;
     }
-
-    logger.debug({address, signedToken, encryptedData, emails});
-
-    if (!(await verifySigner(address as string, signedToken as string))) {
-      res.sendStatus(403);
-      return;
-    }
-
-    const key = await deriveKey(KEY);
-
-    const serverEncryptedData = await encryptText(key, encryptedData);
-
-    logger.debug({serverEncryptedData});
-
-    await db
-      .collection("encrypted-data")
-      .doc(address)
-      .set({address, encryptedData: serverEncryptedData, emails});
-
-    res.sendStatus(201);
-    break;
-  }
   }
 });
 
@@ -158,41 +158,41 @@ export const user = onRequest(async (req, res) => {
   logger.log({method, body});
 
   switch (method) {
-  case "POST": {
-    const data = body.data ? JSON.parse(body.data) : {};
+    case 'POST': {
+      const data = body.data ? JSON.parse(body.data) : {};
 
-    const {timestamp, address, token} = data;
+      const {timestamp, address, token} = data;
 
-    logger.debug({timestamp, address, token});
+      logger.debug({timestamp, address, token});
 
-    if (!timestamp || !address) return;
+      if (!timestamp || !address) return;
 
-    const doc = await db.collection("user").doc(address).get();
-    const docData = doc.data() as User;
-    // setting new token
-    let isAuthorized = await verifySigner(address, token);
-    // confirming existing token
-    if (docData.token === token) {
-      isAuthorized = true;
+      const doc = await db.collection('user').doc(address).get();
+      const docData = doc.data() as User;
+      // setting new token
+      let isAuthorized = await verifySigner(address, token);
+      // confirming existing token
+      if (docData?.token === token) {
+        isAuthorized = true;
+      }
+
+      if (!isAuthorized) {
+        res.sendStatus(403);
+      }
+
+      await db
+        .collection('user')
+        .doc(address)
+        .set({timestamp, address, token, count: docData?.count || 0 + 1});
+
+      res.sendStatus(201);
+      break;
     }
-
-    if (!isAuthorized) {
-      res.sendStatus(403);
-    }
-
-    await db
-      .collection("user")
-      .doc(address)
-      .set({timestamp, address, token, count: docData?.count || 0 + 1});
-
-    res.sendStatus(201);
-    break;
-  }
   }
 });
 
 async function verifySigner(address: string, signedToken: string) {
-  const authDoc = await db.collection("auth").doc(address).get();
+  const authDoc = await db.collection('auth').doc(address).get();
 
   const authData = authDoc.data() as Auth;
 
@@ -204,12 +204,12 @@ async function verifySigner(address: string, signedToken: string) {
   );
 
   if (signerAddress !== address) {
-    logger.error("Address verification failed");
+    logger.error('Address verification failed');
     return;
   }
 
   if (Date.now() > authData.timeOut) {
-    logger.error("Token expired");
+    logger.error('Token expired');
     return;
   }
 

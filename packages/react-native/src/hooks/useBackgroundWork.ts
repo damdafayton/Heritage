@@ -43,7 +43,7 @@ export function useBackgroundWork() {
       onTimeout,
     );
 
-    console.log('configure status:', status);
+    log.debug('configure status:', status);
   };
 
   useEffect(() => {

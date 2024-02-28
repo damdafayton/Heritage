@@ -338,7 +338,7 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.10.0):
     - React-Core
-  - react-native-netinfo (11.3.0):
+  - react-native-netinfo (11.3.1):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -719,7 +719,7 @@ SPEC CHECKSUMS:
   react-native-compat: f8bc14ef3ef0401d9dc771e026980ac87ab952f0
   react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-get-random-values: 384787fd76976f5aec9465aff6fa9e9129af1e74
-  react-native-netinfo: 299dad906cdbf3b67bcc6f693c807f98bdd127cc
+  react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9

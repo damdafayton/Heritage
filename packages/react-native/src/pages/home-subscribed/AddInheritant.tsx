@@ -77,10 +77,9 @@ export function AddInheritant() {
 
     if (!inheritants.length || !isSuccess) return;
 
-    getInheritants(address, abi, userAddr).then(
-      inheritants =>
-        //@ts-ignore
-        console.log({inheritants}) || setInheritants(inheritants),
+    getInheritants(address, abi, userAddr).then(inheritants =>
+      //@ts-ignore
+      setInheritants(inheritants),
     );
   }, [subscriptionData, address, isSuccess]);
 

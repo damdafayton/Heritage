@@ -7,7 +7,7 @@
     "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
     "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
     "lint": "eslint .",
-    "start": "react-native start",
+    "start": "react-native start --port=8082",
     "test": "jest",
     "web": "webpack serve -d source-map --mode development --config \"./web/webpack.config.js\" --color --hot",
     "build:web": "webpack --mode production --config \"./web/webpack.config.js\"",

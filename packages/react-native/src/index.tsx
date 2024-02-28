@@ -69,6 +69,7 @@ export const index = () => {
         <PaperProvider theme={theme}>
           <App />
         </PaperProvider>
+        <Web3Modal />
       </WagmiConfig>
     </NavigationContainer>
   );
