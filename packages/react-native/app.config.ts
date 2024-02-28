@@ -14,9 +14,11 @@ export type ScaffoldConfig = {
   walletAutoConnect: boolean;
   logSeverity: string;
   nodeEnv?: 'production';
+  hostName: string;
 };
 
 export const appConfig: ScaffoldConfig = {
+  hostName: Config.HOSTNAME,
   // The network where your DApp lives in
   logSeverity: Config.LOG_SEVERITY,
   targetNetwork: chains[Config.CHAIN],

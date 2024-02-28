@@ -15,6 +15,7 @@ import {Button} from '../../ui/Button';
 import {Divider} from '../../ui/Divider';
 import {Text} from '../../ui';
 import {useTheme} from 'react-native-paper';
+import {BackgroundTask} from '../../molecules/BackgroundTask';
 
 export function HomeSubscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -118,6 +119,7 @@ export function HomeSubscribed() {
           },
         ]}
       />
+      <BackgroundTask />
     </>
   );
 }

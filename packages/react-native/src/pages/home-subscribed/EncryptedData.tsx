@@ -44,7 +44,7 @@ export function EncryptedData() {
           return;
         }
 
-        const token = await reqToken(hostName, address);
+        const token = await reqToken(address);
 
         if (!token) {
           setIsPageLoading(false);
@@ -55,7 +55,7 @@ export function EncryptedData() {
 
         log.info({signedToken});
 
-        const url = getUrl(hostName, 'encryptedData');
+        const url = getUrl('encryptedData');
 
         const {data, status} = await axios.get(
           `${url}?address=${address}&signedToken=${signedToken}`,
@@ -83,11 +83,11 @@ export function EncryptedData() {
     setIsLoading(true);
 
     try {
-      const token = await reqToken(hostName, address);
+      const token = await reqToken(address);
 
       const signedToken = await signMessageAsync({message: token});
 
-      const url = getUrl(hostName, 'encryptedData');
+      const url = getUrl('encryptedData');
       const {status: statusSaveData} = await axios.post(url, {
         data: JSON.stringify({
           signedToken,

@@ -1,10 +1,13 @@
 import axios from 'axios';
 import {Address} from 'wagmi';
 import {logger} from 'react-native-logs';
-import {appConfig} from '../../app.config';
-const log = logger.createLogger().extend('api');
 
-export function getUrl(hostName: string, endPoint: string) {
+import {appConfig} from '../../app.config';
+const log = logger.createLogger().extend('utils/api');
+
+const hostName = appConfig.hostName;
+
+export function getUrl(endPoint: string) {
   const isProd = appConfig.nodeEnv === 'production';
   const url = isProd
     ? 'https://' + endPoint.toLowerCase() + '-' + hostName.split('https://')[1]
@@ -13,8 +16,8 @@ export function getUrl(hostName: string, endPoint: string) {
   return url;
 }
 
-export async function reqToken(hostName, address: Address) {
-  const url = getUrl(hostName, 'auth');
+export async function reqToken(address: Address) {
+  const url = getUrl('auth');
 
   const {data, status} =
     (await axios
@@ -30,14 +33,12 @@ export async function reqToken(hostName, address: Address) {
   return token;
 }
 
-export async function pingServer(hostName, address, token) {
+export async function pingServer(address, token) {
   log.debug('pinging', {address, token});
-  const url = getUrl(hostName, 'user');
+  const url = getUrl('user');
 
-  const timestamp = Date.now();
   return await axios.post(url, {
     data: JSON.stringify({
-      timestamp,
       address,
       token,
     }),

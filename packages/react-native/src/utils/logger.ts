@@ -10,7 +10,7 @@ export const logger = (logName: string) => {
   const originalError = _logger.error;
 
   _logger.error = (message, ...args: any[]) => {
-    Sentry.captureMessage(String(message));
+    Sentry.captureMessage(String(message) || JSON.stringify(message));
     originalError(message, ...args);
   };
 

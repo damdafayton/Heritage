@@ -25,7 +25,6 @@ import {SuccessSnackbar} from './molecules/SuccessSnackbar';
 import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
-import {Tasks} from './molecules/Tasks';
 import * as Sentry from '@sentry/react-native';
 
 Sentry.init({
@@ -134,7 +133,6 @@ const App = () => {
             minFeePerYear,
             feeThousandagePerYear,
           }}>
-          <Tasks />
           <Appbar key={appBarKey} />
           {!isUserDisconnected ? <W3mButton balance="show" /> : ''}
           <Tabs

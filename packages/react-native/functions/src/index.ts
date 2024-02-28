@@ -161,11 +161,9 @@ export const user = onRequest(async (req, res) => {
     case 'POST': {
       const data = body.data ? JSON.parse(body.data) : {};
 
-      const {timestamp, address, token} = data;
+      const {address, token} = data;
 
-      logger.debug({timestamp, address, token});
-
-      if (!timestamp || !address) return;
+      if (!address) return;
 
       const doc = await db.collection('user').doc(address).get();
       const docData = doc.data() as User;
@@ -176,6 +174,8 @@ export const user = onRequest(async (req, res) => {
         isAuthorized = true;
       }
 
+      logger.debug({isAuthorized});
+
       if (!isAuthorized) {
         res.sendStatus(403);
       }
@@ -183,7 +183,12 @@ export const user = onRequest(async (req, res) => {
       await db
         .collection('user')
         .doc(address)
-        .set({timestamp, address, token, count: docData?.count || 0 + 1});
+        .set({
+          timestamp: Date.now(),
+          address,
+          token,
+          count: docData?.count || 0 + 1,
+        });
 
       res.sendStatus(201);
       break;
@@ -204,7 +209,9 @@ async function verifySigner(address: string, signedToken: string) {
   );
 
   if (signerAddress !== address) {
-    logger.error('Address verification failed');
+    logger.error(
+      `Address verification failed, ${signerAddress} !== ${address}`,
+    );
     return;
   }
 

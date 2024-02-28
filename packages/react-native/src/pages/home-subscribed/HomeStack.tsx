@@ -12,7 +12,6 @@ import {useTheme} from 'react-native-paper';
 import {SendFunds} from './SendFunds';
 import {Deposit} from './Deposit';
 import {AddInheritant} from './AddInheritant';
-import {SuccessSnackbar} from '../../molecules/SuccessSnackbar';
 
 const log = logger('HomeStack');
 

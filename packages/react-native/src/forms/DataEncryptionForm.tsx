@@ -175,10 +175,9 @@ export function DataEncryptionForm({
               <HelperText type="error">{errors.secretKey}</HelperText>
             )}
             {emails.map((email, idx) => (
-              <>
+              <View key={`email${idx}`}>
                 <TextInput
                   label={emails.length > 1 ? `Email-${idx + 1}` : 'Email'}
-                  key={idx}
                   onChangeText={text => {
                     setEmail(idx, text);
                   }}
@@ -195,9 +194,11 @@ export function DataEncryptionForm({
                   }
                 />
                 {errors[`email${idx}`] && (
-                  <HelperText type="error">{errors[`email${idx}`]}</HelperText>
+                  <HelperText key={`error${idx}`} type="error">
+                    {errors[`email${idx}`]}
+                  </HelperText>
                 )}
-              </>
+              </View>
             ))}
 
             <TouchableOpacity

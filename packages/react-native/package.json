@@ -2,6 +2,11 @@
   "name": "@se-2/rn",
   "version": "0.0.1",
   "private": true,
+  "workspaces": {
+    "packages": [
+      "functions"
+    ]
+  },
   "scripts": {
     "android": "ENVFILE=.env.dev react-native run-android",
     "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
