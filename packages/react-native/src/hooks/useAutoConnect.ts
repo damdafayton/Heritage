@@ -25,6 +25,8 @@ const getInitialConnector = (
   connectors: Connector[],
 ): {connector: Connector | undefined; chainId?: number} | undefined => {
   const targetNetwork = getTargetNetwork();
+  log.debug(targetNetwork);
+  return;
   const allowBurner = appConfig.onlyLocalBurnerWallet
     ? targetNetwork.id === hardhat.id
     : true;

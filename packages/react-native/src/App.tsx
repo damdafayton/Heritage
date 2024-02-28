@@ -36,7 +36,11 @@ const log = logger('App');
 const App = () => {
   useAutoConnect();
 
-  const {address: userAddress, isConnecting, isDisconnected} = useAccount();
+  const {
+    address: userAddress,
+    isConnecting,
+    isDisconnected: isUserDisconnected,
+  } = useAccount();
 
   const {subscriptionData, refetchSubscriptionData, isSubscribed} =
     useGetSubscriptionData(userAddress);
@@ -98,46 +102,48 @@ const App = () => {
   const [appBarKey, rerenderAppBar] = useReducer(x => x + 1, 0);
 
   return (
-    <AppStateContext.Provider
-      value={{
-        isModalVisible,
-        errors,
-        clearErrors: () => setError([]),
-        setError: ({message: newError, isModalVisible: isModal = false}) => {
-          setError([...errors, newError]);
-          setIsModalVisible(isModal);
-        },
-        successes,
-        clearSuccesses: () => setSuccess([]),
-        setSuccess: ({
-          message: newMessage,
-          isModalVisible: isModal = false,
-        }) => {
-          setSuccess([...successes, newMessage]);
-          setIsModalVisible(isModal);
-        },
-      }}>
-      <HerritageWalletContext.Provider
-        key={key}
+    <>
+      <AppStateContext.Provider
         value={{
-          subscriptionData,
-          refetchSubscriptionData,
-          hostName: Config.HOSTNAME,
-          minFeePerYear,
-          feeThousandagePerYear,
+          isModalVisible,
+          errors,
+          clearErrors: () => setError([]),
+          setError: ({message: newError, isModalVisible: isModal = false}) => {
+            setError([...errors, newError]);
+            setIsModalVisible(isModal);
+          },
+          successes,
+          clearSuccesses: () => setSuccess([]),
+          setSuccess: ({
+            message: newMessage,
+            isModalVisible: isModal = false,
+          }) => {
+            setSuccess([...successes, newMessage]);
+            setIsModalVisible(isModal);
+          },
         }}>
-        <Tasks />
-        <Appbar key={appBarKey} />
-        <W3mButton balance="show" />
-        <Tabs
-          isConnected={isConnected}
-          isSubscribed={isSubscribed}
-          updateAppBar={rerenderAppBar}
-        />
-        <SuccessSnackbar />
-        <ErrorSnackbar />
-      </HerritageWalletContext.Provider>
-    </AppStateContext.Provider>
+        <HerritageWalletContext.Provider
+          key={key}
+          value={{
+            subscriptionData,
+            refetchSubscriptionData,
+            hostName: Config.HOSTNAME,
+            minFeePerYear,
+            feeThousandagePerYear,
+          }}>
+          <Tasks />
+          <Appbar key={appBarKey} />
+          {!isUserDisconnected ? <W3mButton balance="show" /> : ''}
+          <Tabs
+            isConnected={isConnected}
+            isSubscribed={isSubscribed}
+            updateAppBar={rerenderAppBar}
+          />
+          <SuccessSnackbar />
+          <ErrorSnackbar />
+        </HerritageWalletContext.Provider>
+      </AppStateContext.Provider>
+    </>
   );
 };
 

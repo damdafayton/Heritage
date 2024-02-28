@@ -16,7 +16,7 @@ export type FindHeritageWalletFunction = (functionName: Names) => AbiFunction;
 
 export function useHeritageWalletContract() {
   const {chain, chains} = useNetwork();
-  log.debug(chain);
+  log.debug('chain:', chain);
 
   if (!chain?.id) {
     const error = 'Chain or chain ID can not be found.';
@@ -34,6 +34,7 @@ export function useHeritageWalletContract() {
 
   const address = deployment?.address;
   const abi = deployment?.abi as unknown as typeof defaultABI;
+  log.debug('deploymentAddress', address);
 
   const findContractFunction: FindHeritageWalletFunction = (
     functionName: Names,

@@ -7,9 +7,12 @@ import {Button} from '../ui/Button';
 import {ActivityIndicator} from '../ui/ActivityIndicator';
 
 import {Subscribe} from './subscribe/Subscribe';
+import {W3mConnectButton} from '@web3modal/wagmi-react-native';
+import {useAccount} from 'wagmi';
 
 export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
   const [visible, setVisible] = useState(false);
+  const {isDisconnected: isUserDisconnected} = useAccount();
 
   const Content = () => {
     return (
@@ -27,7 +30,12 @@ export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
   return (
     <ScrollView style={styles.view}>
       <Text style={styles.title}>HERITAGE</Text>
-      {!isConnected ? (
+      {isUserDisconnected ? (
+        <W3mConnectButton
+          label="Connect your wallet"
+          loadingLabel="Connecting"
+        />
+      ) : !isConnected ? (
         <>
           <Text style={styles.text}>
             Waiting for connection to the contract
