@@ -3913,6 +3913,7 @@ __metadata:
     react-native-randombytes: ^3.6.1
     react-native-safe-area-context: ^4.9.0
     react-native-screens: ^3.29.0
+    react-native-splash-screen: ^3.3.0
     react-native-svg: ^15.0.0
     react-native-tcp: ^3.3.2
     react-native-udp: 2.7.0
@@ -15587,6 +15588,15 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: c1879eea8386f32c2655fedd79d41d8e25d2f4e7f883abbcad2c747ea7ac859f4a7f469475a519948e7c5ea317a7ebd8df92c6365627f6a5da1e4a208cece7e1
+  languageName: node
+  linkType: hard
+
+"react-native-splash-screen@npm:^3.3.0":
+  version: 3.3.0
+  resolution: "react-native-splash-screen@npm:3.3.0"
+  peerDependencies:
+    react-native: ">=0.57.0"
+  checksum: 14c565d5d4214f55586dcf6f7abd12d99d3e0667f67de3bda7aa24988971567b283a4187fbc0c6269c83b3c21d59d1950335c61bb0780ec2d065e20b3b9199d0
   languageName: node
   linkType: hard
 

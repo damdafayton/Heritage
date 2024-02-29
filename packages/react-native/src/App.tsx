@@ -5,6 +5,7 @@
  * @format
  * @flow strict-local
  */
+import SplashScreen from 'react-native-splash-screen';
 
 import 'react';
 
@@ -118,6 +119,8 @@ const App = () => {
   const [AUTHENTICATION_TOKEN, setAUTHENTICATION_TOKEN] = useState('');
 
   useEffect(() => {
+    SplashScreen.hide();
+
     (async () => {
       const token = await AsyncStorage.getItem(AUTHENTICATION_TOKEN);
       setAUTHENTICATION_TOKEN(token || '');
