@@ -51,13 +51,21 @@ const App = () => {
   const fnFeeThousandage = findContractFunction?.('feeThousandagePerYear');
   const fnMinFee = findContractFunction?.('minFeePerYearInUsd');
 
-  const {data: data1, refetch} = useContractRead({
+  const {
+    data: data1,
+    refetch,
+    isFetching: isFetching1,
+  } = useContractRead({
     address: heritageAddress,
     functionName: fnFeeThousandage?.name,
     abi: [fnFeeThousandage] as Abi,
   });
 
-  const {data: data2, refetch: refetch2} = useContractRead({
+  const {
+    data: data2,
+    refetch: refetch2,
+    isFetching: isFetching2,
+  } = useContractRead({
     address: heritageAddress,
     functionName: fnMinFee?.name,
     abi: [fnMinFee] as Abi,
@@ -66,20 +74,15 @@ const App = () => {
   const feeThousandagePerYear = Number(displayTxResult(data1));
   const minFeePerYear = Number(displayTxResult(data2));
 
-  const [isConnected, setIsConnected] = useState(
-    !!(minFeePerYear && feeThousandagePerYear),
-  );
-
   log.debug({minFeePerYear, feeThousandagePerYear});
 
-  const [key, forceUpdate] = useReducer(x => x + 1, 0);
+  const [forceUpdateKey, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    log.debug({isConnected, isUserDisconnected});
-    if (isConnected || isUserDisconnected) return;
+    log.debug({minFeePerYear, isUserDisconnected});
+    if (!!minFeePerYear || isUserDisconnected || isFetching1) return;
 
-    if (minFeePerYear && feeThousandagePerYear) {
-      setIsConnected(true);
+    if (minFeePerYear) {
       log.debug('Connected to contract');
       return;
     }
@@ -95,13 +98,11 @@ const App = () => {
     }, 10000);
 
     return () => clearTimeout(timeoutId);
-  }, [key, isUserDisconnected]);
+  }, [forceUpdateKey, isFetching1, isUserDisconnected]);
 
   const [errors, setError] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [successes, setSuccess] = useState<string[]>([]);
-
-  const [appBarKey, rerenderAppBar] = useReducer(x => x + 1, 0);
 
   return (
     <>
@@ -125,21 +126,18 @@ const App = () => {
           },
         }}>
         <HerritageWalletContext.Provider
-          key={key}
           value={{
             subscriptionData,
             refetchSubscriptionData,
             hostName: Config.HOSTNAME,
             minFeePerYear,
             feeThousandagePerYear,
+            isSubscribed,
+            isConnected: !!minFeePerYear,
           }}>
-          <Appbar key={appBarKey} />
+          <Appbar />
           {!isUserDisconnected ? <W3mButton balance="show" /> : ''}
-          <Tabs
-            isConnected={isConnected}
-            isSubscribed={isSubscribed}
-            updateAppBar={rerenderAppBar}
-          />
+          <Tabs />
           <SuccessSnackbar />
           <ErrorSnackbar />
         </HerritageWalletContext.Provider>

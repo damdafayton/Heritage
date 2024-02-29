@@ -16,7 +16,7 @@ export function Contract() {
     <>
       <ContractData />
       <Divider />
-      {feeThousandagePerYear && minFeePerYear && (
+      {(feeThousandagePerYear && minFeePerYear && (
         <>
           <List.Section title="">
             <List.Accordion title="Fee examples">
@@ -48,7 +48,8 @@ Applied fee = ${(10000 * feeThousandagePerYear) / 1000}$`}
             </List.Accordion>
           </List.Section>
         </>
-      )}
+      )) ||
+        null}
     </>
   );
 }

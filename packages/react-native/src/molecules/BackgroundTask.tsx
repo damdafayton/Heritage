@@ -124,17 +124,30 @@ export function BackgroundTask() {
         </>
       ) : (
         <>
-          <Text style={{marginTop: 0}}>
-            <AntDesign size={14} name="check" color={theme.colors.success} />{' '}
-            App is pinging the server to notify that you are alive.
-          </Text>
+          <View
+            style={{
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              columnGap: 8,
+            }}>
+            <AntDesign size={16} name="check" color={theme.colors.success} />
+            <Text style={{flex: 1}}>
+              App is pinging the server to notify that you are alive.
+            </Text>
+          </View>
           {lastPingTimestamp && (
             <Text>
               Last ping: {new Date(lastPingTimestamp).toLocaleString()}{' '}
               <TouchableOpacity
                 onPress={refreshTimestamp}
-                style={{marginBottom: -1}}>
-                <MaterialCommunityIcons size={14} name="refresh" />
+                style={{marginBottom: -2}}>
+                <MaterialCommunityIcons
+                  size={18}
+                  name="refresh"
+                  color={theme.colors.primary}
+                />
               </TouchableOpacity>
             </Text>
           )}

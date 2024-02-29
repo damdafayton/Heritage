@@ -1,5 +1,5 @@
 import {StyleSheet, View, ScrollView} from 'react-native';
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('HomeNonSubscribed');
 
@@ -10,10 +10,13 @@ import {Subscribe} from './subscribe/Subscribe';
 import {W3mConnectButton} from '@web3modal/wagmi-react-native';
 import {useAccount} from 'wagmi';
 import {Text} from '../ui';
+import {HerritageWalletContext} from '../context/HerritageWallet.context';
 
-export function HomeNonSubscribed({isConnected}: {isConnected: boolean}) {
+export function HomeNonSubscribed() {
   const [visible, setVisible] = useState(false);
   const {isDisconnected: isUserDisconnected} = useAccount();
+
+  const isConnected = useContext(HerritageWalletContext);
 
   const Content = () => {
     return (

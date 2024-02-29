@@ -33,7 +33,7 @@ export function HomeStack() {
 
   const StyledScrollView = ({children, ...props}) => {
     return (
-      <ScrollView {...props}>
+      <ScrollView showsVerticalScrollIndicator={false} {...props}>
         {children}
         <Text style={{marginBottom: 24}}>{''}</Text>
       </ScrollView>

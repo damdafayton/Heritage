@@ -3,6 +3,8 @@ import {SubscriptionData} from '../hooks/useGetSubscriptionData';
 
 type ContextType = {
   subscriptionData?: SubscriptionData;
+  isSubscribed: boolean;
+  isConnected: boolean;
   refetchSubscriptionData: Function;
   hostName: string;
   minFeePerYear?: number;

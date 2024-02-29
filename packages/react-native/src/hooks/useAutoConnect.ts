@@ -28,7 +28,7 @@ const getInitialConnector = (
   log.debug(targetNetwork);
 
   const allowBurner = appConfig.onlyLocalBurnerWallet
-    ? targetNetwork.id === hardhat.id
+    ? targetNetwork.id === 2 || 'hardhat.id'
     : true;
 
   if (!previousWalletId) {

@@ -1,13 +1,12 @@
-import {useNavigation} from '@react-navigation/native';
+import {useNavigation, useNavigationState} from '@react-navigation/native';
 import {Appbar as AppbarUI} from 'react-native-paper';
-import {getHeaderTitle} from '@react-navigation/elements';
-import {useEffect, useState} from 'react';
+import {useEffect, useReducer, useState} from 'react';
 import {logger} from '../utils/logger';
 const log = logger('Appbar');
 
 export function Appbar() {
   const navigation = useNavigation();
-  const navState = navigation.getState();
+  const {routes, index} = useNavigationState(x => x) || {};
 
   // const title = getHeaderTitle(options, route?.name);
 
@@ -20,7 +19,13 @@ export function Appbar() {
   const [appBarName, setAppBarName] = useState('');
 
   useEffect(() => {
-    const {routes, index} = navState || {};
+    log.debug('state changed');
+
+    if (navigation.canGoBack()) {
+      setShowBack(true);
+    } else {
+      setShowBack(false);
+    }
 
     if (!routes) return;
 
@@ -36,15 +41,7 @@ export function Appbar() {
     }
 
     setAppBarName(_appBarName);
-  }, []);
-
-  useEffect(() => {
-    if (navigation.canGoBack()) {
-      setShowBack(true);
-    } else {
-      setShowBack(false);
-    }
-  }, []);
+  }, [index, routes?.[index]?.state?.index]);
 
   return (
     <AppbarUI.Header mode="small">
