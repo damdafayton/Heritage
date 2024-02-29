@@ -16,7 +16,7 @@ export function getUrl(endPoint: string) {
   return url;
 }
 
-export async function reqToken(address: Address) {
+export async function authGet(address: Address) {
   const url = getUrl('auth');
 
   const {data, status} =
@@ -33,21 +33,29 @@ export async function reqToken(address: Address) {
   return token;
 }
 
-export async function pingServer(address, token) {
+export async function userPost(address, token) {
   log.debug('pinging', {address, token});
   const url = getUrl('user');
 
   return await axios.post(url, {
     data: JSON.stringify({
       address,
-      token,
+      signedToken: token,
     }),
   });
 }
 
-export async function getUserData(address: Address, signedToken) {
+// Returns timestamp data
+export async function userGet(address: Address, signedToken) {
   const url = getUrl('user');
 
+  return await axios.get(
+    `${url}?address=${address}&signedToken=${signedToken}`,
+  );
+}
+
+export async function getEncryptedData(address: Address, signedToken: string) {
+  const url = getUrl('encryptedData');
   return await axios.get(
     `${url}?address=${address}&signedToken=${signedToken}`,
   );

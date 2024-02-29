@@ -26,6 +26,8 @@ import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
 import * as Sentry from '@sentry/react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {WALLET_ID_KEY} from './utils/constants';
 
 Sentry.init({
   dsn: 'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
@@ -39,6 +41,7 @@ const App = () => {
   const {
     address: userAddress,
     isConnecting,
+    connector,
     isDisconnected: isUserDisconnected,
   } = useAccount();
 
@@ -79,7 +82,16 @@ const App = () => {
   const [forceUpdateKey, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    log.debug({minFeePerYear, isUserDisconnected});
+    log.debug({minFeePerYear, isUserDisconnected, connector: connector?.name});
+
+    (async () => {
+      log.debug('WALLET_ID', await AsyncStorage.getItem(WALLET_ID_KEY));
+      log.debug(
+        'com.herritage.backgroundTracking',
+        await AsyncStorage.getItem('com.herritage.backgroundTracking'),
+      );
+    })();
+
     if (!!minFeePerYear || isUserDisconnected || isFetching1) return;
 
     if (minFeePerYear) {
@@ -103,6 +115,14 @@ const App = () => {
   const [errors, setError] = useState<string[]>([]);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [successes, setSuccess] = useState<string[]>([]);
+  const [AUTHENTICATION_TOKEN, setAUTHENTICATION_TOKEN] = useState('');
+
+  useEffect(() => {
+    (async () => {
+      const token = await AsyncStorage.getItem(AUTHENTICATION_TOKEN);
+      setAUTHENTICATION_TOKEN(token || '');
+    })();
+  }, []);
 
   return (
     <>
@@ -124,6 +144,8 @@ const App = () => {
             setSuccess([...successes, newMessage]);
             setIsModalVisible(isModal);
           },
+          authToken: AUTHENTICATION_TOKEN,
+          setAuthToken: setAUTHENTICATION_TOKEN,
         }}>
         <HerritageWalletContext.Provider
           value={{
@@ -136,7 +158,15 @@ const App = () => {
             isConnected: !!minFeePerYear,
           }}>
           <Appbar />
-          {!isUserDisconnected ? <W3mButton balance="show" /> : ''}
+          {!isUserDisconnected ? (
+            <W3mButton
+              balance="show"
+              loadingLabel="Loading.."
+              label="Loading.."
+            />
+          ) : (
+            ''
+          )}
           <Tabs />
           <SuccessSnackbar />
           <ErrorSnackbar />

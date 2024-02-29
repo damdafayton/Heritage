@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {useEffect} from 'react';
+import {useEffect, useRef} from 'react';
 import {hardhat} from 'viem/chains';
 import {Connector, useAccount, useConnect} from 'wagmi';
 
@@ -10,8 +10,8 @@ import {
   defaultBurnerChainId,
 } from '../services/wagmi-burner/BurnerConnector';
 import {logger} from '../utils/logger';
+import {WALLET_ID_KEY} from '../utils/constants';
 
-const WALLET_ID_KEY = 'heritage.wallet';
 const log = logger('useAutoConnect');
 
 /**
@@ -28,7 +28,7 @@ const getInitialConnector = (
   log.debug(targetNetwork);
 
   const allowBurner = appConfig.onlyLocalBurnerWallet
-    ? targetNetwork.id === 2 || 'hardhat.id'
+    ? targetNetwork.id === hardhat.id
     : true;
 
   if (!previousWalletId) {
@@ -53,11 +53,19 @@ const getInitialConnector = (
 };
 
 export function useAutoConnect() {
+  const firstRender = useRef(true);
+
   const connectState = useConnect();
   const accountState = useAccount();
 
   useEffect(() => {
     log.debug('accountState.isConnected', accountState.isConnected);
+    log.debug('accountState', accountState);
+
+    if (firstRender.current) {
+      firstRender.current = false;
+      return;
+    }
 
     (async () => {
       if (accountState.isConnected) {
@@ -66,7 +74,9 @@ export function useAutoConnect() {
           WALLET_ID_KEY,
           accountState.connector?.id ?? '',
         );
-      } else {
+      }
+
+      if (accountState.isDisconnected) {
         // user has disconnected, reset walletName
         await AsyncStorage.setItem(WALLET_ID_KEY, '');
       }
@@ -76,7 +86,7 @@ export function useAutoConnect() {
   useEffect(() => {
     (async () => {
       const previousWalletId = await AsyncStorage.getItem(WALLET_ID_KEY);
-      log.debug('previousWalletId', previousWalletId);
+
       log.debug('accountState', accountState);
 
       const initialConnector = getInitialConnector(

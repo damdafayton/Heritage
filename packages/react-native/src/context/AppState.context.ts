@@ -20,4 +20,6 @@ export const AppStateContext = createContext({
     isModalVisible?: boolean;
   }) => {},
   isModalVisible: false,
+  authToken: '',
+  setAuthToken: (token: string) => {},
 });

@@ -1,58 +1,25 @@
-import {StyleSheet, View, ScrollView} from 'react-native';
-import {useContext, useState} from 'react';
+import {StyleSheet, View} from 'react-native';
+import {useState} from 'react';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('HomeNonSubscribed');
 
 import {Button} from '../ui/Button';
-import {ActivityIndicator} from '../ui/ActivityIndicator';
-
 import {Subscribe} from './subscribe/Subscribe';
-import {W3mConnectButton} from '@web3modal/wagmi-react-native';
-import {useAccount} from 'wagmi';
 import {Text} from '../ui';
-import {HerritageWalletContext} from '../context/HerritageWallet.context';
 
 export function HomeNonSubscribed() {
   const [visible, setVisible] = useState(false);
-  const {isDisconnected: isUserDisconnected} = useAccount();
-
-  const isConnected = useContext(HerritageWalletContext);
-
-  const Content = () => {
-    return (
-      <View>
-        <Text style={styles.text}>
-          You are not registered. Click below button to register.
-        </Text>
-        <Button mode="contained" onPress={() => setVisible(true)}>
-          Register
-        </Button>
-      </View>
-    );
-  };
 
   return (
-    <ScrollView style={styles.view}>
-      <Text variant="titleMedium" style={styles.title}>
-        HERITAGE
+    <View>
+      <Text style={styles.text}>
+        You are not registered. Click below button to register.
       </Text>
-      {isUserDisconnected ? (
-        <W3mConnectButton
-          label="Connect your wallet"
-          loadingLabel="Connecting"
-        />
-      ) : !isConnected ? (
-        <>
-          <Text style={[styles.text, {marginBottom: 14}]}>
-            Waiting for connection to the contract
-          </Text>
-          <ActivityIndicator />
-        </>
-      ) : (
-        <Content />
-      )}
+      <Button mode="contained" onPress={() => setVisible(true)}>
+        Register
+      </Button>
       <Subscribe visible={visible} setVisible={setVisible} />
-    </ScrollView>
+    </View>
   );
 }
 

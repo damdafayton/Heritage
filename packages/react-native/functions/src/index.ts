@@ -40,11 +40,10 @@ type EncryptedData = {
 type User = {
   timestamp: number;
   address: string;
-  signedToken: string;
-  count: number; // to keep track of updates easily on development
+  token: string;
 };
 
-export const auth = onRequest((req, res) => {
+export const auth = onRequest(async (req, res) => {
   const {method, url} = req;
   logger.log({method, url}, {structuredData: true});
 
@@ -56,7 +55,7 @@ export const auth = onRequest((req, res) => {
     if (typeof address !== "string") return;
 
     const oneMinAfter = Date.now() + 60000;
-    const token = (Math.random() * 10 ** 18).toString(16);
+    const token = "HERITAGE" + getRandomHex() + getRandomHex();
 
     db.collection("auth")
       .doc(address)
@@ -71,6 +70,24 @@ export const auth = onRequest((req, res) => {
       .catch((error: any) => {
         logger.error("Error writing document: ", error);
       });
+
+    const userDoc = await db.collection("user").doc(address).get();
+
+    if (!userDoc.exists) {
+      db.collection("user")
+        .doc(address)
+        .set({
+          timestamp: Date.now(),
+          address,
+          token,
+        } as User)
+        .then(() => {
+          logger.log("Document successfully written!");
+        })
+        .catch((error: any) => {
+          logger.error("Error writing document: ", error);
+        });
+    }
 
     res.send({token});
     return;
@@ -89,8 +106,11 @@ export const encryptedData = onRequest(async (req, res) => {
     const {address, signedToken} = query;
     if (typeof address !== "string") return;
 
-    if (!(await verifySigner(address as string, signedToken as string))) {
-      res.sendStatus(403);
+    if (
+      !signedToken ||
+        !(await verifySignedToken(address as string, signedToken as string))
+    ) {
+      res.sendStatus(401);
       return;
     }
 
@@ -131,7 +151,12 @@ export const encryptedData = onRequest(async (req, res) => {
 
     logger.debug({address, signedToken, encryptedData, emails});
 
-    if (!(await verifySigner(address as string, signedToken as string))) {
+    if (
+      !(await verifySignerWithinTimeLimit(
+          address as string,
+          signedToken as string,
+      ))
+    ) {
       res.sendStatus(403);
       return;
     }
@@ -162,8 +187,10 @@ export const user = onRequest(async (req, res) => {
     const {address, signedToken} = query;
     if (typeof address !== "string") return;
 
-    if (!(await verifyPingToken(address as string, signedToken as string))) {
-      res.sendStatus(403);
+    if (
+      !(await verifySignedToken(address as string, signedToken as string))
+    ) {
+      res.sendStatus(401);
       return;
     }
 
@@ -176,34 +203,25 @@ export const user = onRequest(async (req, res) => {
   case "POST": {
     const data = body.data ? JSON.parse(body.data) : {};
 
-    const {address, token: signedToken} = data;
+    const {address, signedToken} = data;
 
     if (!address) return;
 
-    const doc = await db.collection("user").doc(address).get();
-    const docData = doc.data() as User;
+    let token;
 
-    const isAuthorized =
-        // setting new token or
-        (await verifySigner(address, signedToken)) ||
-        // confirming existing token
-        (await verifyPingToken(address, signedToken));
-
-    logger.debug({isAuthorized});
-
-    if (!isAuthorized) {
+    if (await verifySignedToken(address, signedToken)) {
+      token = (await db.collection("user").doc(address).get()).data()?.token;
+    } else if (await verifySignerWithinTimeLimit(address, signedToken)) {
+      token = (await db.collection("auth").doc(address).get()).data()?.token;
+    } else {
       res.sendStatus(403);
     }
 
-    await db
-      .collection("user")
-      .doc(address)
-      .set({
-        timestamp: Date.now(),
-        address,
-        signedToken,
-        count: (docData?.count || 0) + 1,
-      });
+    await db.collection("user").doc(address).set({
+      timestamp: Date.now(),
+      address,
+      token,
+    });
 
     res.sendStatus(201);
     break;
@@ -211,22 +229,33 @@ export const user = onRequest(async (req, res) => {
   }
 });
 
-async function verifyPingToken(address: string, signedToken: string) {
+async function verifySignedToken(address: string, signedToken: string) {
   const doc = await db.collection("user").doc(address).get();
 
   const docData = doc.data() as User;
 
-  if (!docData) return;
+  if (!docData?.token) return;
 
-  if (docData.signedToken !== signedToken) {
-    logger.error("Token mismatch");
+  const signerAddress = await ethers.verifyMessage(
+    docData.token,
+    signedToken as string,
+  );
+
+  if (signerAddress !== address) {
+    logger.error(
+      `Address verification failed, ${signerAddress} !== ${address}`,
+    );
     return;
   }
 
   return true;
 }
 
-async function verifySigner(address: string, signedToken: string) {
+// Time restricted
+async function verifySignerWithinTimeLimit(
+  address: string,
+  signedToken: string,
+) {
   const authDoc = await db.collection("auth").doc(address).get();
 
   const authData = authDoc.data() as Auth;
@@ -251,4 +280,8 @@ async function verifySigner(address: string, signedToken: string) {
   }
 
   return true;
+}
+
+function getRandomHex() {
+  return (Math.random() * 10 ** 17).toString(16);
 }

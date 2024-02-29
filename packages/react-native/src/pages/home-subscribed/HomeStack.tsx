@@ -75,7 +75,7 @@ export function HomeStack() {
           name={HomeSubscribedType.ENCRYPTED_DATA}>
           {props => (
             <StyledScrollView {...props}>
-              <EncryptedData></EncryptedData>
+              <EncryptedData />
             </StyledScrollView>
           )}
         </Stack.Screen>

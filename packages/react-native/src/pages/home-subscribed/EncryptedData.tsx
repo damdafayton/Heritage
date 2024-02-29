@@ -1,14 +1,11 @@
 import {useContext, useEffect, useState} from 'react';
-
+import {useAccount, useSignMessage} from 'wagmi';
 import axios from 'axios';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('EncryptedData');
 
-import {useAccount, useSignMessage} from 'wagmi';
-
 import {decryptText, deriveKey, encryptText} from '../../helpers/crpyto';
-import {HerritageWalletContext} from '../../context/HerritageWallet.context';
-import {getUrl, reqToken} from '../../utils/api';
+import {getEncryptedData, getUrl, authGet} from '../../utils/api';
 import {AppStateContext} from '../../context/AppState.context';
 import {Loading} from '../../molecules/Loading';
 import {
@@ -19,6 +16,9 @@ import {
   DataDecryptionForm,
   DataDecryptionFormVals,
 } from '../../forms/DataDecryptionForm';
+import {AUTHENTICATION_TOKEN} from '../../utils/constants';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useRefreshAuthenticationToken} from '../../hooks/useRefreshAuthenticationToken';
 
 export function EncryptedData() {
   const {setError, setSuccess} = useContext(AppStateContext);
@@ -32,41 +32,32 @@ export function EncryptedData() {
 
   const {address} = useAccount();
 
-  const {hostName} = useContext(HerritageWalletContext);
-
   const {isLoading: isLoadingSign, signMessageAsync} = useSignMessage();
+  const {authToken} = useContext(AppStateContext);
+  const {refresh: refreshAuth} = useRefreshAuthenticationToken();
 
   useEffect(() => {
     (async () => {
       try {
         if (!address) {
-          setError({message: 'An error occured. Refresh the page.'});
+          log.error('Address can not be found.');
           return;
         }
 
-        const token = await reqToken(address);
+        if (authToken) {
+          const {status, data} = await getEncryptedData(address, authToken);
 
-        if (!token) {
-          setIsPageLoading(false);
-          return;
-        }
+          log.info({data: JSON.stringify(data), status});
 
-        const signedToken = await signMessageAsync({message: token});
-
-        log.info({signedToken});
-
-        const url = getUrl('encryptedData');
-
-        const {data, status} = await axios.get(
-          `${url}?address=${address}&signedToken=${signedToken}`,
-        );
-
-        log.info({data: JSON.stringify(data), status});
-
-        if (status === 200) {
-          setEncryptedText(data.encryptedData);
-          setInitialEmails(data.emails);
-          setShowEditForm(false);
+          if (status === 200) {
+            setEncryptedText(data.encryptedData);
+            setInitialEmails(data.emails);
+            setShowEditForm(false);
+          } else if (status === 501) {
+            await refreshAuth();
+          }
+        } else {
+          await refreshAuth();
         }
 
         setIsPageLoading(false);
@@ -75,7 +66,7 @@ export function EncryptedData() {
         setIsPageLoading(false);
       }
     })();
-  }, []);
+  }, [setIsPageLoading, authToken]);
 
   const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
     if (!address || !vals.clientEncryptedText) return;
@@ -83,7 +74,7 @@ export function EncryptedData() {
     setIsLoading(true);
 
     try {
-      const token = await reqToken(address);
+      const token = await authGet(address);
 
       const signedToken = await signMessageAsync({message: token});
 
@@ -100,7 +91,7 @@ export function EncryptedData() {
       log.info({statusSaveData});
 
       if (statusSaveData === 201) {
-        setSuccess({message: 'Data is encryptes and saved successfully.'});
+        setSuccess({message: 'Data has encrypted and saved successfully.'});
         setEncryptedText(vals.clientEncryptedText);
         setInitialEmails(vals.emails);
         setShowEditForm(false);

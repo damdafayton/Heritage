@@ -1,104 +1,96 @@
 import {TouchableOpacity, View} from 'react-native';
 import {Button, Text, Tooltip} from '../ui';
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useContext, useEffect, useReducer, useState} from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import {useAccount, useSignMessage} from 'wagmi';
-import {getUserData, pingServer, reqToken} from '../utils/api';
+import {userGet, userPost, authGet} from '../utils/api';
 import {logger} from '../utils/logger';
 import {useTheme} from 'react-native-paper';
 import {styles} from '../ui/styles';
+import {AUTHENTICATION_TOKEN, TRACK_PING} from '../utils/constants';
+import {useRefreshAuthenticationToken} from '../hooks/useRefreshAuthenticationToken';
+import {Loading} from './Loading';
+import {AppStateContext} from '../context/AppState.context';
 const log = logger('BackgroundTask');
-
-const BACKGROUND_TRACKING_KEY = 'com.herritage.backgroundTracking';
 
 export function BackgroundTask() {
   const {address} = useAccount();
 
-  const [canPingServer, setCanPingServer] = useState(false);
-  const [isChecking, setIsChecking] = useState(true);
+  const [isBackgroundFetching, setIsBackgroundFetching] = useState<
+    undefined | boolean
+  >(undefined);
   const [lastPingTimestamp, setLastPingTimestamp] = useState('');
+  const [forceUpdateFetcherKey, forceUpdateFetcher] = useReducer(x => x + 1, 0);
+  const theme = useTheme();
 
-  useEffect(() => {
-    if (!address) {
-      setCanPingServer(false);
-      return;
-    }
+  const {authToken} = useContext(AppStateContext);
 
-    setIsChecking(true);
+  const {refresh: refreshAuthentication, isLoading: isLoadingAuth} =
+    useRefreshAuthenticationToken();
 
-    (async () => {
-      const signedToken = (await AsyncStorage.getItem(
-        BACKGROUND_TRACKING_KEY,
-      )) as `0x${string}`;
+  const callUserGet = async () => {
+    const signedToken = (await AsyncStorage.getItem(
+      AUTHENTICATION_TOKEN,
+    )) as `0x${string}`;
 
-      // Confirm validity of token by pinging the server
-      if (signedToken) {
-        const {status} = await pingServer(address, signedToken);
+    return await userGet(address as `0x${string}`, signedToken);
+  };
 
-        if (status === 201) {
-          setCanPingServer(true);
-        }
-      } else {
-        setCanPingServer(false);
-      }
+  const refreshTimestamp = useCallback(async () => {
+    const {data} = await callUserGet();
 
-      setIsChecking(false);
-    })();
-  }, [address, setIsChecking]);
+    const timestamp = data?.timestamp;
 
-  const {isLoading: isLoadingSign, signMessageAsync} = useSignMessage();
+    if (!timestamp) return;
+
+    setLastPingTimestamp(timestamp);
+  }, [setLastPingTimestamp]);
 
   const startTracking = async () => {
     log.debug('startTracking');
+    await AsyncStorage.setItem(TRACK_PING, 'true');
 
-    const _token = await reqToken(address as `0x${string}`);
-
-    if (!_token) return;
-    const signedToken = await signMessageAsync({message: _token});
-
-    const {status} = await pingServer(address as `0x${string}`, signedToken);
-
-    if (status === 201) {
-      await AsyncStorage.setItem(BACKGROUND_TRACKING_KEY, signedToken);
-      setCanPingServer(true);
+    try {
+      // Check if user is authenticated by requesting timestamp
+      const {data} = await callUserGet();
+      setLastPingTimestamp(data?.timestamp);
+      forceUpdateFetcher();
+    } catch (e) {
+      log.debug(e);
+      await refreshAuthentication();
     }
   };
 
   const stopTracking = async () => {
     log.debug('stopTracking');
-    await AsyncStorage.setItem(BACKGROUND_TRACKING_KEY, '');
-    setCanPingServer(false);
+    await AsyncStorage.setItem(TRACK_PING, '');
+    forceUpdateFetcher();
   };
 
-  const refreshTimestamp = useCallback(async () => {
-    const signedToken = (await AsyncStorage.getItem(
-      BACKGROUND_TRACKING_KEY,
-    )) as `0x${string}`;
-
-    const {data} = await getUserData(address as `0x${string}`, signedToken);
-
-    setLastPingTimestamp(data?.timestamp);
-  }, [setLastPingTimestamp]);
-
   useEffect(() => {
-    if (canPingServer) {
-      (async () => {
-        await refreshTimestamp();
-      })();
-    }
-  }, [canPingServer, setLastPingTimestamp]);
+    (async () => {
+      const isAllowedToTrack =
+        (await AsyncStorage.getItem(TRACK_PING)) === 'true';
 
-  const theme = useTheme();
+      setIsBackgroundFetching(isAllowedToTrack);
 
-  if (isChecking) return <></>;
+      if (isAllowedToTrack) {
+        startBackgroundFetch(address, authToken);
+      } else {
+        BackgroundFetch.stop();
+      }
+    })();
+  }, [address, authToken, forceUpdateFetcherKey]);
+
+  if (isBackgroundFetching === undefined) return <Loading />;
 
   return (
-    <View style={styles.global}>
-      {!canPingServer ? (
+    <View style={styles.text}>
+      {!isBackgroundFetching ? (
         <>
           <Text style={{marginTop: 0}}>
             <AntDesign name="warning" color={theme.colors.error} /> Your app is
@@ -114,7 +106,7 @@ export function BackgroundTask() {
             server every 15 minutes to confirm that you are still alive.
           </Text>
           <Button
-            loading={isLoadingSign}
+            loading={isLoadingAuth}
             mode="contained-tonal"
             buttonColor={theme.colors.success}
             textColor={theme.colors.background}
@@ -152,7 +144,7 @@ export function BackgroundTask() {
             </Text>
           )}
           <Button
-            loading={isLoadingSign}
+            loading={isLoadingAuth}
             mode="contained-tonal"
             onPress={stopTracking}
             textColor={theme.colors.background}
@@ -172,7 +164,7 @@ async function startBackgroundFetch(address, signedToken) {
     // Do your background work...
     // await this.addEvent(taskId);
     // IMPORTANT:  You must signal to the OS that your task is complete.
-    await pingServer(address as `0x${string}`, signedToken);
+    await userPost(address as `0x${string}`, signedToken);
     BackgroundFetch.finish(taskId);
   };
 

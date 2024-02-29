@@ -73,7 +73,7 @@ export function HomeSubscribed() {
           mode="contained-tonal"
           onPress={payFee}
           compact={true}
-          style={{marginHorizontal: 8, marginTop: 0}}
+          style={{marginHorizontal: 8, marginTop: 2}}
           loading={loadingPayFee}
           labelStyle={{
             paddingVertical: 2,

@@ -11,6 +11,9 @@ import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {isSubscribed} from '../../helpers/isSubscribed';
 import {List, Tooltip} from '../../ui';
 import {AppStateContext} from '../../context/AppState.context';
+import {logger} from '../../utils/logger';
+import {Loading} from '../../molecules/Loading';
+const log = logger('AddInheritant');
 
 export function AddInheritant() {
   const {setError, setSuccess} = useContext(AppStateContext);
@@ -50,7 +53,7 @@ export function AddInheritant() {
   ) => {
     const inheritants = [];
 
-    for (const num of Array.from(Array(100).keys())) {
+    for await (const num of Array.from(Array(100).keys())) {
       try {
         const inheritant = await client.readContract({
           address,
@@ -61,12 +64,11 @@ export function AddInheritant() {
         if (!inheritant) break;
 
         inheritants.push(inheritant as never);
-      } catch {
+      } catch (e) {
         // array ended
         break;
       }
     }
-
     return inheritants;
   };
 
@@ -75,13 +77,13 @@ export function AddInheritant() {
   useEffect(() => {
     if (!isSubscribed(subscriptionData) || !address || !userAddr) return;
 
-    if (!inheritants.length || !isSuccess) return;
-
-    getInheritants(address, abi, userAddr).then(inheritants =>
+    getInheritants(address, abi, userAddr).then(inheritants => {
+      log.debug({inheritants});
+      if (!inheritants.length) return;
       //@ts-ignore
-      setInheritants(inheritants),
-    );
-  }, [subscriptionData, address, isSuccess]);
+      setInheritants(inheritants);
+    });
+  }, [subscriptionData, address, isSuccess, setInheritants]);
 
   return (
     <>
@@ -89,7 +91,11 @@ export function AddInheritant() {
         onSubmit={onSubmitAddInheritant}
         isLoading={isLoading}
       />
-      {inheritants.length ? <Inheritants inheritants={inheritants} /> : null}
+      {inheritants.length ? (
+        <Inheritants inheritants={inheritants} />
+      ) : isLoading ? (
+        <Loading />
+      ) : null}
     </>
   );
 }
@@ -98,6 +104,7 @@ const Inheritants = ({inheritants}) => (
   <List.Section title="Inheritants" style={{marginTop: 20}}>
     {inheritants?.map((inheritant: string[], idx) => (
       <List.Accordion
+        key={idx}
         title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
         left={props => <List.Icon {...props} icon="human" />}>
         <Tooltip title={inheritant[0]}>
