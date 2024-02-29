@@ -24,14 +24,15 @@ const {chains, publicClient} = configureChains(enabledChains, [
 
 // 2. Create config
 const metadata = {
-  name: 'Web3Modal RN',
-  description: 'Web3Modal RN Example',
+  name: 'Heritage Wallets',
+  description: '3rd party wallets to connect to the Heritage',
   url: 'https://web3modal.com',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
   redirect: {
     native: 'heritagenative://',
     // universal: 'YOUR_APP_UNIVERSAL_LINK.com',
   },
+  defaultChain: chains[0].id,
 };
 
 const allowBurner = appConfig.onlyLocalBurnerWallet

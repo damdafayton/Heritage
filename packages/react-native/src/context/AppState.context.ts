@@ -1,8 +1,6 @@
 import {createContext} from 'react';
 
 export const AppStateContext = createContext({
-  errors: [] as string[],
-  successes: [] as string[],
   clearErrors: () => {},
   clearSuccesses: () => {},
   setError: ({

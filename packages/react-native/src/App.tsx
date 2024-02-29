@@ -39,12 +39,8 @@ const log = logger('App');
 const App = () => {
   useAutoConnect();
 
-  const {
-    address: userAddress,
-    isConnecting,
-    connector,
-    isDisconnected: isUserDisconnected,
-  } = useAccount();
+  const {address: userAddress, isDisconnected: isUserDisconnected} =
+    useAccount();
 
   const {subscriptionData, refetchSubscriptionData, isSubscribed} =
     useGetSubscriptionData(userAddress);
@@ -83,17 +79,7 @@ const App = () => {
   const [forceUpdateKey, forceUpdate] = useReducer(x => x + 1, 0);
 
   useEffect(() => {
-    log.debug({minFeePerYear, isUserDisconnected, connector: connector?.name});
-
-    (async () => {
-      log.debug('WALLET_ID', await AsyncStorage.getItem(WALLET_ID_KEY));
-      log.debug(
-        'com.herritage.backgroundTracking',
-        await AsyncStorage.getItem('com.herritage.backgroundTracking'),
-      );
-    })();
-
-    if (!!minFeePerYear || isUserDisconnected || isFetching1) return;
+    if (isUserDisconnected || isFetching1) return;
 
     if (minFeePerYear) {
       log.debug('Connected to contract');
@@ -114,8 +100,9 @@ const App = () => {
   }, [forceUpdateKey, isFetching1, isUserDisconnected]);
 
   const [errors, setError] = useState<string[]>([]);
-  const [isModalVisible, setIsModalVisible] = useState(false);
   const [successes, setSuccess] = useState<string[]>([]);
+
+  const [isModalVisible, setIsModalVisible] = useState(false);
   const [AUTHENTICATION_TOKEN, setAUTHENTICATION_TOKEN] = useState('');
 
   useEffect(() => {
@@ -132,13 +119,11 @@ const App = () => {
       <AppStateContext.Provider
         value={{
           isModalVisible,
-          errors,
           clearErrors: () => setError([]),
           setError: ({message: newError, isModalVisible: isModal = false}) => {
             setError([...errors, newError]);
             setIsModalVisible(isModal);
           },
-          successes,
           clearSuccesses: () => setSuccess([]),
           setSuccess: ({
             message: newMessage,
@@ -167,14 +152,12 @@ const App = () => {
               loadingLabel="Loading.."
               label="Loading.."
             />
-          ) : (
-            ''
-          )}
+          ) : null}
           <Tabs />
-          <SuccessSnackbar />
-          <ErrorSnackbar />
         </HerritageWalletContext.Provider>
       </AppStateContext.Provider>
+      <SuccessSnackbar successes={successes} />
+      <ErrorSnackbar errors={errors} />
     </>
   );
 };

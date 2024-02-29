@@ -9,8 +9,8 @@ import {useTheme} from 'react-native-paper';
 import {View} from 'react-native';
 const log = logger('ErrorSnackbar');
 
-export function ErrorSnackbar() {
-  const {errors, clearErrors} = useContext(AppStateContext);
+export function ErrorSnackbar({errors}: {errors: string[]}) {
+  const {clearErrors} = useContext(AppStateContext);
 
   const [visible, setVisible] = useState(true);
 

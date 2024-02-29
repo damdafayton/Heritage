@@ -1,4 +1,11 @@
-import {Address, useAccount, usePublicClient, useContractWrite} from 'wagmi';
+import {
+  Address,
+  useAccount,
+  usePublicClient,
+  useContractWrite,
+  useNetwork,
+  useContractRead,
+} from 'wagmi';
 import {Abi} from 'viem';
 
 import {
@@ -13,17 +20,18 @@ import {List, Tooltip} from '../../ui';
 import {AppStateContext} from '../../context/AppState.context';
 import {logger} from '../../utils/logger';
 import {Loading} from '../../molecules/Loading';
+import {sleep} from '../../utils/utils';
 const log = logger('AddInheritant');
 
 export function AddInheritant() {
+  const [inheritants, setInheritants] = useState<any[] | undefined>(undefined);
   const {setError, setSuccess} = useContext(AppStateContext);
-
   const {abi, address} = useHeritageWalletContract();
 
   const {
-    write: writeAddInheritant,
     isSuccess,
     isLoading,
+    writeAsync: writeAddInheritant,
   } = useContractWrite({
     abi,
     address,
@@ -32,6 +40,11 @@ export function AddInheritant() {
 
   const onSubmitAddInheritant = async (vals: AddInheritantVals) => {
     try {
+      // await Promise.all([
+      //   sleep(6000),
+      //   writeAddInheritant({args: [vals.address, BigInt(vals.percent)]}),
+      // ]);
+
       await writeAddInheritant({args: [vals.address, BigInt(vals.percent)]});
 
       setSuccess({message: 'Inheritant added successfully.'});
@@ -46,7 +59,7 @@ export function AddInheritant() {
 
   const {address: userAddr} = useAccount();
 
-  const getInheritants = async (
+  const readInheritants = async (
     address: Address,
     abi: Abi,
     userAddr: Address,
@@ -65,22 +78,23 @@ export function AddInheritant() {
 
         inheritants.push(inheritant as never);
       } catch (e) {
-        // array ended
+        // contract array finished, end the loop
         break;
       }
     }
     return inheritants;
   };
 
-  const [inheritants, setInheritants] = useState([]);
-
   useEffect(() => {
     if (!isSubscribed(subscriptionData) || !address || !userAddr) return;
 
-    getInheritants(address, abi, userAddr).then(inheritants => {
-      log.debug({inheritants});
-      if (!inheritants.length) return;
-      //@ts-ignore
+    log.debug('readInheritants', {
+      subscriptionData,
+      address,
+      isSuccess,
+      setInheritants,
+    });
+    readInheritants(address, abi, userAddr).then(inheritants => {
       setInheritants(inheritants);
     });
   }, [subscriptionData, address, isSuccess, setInheritants]);
@@ -91,30 +105,27 @@ export function AddInheritant() {
         onSubmit={onSubmitAddInheritant}
         isLoading={isLoading}
       />
-      {inheritants.length ? (
-        <Inheritants inheritants={inheritants} />
-      ) : isLoading ? (
-        <Loading />
-      ) : null}
+      {inheritants ? <Inheritants inheritants={inheritants} /> : <Loading />}
     </>
   );
 }
 
-const Inheritants = ({inheritants}) => (
-  <List.Section title="Inheritants" style={{marginTop: 20}}>
-    {inheritants?.map((inheritant: string[], idx) => (
-      <List.Accordion
-        key={idx}
-        title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
-        left={props => <List.Icon {...props} icon="human" />}>
-        <Tooltip title={inheritant[0]}>
-          <List.Item
-            title={`Address: ${
-              inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
-            }`}
-          />
-        </Tooltip>
-      </List.Accordion>
-    ))}
-  </List.Section>
-);
+const Inheritants = ({inheritants}) =>
+  inheritants?.length ? (
+    <List.Section title="Inheritants" style={{marginTop: 20}}>
+      {inheritants?.map((inheritant: string[], idx) => (
+        <List.Accordion
+          key={idx}
+          title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
+          left={props => <List.Icon {...props} icon="human" />}>
+          <Tooltip title={inheritant[0]}>
+            <List.Item
+              title={`Address: ${
+                inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
+              }`}
+            />
+          </Tooltip>
+        </List.Accordion>
+      ))}
+    </List.Section>
+  ) : null;

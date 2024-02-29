@@ -33,14 +33,6 @@ export function useHeritageWalletContract() {
 
   const address = deployment?.address;
   const abi = deployment?.abi as unknown as typeof defaultABI;
-  log.debug(
-    'deploymentAddress',
-    address,
-    'chainName',
-    chain.name,
-    'chainId',
-    chain.id,
-  );
 
   const findContractFunction: FindHeritageWalletFunction = (
     functionName: Names,

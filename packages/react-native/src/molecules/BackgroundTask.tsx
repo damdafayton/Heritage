@@ -73,6 +73,8 @@ export function BackgroundTask() {
 
   useEffect(() => {
     (async () => {
+      refreshTimestamp();
+
       const isAllowedToTrack =
         (await AsyncStorage.getItem(TRACK_PING)) === 'true';
 
@@ -132,15 +134,17 @@ export function BackgroundTask() {
           {lastPingTimestamp && (
             <Text>
               Last ping: {new Date(lastPingTimestamp).toLocaleString()}{' '}
-              <TouchableOpacity
-                onPress={refreshTimestamp}
-                style={{marginBottom: -2}}>
-                <MaterialCommunityIcons
-                  size={18}
-                  name="refresh"
-                  color={theme.colors.primary}
-                />
-              </TouchableOpacity>
+              <Tooltip title="Refresh last pinged">
+                <TouchableOpacity
+                  onPress={refreshTimestamp}
+                  style={{marginBottom: -1}}>
+                  <MaterialCommunityIcons
+                    size={18}
+                    name="refresh"
+                    color={theme.colors.primary}
+                  />
+                </TouchableOpacity>
+              </Tooltip>
             </Text>
           )}
           <Button
@@ -160,7 +164,7 @@ export function BackgroundTask() {
 async function startBackgroundFetch(address, signedToken) {
   // BackgroundFetch event handler.
   const onEvent = async taskId => {
-    log.debug('task:', taskId);
+    log.debug('task => ' + taskId);
     // Do your background work...
     // await this.addEvent(taskId);
     // IMPORTANT:  You must signal to the OS that your task is complete.
@@ -171,7 +175,7 @@ async function startBackgroundFetch(address, signedToken) {
   // Timeout callback is executed when your Task has exceeded its allowed running-time.
   // You must stop what you're doing immediately BackgroundFetch.finish(taskId)
   const onTimeout = async taskId => {
-    log.warn('task TIMEOUT:', taskId);
+    log.warn('task TIMEOUT => ' + taskId);
     BackgroundFetch.finish(taskId);
   };
 
@@ -182,5 +186,5 @@ async function startBackgroundFetch(address, signedToken) {
     onTimeout,
   );
 
-  log.debug('configure status:', status);
+  log.debug('configure status => ' + status);
 }

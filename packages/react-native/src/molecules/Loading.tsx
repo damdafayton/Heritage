@@ -1,5 +1,5 @@
 import {ActivityIndicator} from '../ui';
 
-export function Loading() {
-  return <ActivityIndicator />;
+export function Loading({style = {}}) {
+  return <ActivityIndicator style={[{marginTop: 20}, style]} />;
 }

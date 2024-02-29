@@ -9,8 +9,8 @@ import {useTheme} from 'react-native-paper';
 import {View} from 'react-native';
 const log = logger('SuccessSnackbar');
 
-export function SuccessSnackbar() {
-  const {successes, clearSuccesses} = useContext(AppStateContext);
+export function SuccessSnackbar({successes}: {successes: string[]}) {
+  const {clearSuccesses} = useContext(AppStateContext);
 
   const [visible, setVisible] = useState(true);
 
