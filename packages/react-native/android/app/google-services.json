@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "898481618531",
+    "project_id": "heritage-96586",
+    "storage_bucket": "heritage-96586.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:898481618531:android:b58545130440159a764256",
+        "android_client_info": {
+          "package_name": "com.heritageproject"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBtoZswGlCVbbPecM4jzjpnuoapcMfQDr8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

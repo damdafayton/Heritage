@@ -1,5 +1,4 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
 buildscript {
     ext {
         buildToolsVersion = "33.0.0"
@@ -17,9 +16,16 @@ buildscript {
     dependencies {
         classpath("com.android.tools.build:gradle")
         classpath("com.facebook.react:react-native-gradle-plugin")
+        classpath("com.google.gms:google-services:4.4.1")
     }
 }
 
+plugins {
+
+  // Add the dependency for the Google services Gradle plugin
+//   id "com.google.gms.google-services" version "4.4.1" apply false
+
+}
 
 allprojects {
     repositories {
@@ -29,3 +35,4 @@ allprojects {
         url("${project(':react-native-background-fetch').projectDir}/libs")
         }
     }}
+
