@@ -51,7 +51,7 @@ export function ErrorSnackbar({errors}: {errors: string[]}) {
             style={{
               color: theme.colors.inverseOnSurface,
             }}>
-            {errors}
+            {errors.join(', ')}
           </Text>
         </View>
       </Snackbar>

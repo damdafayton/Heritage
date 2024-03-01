@@ -51,7 +51,7 @@ export function SuccessSnackbar({successes}: {successes: string[]}) {
             style={{
               color: theme.colors.inverseOnSurface,
             }}>
-            {successes}
+            {successes.join(', ')}
           </Text>
         </View>
       </Snackbar>

@@ -12,6 +12,8 @@ const log = logger('PortalWithModal');
 export function PortalWithModal({children, visible, onDismiss}) {
   const heritageContextData = useContext(HerritageWalletContext);
   const appStateContextData = useContext(AppStateContext);
+  const {isModalVisible, errors, successes} = appStateContextData;
+
   log.debug(appStateContextData);
   return (
     <PortalRN>
@@ -22,10 +24,10 @@ export function PortalWithModal({children, visible, onDismiss}) {
             visible={visible}
             onDismiss={onDismiss}
             contentContainerStyle={containerStyle}>
-            {appStateContextData.isModalVisible && (
+            {isModalVisible && (
               <>
-                <ErrorSnackbar />
-                <SuccessSnackbar />
+                <ErrorSnackbar errors={errors} />
+                <SuccessSnackbar successes={successes} />
               </>
             )}
             {children}

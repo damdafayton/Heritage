@@ -25,7 +25,7 @@ export function Tabs() {
       style={{
         paddingHorizontal: 20,
         paddingTop: 10,
-        // backgroundColor: theme.colors.background,
+        backgroundColor: theme.colors.background,
       }}
       screenListeners={{
         state: e => {

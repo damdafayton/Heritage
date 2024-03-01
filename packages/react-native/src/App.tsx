@@ -19,7 +19,7 @@ import {useHeritageWalletContract} from './hooks/useHeritageWalletContract';
 import {Abi} from 'viem';
 import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
-import {useEffect, useReducer, useState} from 'react';
+import {useEffect, useLayoutEffect, useReducer, useState} from 'react';
 import {AppStateContext} from './context/AppState.context';
 import {Tabs} from './molecules/Tabs';
 import {SuccessSnackbar} from './molecules/SuccessSnackbar';
@@ -28,7 +28,7 @@ import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
 import * as Sentry from '@sentry/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {WALLET_ID_KEY} from './utils/constants';
+import {Appearance} from 'react-native';
 
 Sentry.init({
   dsn: 'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
@@ -114,16 +114,23 @@ const App = () => {
     })();
   }, []);
 
+  useLayoutEffect(() => {
+    // Make sure theme is same for all components
+    Appearance.setColorScheme(Appearance.getColorScheme());
+  }, []);
+
   return (
     <>
       <AppStateContext.Provider
         value={{
           isModalVisible,
+          errors: errors,
           clearErrors: () => setError([]),
           setError: ({message: newError, isModalVisible: isModal = false}) => {
             setError([...errors, newError]);
             setIsModalVisible(isModal);
           },
+          successes: successes,
           clearSuccesses: () => setSuccess([]),
           setSuccess: ({
             message: newMessage,
