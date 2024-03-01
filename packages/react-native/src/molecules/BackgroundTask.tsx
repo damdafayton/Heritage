@@ -1,5 +1,5 @@
 import {TouchableOpacity, View} from 'react-native';
-import {Button, Text, Tooltip} from '../ui';
+import {Banner, Button, Snackbar, Text, Tooltip} from '../ui';
 import {useCallback, useContext, useEffect, useReducer, useState} from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -52,14 +52,15 @@ export function BackgroundTask() {
 
   const startTracking = async () => {
     log.debug('startTracking');
-    await AsyncStorage.setItem(TRACK_PING, 'true');
 
     try {
       // Check if user is authenticated by requesting timestamp
       const {status} = await callUserGet();
-
-      if (status === 201) {
+      log.debug({status});
+      if (status === 200) {
+        await AsyncStorage.setItem(TRACK_PING, 'true');
         forceUpdateBackgroundFetcher();
+        return;
       }
       await refreshAuthentication();
     } catch (e) {
@@ -91,25 +92,33 @@ export function BackgroundTask() {
     })();
   }, [address, authToken, forceUpdate]);
 
+  const [showTrackerSnack, setShowTrackerSnack] = useState(false);
+
   if (isBackgroundFetching === undefined) return <Loading />;
 
   return (
     <View style={styles.text}>
       {!isBackgroundFetching ? (
         <>
-          <Text style={{marginTop: 0}}>
-            <AntDesign name="warning" color={theme.colors.error} /> Your app is
-            not pinging the server to confirm that you are alive. If an account
-            is inactive for 30 days:
-          </Text>
-          <Text>1) It's inheritance will be distributed. </Text>
-          <Text>
-            2) It's encrypted data will be delivered to registered receivers.
-          </Text>
-          <Text>
-            This button enables the app to send a ping in the background to the
-            server every 15 minutes to confirm that you are still alive.
-          </Text>
+          <TouchableOpacity
+            onPress={() => setShowTrackerSnack(!showTrackerSnack)}>
+            <Text style={{marginTop: 0}}>
+              <AntDesign name="warning" color={theme.colors.error} /> Your app
+              is not pinging the server to confirm that you are alive.
+            </Text>
+          </TouchableOpacity>
+          {showTrackerSnack ? (
+            <Banner
+              style={{marginTop: 14}}
+              visible={showTrackerSnack}
+              onDismiss={() => setShowTrackerSnack(false)}>
+              {`If an account is inactive for 30 days:
+1) It's inheritance will be distributed. \ 
+2) It's encrypted data will be delivered to registered receivers.\
+
+This button enables the app to send a ping in the background to the server every 15 minutes to confirm that you are still alive.`}
+            </Banner>
+          ) : null}
           <Button
             loading={isLoadingAuth}
             mode="contained-tonal"

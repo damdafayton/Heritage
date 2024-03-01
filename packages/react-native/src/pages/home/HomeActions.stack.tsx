@@ -1,4 +1,3 @@
-import PolyfillCrypto from 'react-native-webview-crypto';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import {useContext} from 'react';
 
@@ -7,18 +6,14 @@ import {EncryptedData} from './EncryptedData';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {logger} from '../../utils/logger';
 import {HomeSubscribedType} from '../../typings/config';
-import {HomeSubscribed} from './HomeSubscribed';
 import {useTheme} from 'react-native-paper';
-import {SendFunds} from './SendFunds';
-import {Deposit} from './Deposit';
-import {AddInheritant} from './AddInheritant';
 import {ScrollView} from 'react-native';
-import {styles} from '../../ui/styles';
 import {Text} from '../../ui';
+import {HomeActions} from './HomeActions';
 
-const log = logger('HomeStack');
+const log = logger('HomeActionsStack');
 
-export function HomeStack() {
+export function HomeActionsStack() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
     HerritageWalletContext,
   );
@@ -42,7 +37,6 @@ export function HomeStack() {
 
   return (
     <>
-      <PolyfillCrypto />
       <Stack.Navigator
         screenOptions={{
           contentStyle: {
@@ -57,16 +51,7 @@ export function HomeStack() {
           options={{...globalScreenOptions}}>
           {props => (
             <StyledScrollView {...props}>
-              <HomeSubscribed />
-            </StyledScrollView>
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name={HomeSubscribedType.DEPOSIT}
-          options={{...globalScreenOptions}}>
-          {props => (
-            <StyledScrollView {...props}>
-              <Deposit />
+              <HomeActions />
             </StyledScrollView>
           )}
         </Stack.Screen>
@@ -76,24 +61,6 @@ export function HomeStack() {
           {props => (
             <StyledScrollView {...props}>
               <EncryptedData />
-            </StyledScrollView>
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name={HomeSubscribedType.SEND}
-          options={globalScreenOptions}>
-          {props => (
-            <StyledScrollView {...props}>
-              <SendFunds />
-            </StyledScrollView>
-          )}
-        </Stack.Screen>
-        <Stack.Screen
-          name={HomeSubscribedType.ADD_INHERITANT}
-          options={globalScreenOptions}>
-          {props => (
-            <StyledScrollView {...props}>
-              <AddInheritant />
             </StyledScrollView>
           )}
         </Stack.Screen>

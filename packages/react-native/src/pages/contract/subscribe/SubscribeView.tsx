@@ -1,6 +1,6 @@
 import {ScrollView, StyleSheet, View} from 'react-native';
-import {DepositForm, DepositFormSubmit} from '../../forms/DepositForm';
-import {ContractData} from '../../molecules/ContractData';
+import {DepositForm, DepositFormSubmit} from '../../../forms/DepositForm';
+import {ContractData} from '../../../molecules/ContractData';
 
 type PropTypes = {
   handleFormSubmit: DepositFormSubmit;

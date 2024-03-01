@@ -29,6 +29,7 @@ import {logger} from './utils/logger';
 import * as Sentry from '@sentry/react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Appearance} from 'react-native';
+import PolyfillCrypto from 'react-native-webview-crypto';
 
 Sentry.init({
   dsn: 'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
@@ -121,6 +122,7 @@ const App = () => {
 
   return (
     <>
+      <PolyfillCrypto />
       <AppStateContext.Provider
         value={{
           isModalVisible,

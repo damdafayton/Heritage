@@ -17,7 +17,7 @@ import {Text} from '../../ui';
 import {useTheme} from 'react-native-paper';
 import {BackgroundTask} from '../../molecules/BackgroundTask';
 
-export function HomeSubscribed() {
+export function UserSubscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
     HerritageWalletContext,
   );
@@ -102,25 +102,13 @@ export function HomeSubscribed() {
           {value: HomeSubscribedType.SEND, label: HomeSubscribedType.SEND},
         ]}
       />
-      <SegmentedButtons
-        value={segmentedButtons}
-        onValueChange={value => {
-          // setSegmentedButtons(value);
-          navigation.navigate(value);
-        }}
-        buttons={[
-          {
-            value: HomeSubscribedType.ENCRYPTED_DATA,
-            label: HomeSubscribedType.ENCRYPTED_DATA,
-          },
-          {
-            value: HomeSubscribedType.ADD_INHERITANT,
-            label: HomeSubscribedType.ADD_INHERITANT,
-          },
-        ]}
-      />
-      <Divider />
-      <BackgroundTask />
+      <Button
+        mode="contained-tonal"
+        onPress={() =>
+          navigation.navigate(HomeSubscribedType.ADD_INHERITANT as never)
+        }>
+        {HomeSubscribedType.ADD_INHERITANT}
+      </Button>
     </>
   );
 }

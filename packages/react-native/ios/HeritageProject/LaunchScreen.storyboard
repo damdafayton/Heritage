@@ -27,9 +27,10 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="splash" highlightedImage="splash" translatesAutoresizingMaskIntoConstraints="NO" id="6Zd-zS-zgq" userLabel="splash">
-                                <rect key="frame" x="0.0" y="180" width="375" height="358"/>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" fixedFrame="YES" image="splash" translatesAutoresizingMaskIntoConstraints="NO" id="7v7-AF-mGq">
+                                <rect key="frame" x="-0.97610619468969162" y="269.75752212388068" width="374.99999999988472" height="128"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <preferredSymbolConfiguration key="preferredSymbolConfiguration" scale="large"/>
                             </imageView>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="Ya9-VQ-FvC"/>
@@ -50,7 +51,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="splash" width="90" height="90"/>
+        <image name="splash" width="29" height="29"/>
         <systemColor name="systemBackgroundColor">
             <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
         </systemColor>

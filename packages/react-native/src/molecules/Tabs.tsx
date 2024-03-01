@@ -12,6 +12,7 @@ import {Contract} from '../pages/Contract';
 import {Home} from '../pages/Home';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {useContext} from 'react';
+import {Help} from '../pages/Help';
 
 export function Tabs() {
   const theme = useTheme();
@@ -63,6 +64,20 @@ export function Tabs() {
           />
         </>
       )}
+      <Tab.Screen
+        name={MenuType.HELP}
+        component={Help}
+        options={{
+          tabBarLabel: MenuType.HELP,
+          tabBarIcon: ({color}) => (
+            <MaterialCommunityIcons
+              name="account-question"
+              color={color}
+              size={24}
+            />
+          ),
+        }}
+      />
     </Tab.Navigator>
   );
 }
