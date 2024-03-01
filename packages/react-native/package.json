@@ -8,7 +8,7 @@
     ]
   },
   "scripts": {
-    "android": "ENVFILE=.env.dev react-native run-android",
+    "android": "ENVFILE=.env.dev react-native run-android --port=8082",
     "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
     "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
     "ios:build": "yarn pod && ENVFILE=.env.prod react-native run-ios --port=8082 --device 'yucel’s iPhone' --mode Release",
@@ -37,7 +37,10 @@
     "semver@^7.3.8": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
     "semver@^7.5.3": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
     "semver@^7.5.4": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
-    "semver@^5.6.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch"
+    "semver@^5.6.0": "patch:semver@npm%3A7.5.4#./.yarn/patches/semver-npm-7.5.4-c4ad957fcd.patch",
+    "react-native-tcp@^3.3.2": "patch:react-native-tcp@npm%3A3.3.2#./.yarn/patches/react-native-tcp-npm-3.3.2-683c31cffa.patch",
+    "react-native-os@^1.2.6": "patch:react-native-os@npm%3A1.2.6#./.yarn/patches/react-native-os-npm-1.2.6-65c52ed3dc.patch",
+    "react-native-udp@2.7.0": "patch:react-native-udp@npm%3A2.7.0#./.yarn/patches/react-native-udp-npm-2.7.0-f90f2ea2b5.patch"
   },
   "dependencies": {
     "@ethersproject/providers": "^5.7.2",

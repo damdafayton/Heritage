@@ -24,7 +24,7 @@ export function BackgroundTask() {
     undefined | boolean
   >(undefined);
   const [lastPingTimestamp, setLastPingTimestamp] = useState('');
-  const [forceUpdateFetcherKey, forceUpdateFetcher] = useReducer(x => x + 1, 0);
+  const [forceUpdate, forceUpdateBackgroundFetcher] = useReducer(x => x + 1, 0);
   const theme = useTheme();
 
   const {authToken} = useContext(AppStateContext);
@@ -56,9 +56,12 @@ export function BackgroundTask() {
 
     try {
       // Check if user is authenticated by requesting timestamp
-      const {data} = await callUserGet();
-      setLastPingTimestamp(data?.timestamp);
-      forceUpdateFetcher();
+      const {status} = await callUserGet();
+
+      if (status === 201) {
+        forceUpdateBackgroundFetcher();
+      }
+      await refreshAuthentication();
     } catch (e) {
       log.debug(e);
       await refreshAuthentication();
@@ -68,7 +71,7 @@ export function BackgroundTask() {
   const stopTracking = async () => {
     log.debug('stopTracking');
     await AsyncStorage.setItem(TRACK_PING, '');
-    forceUpdateFetcher();
+    forceUpdateBackgroundFetcher();
   };
 
   useEffect(() => {
@@ -86,7 +89,7 @@ export function BackgroundTask() {
         BackgroundFetch.stop();
       }
     })();
-  }, [address, authToken, forceUpdateFetcherKey]);
+  }, [address, authToken, forceUpdate]);
 
   if (isBackgroundFetching === undefined) return <Loading />;
 

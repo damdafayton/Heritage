@@ -1,4 +1,4 @@
-package com.HeritageProject;
+package com.heritageproject;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

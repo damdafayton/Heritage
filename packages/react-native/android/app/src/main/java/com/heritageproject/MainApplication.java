@@ -1,4 +1,4 @@
-package com.HeritageProject;
+package com.heritageproject;
 
 import android.app.Application;
 import com.facebook.react.PackageList;
