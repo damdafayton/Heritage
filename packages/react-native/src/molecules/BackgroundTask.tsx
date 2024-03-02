@@ -27,7 +27,7 @@ export function BackgroundTask() {
   const [forceUpdate, forceUpdateBackgroundFetcher] = useReducer(x => x + 1, 0);
   const theme = useTheme();
 
-  const {authToken} = useContext(AppStateContext);
+  const {authToken, setError} = useContext(AppStateContext);
 
   const {refresh: refreshAuthentication, isLoading: isLoadingAuth} =
     useRefreshAuthenticationToken();
@@ -64,8 +64,8 @@ export function BackgroundTask() {
       }
       await refreshAuthentication();
     } catch (e) {
-      log.debug(e);
-      await refreshAuthentication();
+      log.error(e);
+      setError({message: 'Something went wrong, please try again.'});
     }
   };
 
