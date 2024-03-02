@@ -6,7 +6,7 @@ import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {Loading} from '../molecules/Loading';
 import {UserNotSubscribed} from './contract/UserNotSubscribed';
 import {UserSubscribedStack} from './contract/UserSubscribed.stack';
-import {ActivityIndicator, Text} from '../ui';
+import {Text} from '../ui';
 import {StyleSheet} from 'react-native';
 
 export function Contract() {
@@ -23,7 +23,7 @@ export function Contract() {
       <Text style={[styles.text, {marginBottom: 14}]}>
         Waiting for connection to the contract
       </Text>
-      <ActivityIndicator />
+      <Loading />
     </>
   );
 }

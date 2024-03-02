@@ -12,7 +12,7 @@ import {AppStateContext} from '../../../context/AppState.context';
 
 export function Subscribe({visible, setVisible}) {
   const {refetchSubscriptionData} = useContext(HerritageWalletContext);
-  const {setError} = useContext(AppStateContext);
+  const {setError, setSuccess} = useContext(AppStateContext);
 
   const {getDepositInWei} = useConvertDepositToWei();
 
@@ -22,6 +22,10 @@ export function Subscribe({visible, setVisible}) {
 
       await writeAsync({
         value: depositAmountInWEI,
+      });
+
+      setSuccess({
+        message: 'Registration successful!',
       });
     } catch (e) {
       log.error(e);

@@ -1,12 +1,12 @@
 import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
 import {useNetwork} from 'wagmi';
 
-import {ActivityIndicator} from '../ui/ActivityIndicator';
 import {Text} from '../ui/Text';
 import {useContext} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
 import {logger} from '../utils/logger';
+import {Loading} from './Loading';
 const log = logger('ContractData');
 
 export function ContractData({style}: {style?: any}) {
@@ -49,7 +49,7 @@ export function ContractData({style}: {style?: any}) {
           </View>
         </View>
       ) : (
-        <ActivityIndicator />
+        <Loading />
       )}
     </View>
   );

@@ -97,12 +97,12 @@ export function BackgroundTask() {
   if (isBackgroundFetching === undefined) return <Loading />;
 
   return (
-    <View style={styles.text}>
+    <View style={{marginTop: styles.global.marginTop}}>
       {!isBackgroundFetching ? (
         <>
           <TouchableOpacity
             onPress={() => setShowTrackerSnack(!showTrackerSnack)}>
-            <Text style={{marginTop: 0}}>
+            <Text>
               <AntDesign name="warning" color={theme.colors.error} /> Your app
               is not pinging the server to confirm that you are alive.
             </Text>

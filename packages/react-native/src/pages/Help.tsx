@@ -6,6 +6,8 @@ import {Text} from '../ui';
 import {useContext} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {Loading} from '../molecules/Loading';
+import {ContractData} from '../molecules/ContractData';
+import {StyleSheet, View} from 'react-native';
 
 export function Help() {
   const {minFeePerYear, feeThousandagePerYear} = useContext(
@@ -18,17 +20,19 @@ export function Help() {
         <>
           <List.Section title="">
             <List.Accordion title="Fee examples">
-              <List.Subheader>For 1000$</List.Subheader>
+              <List.Subheader>For 1.000$</List.Subheader>
               <Text style={{marginStart: 24}}>
-                {`Calculated fee = 1000 * 0.00${feeThousandagePerYear} = ${
+                {`Annual fee = ${feeThousandagePerYear} ‰
+Calculated fee = 1.000 * 0,00${feeThousandagePerYear} = ${
                   (1000 * feeThousandagePerYear) / 1000
                 }$
 Minimum fee = ${minFeePerYear}$
 Applied yearly fee = ${minFeePerYear}$`}
               </Text>
-              <List.Subheader>For 10000$</List.Subheader>
+              <List.Subheader>For 10.000$</List.Subheader>
               <Text style={{marginStart: 24}}>
-                {`Calculated fee = 10000 * 0.00${feeThousandagePerYear} = ${
+                {`Annual fee = ${feeThousandagePerYear} ‰
+Calculated fee = 10.000 * 0,00${feeThousandagePerYear} = ${
                   (10000 * feeThousandagePerYear) / 1000
                 }$
 Minimum fee = ${minFeePerYear}$
