@@ -5,7 +5,12 @@ import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('EncryptedData');
 
 import {decryptText, deriveKey, encryptText} from '../../helpers/crpyto';
-import {getEncryptedData, getUrl, authGet} from '../../utils/api';
+import {
+  getEncryptedData,
+  getUrl,
+  authGet,
+  postEncryptedData,
+} from '../../utils/api';
 import {AppStateContext} from '../../context/AppState.context';
 import {Loading} from '../../molecules/Loading';
 import {
@@ -17,6 +22,8 @@ import {
   DataDecryptionFormVals,
 } from '../../forms/DataDecryptionForm';
 import {useRefreshAuthenticationToken} from '../../hooks/useRefreshAuthenticationToken';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {AUTHENTICATION_TOKEN} from '../../utils/constants';
 
 export function EncryptedData() {
   const {setError, setSuccess} = useContext(AppStateContext);
@@ -31,7 +38,6 @@ export function EncryptedData() {
   const {address} = useAccount();
 
   const {isLoading: isLoadingSign, signMessageAsync} = useSignMessage();
-  const {authToken} = useContext(AppStateContext);
   const {refresh: refreshAuth} = useRefreshAuthenticationToken();
 
   useEffect(() => {
@@ -41,30 +47,37 @@ export function EncryptedData() {
           log.error('Address can not be found.');
           return;
         }
+        setIsPageLoading(true);
 
-        if (authToken) {
-          const {status, data} = await getEncryptedData(address, authToken);
+        const authToken = (await AsyncStorage.getItem(
+          AUTHENTICATION_TOKEN,
+        )) as `0x${string}`;
 
-          log.info({data: JSON.stringify(data), status});
-
-          if (status === 200) {
-            setEncryptedText(data.encryptedData);
-            setInitialEmails(data.emails);
-            setShowEditForm(false);
-          } else if (status === 501) {
-            await refreshAuth();
-          }
-        } else {
+        if (!authToken) {
+          log.debug('No auth token found.');
           await refreshAuth();
+          setIsPageLoading(false);
+          return;
         }
 
-        setIsPageLoading(false);
+        const {status, data} = await getEncryptedData(address, authToken);
+
+        if (status === 200) {
+          setEncryptedText(data.encryptedData);
+          setInitialEmails(data.emails);
+          setShowEditForm(false);
+        } else if (status === 501) {
+          await refreshAuth();
+        }
       } catch (e) {
         log.error(e);
-        setIsPageLoading(false);
+
+        setError({message: 'An error occured. Try again.'});
       }
+
+      setIsPageLoading(false);
     })();
-  }, [setIsPageLoading, authToken]);
+  }, [setIsPageLoading]);
 
   const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
     if (!address || !vals.clientEncryptedText) return;
@@ -76,15 +89,14 @@ export function EncryptedData() {
 
       const signedToken = await signMessageAsync({message: token});
 
-      const url = getUrl('encryptedData');
-      const {status: statusSaveData} = await axios.post(url, {
-        data: JSON.stringify({
-          signedToken,
-          address,
-          encryptedData: vals.clientEncryptedText,
-          emails: vals.emails,
-        }),
+      const data = JSON.stringify({
+        signedToken,
+        address,
+        encryptedData: vals.clientEncryptedText,
+        emails: vals.emails,
       });
+
+      const {status: statusSaveData} = await postEncryptedData(address, data);
 
       log.info({statusSaveData});
 

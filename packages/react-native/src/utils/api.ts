@@ -34,7 +34,10 @@ export async function authGet(address: Address) {
 }
 
 export async function userPost(address, signedToken) {
-  log.debug('This call updates timestamp', {address, signedToken});
+  log.debug('This call updates USER token and timestamp', {
+    address,
+    signedToken,
+  });
   const url = getUrl('user');
 
   return await axios.post(url, {
@@ -67,4 +70,12 @@ export async function getEncryptedData(address: Address, signedToken: string) {
   return await axios.get(
     `${url}?address=${address}&signedToken=${signedToken || ''}`,
   );
+}
+
+export async function postEncryptedData(address: Address, data: string) {
+  const url = getUrl('encryptedData');
+
+  return await axios.post(url, {
+    data,
+  });
 }

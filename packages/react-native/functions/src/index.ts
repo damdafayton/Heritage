@@ -65,7 +65,7 @@ export const auth = onRequest(async (req, res) => {
         token,
       } as Auth)
       .then(() => {
-        logger.log("Document successfully written!");
+        logger.log("AUTH document successfully written!");
       })
       .catch((error: any) => {
         logger.error("Error writing document: ", error);
@@ -214,7 +214,7 @@ export const user = onRequest(async (req, res) => {
         token,
       })
       .then(() => {
-        logger.log("User document successfully written! Created new token.");
+        logger.log("USER document successfully written!");
       })
       .catch((error: any) => {
         logger.error("Error writing document: ", error);
@@ -257,7 +257,7 @@ export const ping = onRequest(async (req, res) => {
         {merge: true},
       )
       .then(() => {
-        logger.log("User document successfully written! Timestamp updated.");
+        logger.log("USER document successfully updated with timestamp!");
       })
       .catch((error: any) => {
         logger.error("Error writing document: ", error);

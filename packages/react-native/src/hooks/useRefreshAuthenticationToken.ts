@@ -1,18 +1,14 @@
 import {useAccount, useSignMessage} from 'wagmi';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import {authGet, userPost} from '../utils/api';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {AUTHENTICATION_TOKEN} from '../utils/constants';
-import {useContext} from 'react';
-import {AppStateContext} from '../context/AppState.context';
 import {logger} from '../utils/logger';
 const log = logger('useRefreshAuthenticationToken');
 
 export function useRefreshAuthenticationToken() {
   const {address} = useAccount();
   const {isLoading: isLoadingSign, signMessageAsync} = useSignMessage();
-
-  const {setAuthToken} = useContext(AppStateContext);
 
   const refresh = async (onError?: Function) => {
     try {
@@ -25,7 +21,6 @@ export function useRefreshAuthenticationToken() {
 
       if (res.status === 201) {
         await AsyncStorage.setItem(AUTHENTICATION_TOKEN, signedToken);
-        setAuthToken(signedToken);
       }
 
       return res;

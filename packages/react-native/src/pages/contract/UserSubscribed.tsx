@@ -1,5 +1,11 @@
 import {useContext, useState} from 'react';
-import {ScrollView, StyleSheet, View} from 'react-native';
+import {
+  Linking,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -16,6 +22,7 @@ import {Divider} from '../../ui/Divider';
 import {Text} from '../../ui';
 import {useTheme} from 'react-native-paper';
 import {BackgroundTask} from '../../molecules/BackgroundTask';
+import {useGetEtherScanLink} from '../../hooks/useGetEtherScanLink';
 
 export function UserSubscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
@@ -55,8 +62,18 @@ export function UserSubscribed() {
 
   const theme = useTheme();
 
+  const etherscanLink = useGetEtherScanLink();
+
   return (
     <>
+      <View style={styles.contractDataRow}>
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(etherscanLink);
+          }}>
+          <Text>View contract on Etherscan</Text>
+        </TouchableOpacity>
+      </View>
       <View style={styles.contractDataRow}>
         <Text>Annual fee: </Text>
         <Text>{feeThousandagePerYear}</Text>

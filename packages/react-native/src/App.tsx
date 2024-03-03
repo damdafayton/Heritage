@@ -104,16 +104,10 @@ const App = () => {
   const [successes, setSuccess] = useState<string[]>([]);
 
   const [isModalVisible, setIsModalVisible] = useState(false);
-  const [AUTHENTICATION_TOKEN, setAUTHENTICATION_TOKEN] = useState('');
 
   useEffect(() => {
     SplashScreen.hide();
-
-    (async () => {
-      const token = await AsyncStorage.getItem(AUTHENTICATION_TOKEN);
-      setAUTHENTICATION_TOKEN(token || '');
-    })();
-  }, [setAUTHENTICATION_TOKEN]);
+  }, []);
 
   useLayoutEffect(() => {
     // Make sure theme is same for all components
@@ -141,8 +135,6 @@ const App = () => {
             setSuccess([...successes, newMessage]);
             setIsModalVisible(isModal);
           },
-          authToken: AUTHENTICATION_TOKEN,
-          setAuthToken: setAUTHENTICATION_TOKEN,
         }}>
         <HerritageWalletContext.Provider
           value={{

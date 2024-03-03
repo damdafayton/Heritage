@@ -13,11 +13,7 @@ export function Contract() {
   const {isConnected, isSubscribed} = useContext(HerritageWalletContext);
 
   return isConnected ? (
-    <>
-      {isSubscribed ? <UserSubscribedStack /> : <UserNotSubscribed />}
-      {/* <ContractData />
-      <Divider /> */}
-    </>
+    <>{isSubscribed ? <UserSubscribedStack /> : <UserNotSubscribed />}</>
   ) : (
     <>
       <Text style={[styles.text, {marginBottom: 14}]}>

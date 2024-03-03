@@ -1,12 +1,11 @@
 import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
-import {useNetwork} from 'wagmi';
 
 import {Text} from '../ui/Text';
 import {useContext} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
-import {useHeritageWalletContract} from '../hooks/useHeritageWalletContract';
 import {logger} from '../utils/logger';
 import {Loading} from './Loading';
+import {useGetEtherScanLink} from '../hooks/useGetEtherScanLink';
 const log = logger('ContractData');
 
 export function ContractData({style}: {style?: any}) {
@@ -14,21 +13,24 @@ export function ContractData({style}: {style?: any}) {
     HerritageWalletContext,
   );
 
-  const {address} = useHeritageWalletContract();
-  const {chain} = useNetwork();
-
   log.debug({minFeePerYear, feeThousandagePerYear});
 
   const contractIsLoaded = minFeePerYear && feeThousandagePerYear;
 
-  const etherscanLink = `https://${
-    chain?.id === 1 ? '' : `${chain?.name}.`
-  }etherscan.io/address/${address}`;
+  const etherscanLink = useGetEtherScanLink();
 
   return (
     <View style={[styles.contractData, style]}>
       {contractIsLoaded ? (
         <View style={styles.contractDataCell}>
+          <View style={styles.contractDataRow}>
+            <TouchableOpacity
+              onPress={() => {
+                Linking.openURL(etherscanLink);
+              }}>
+              <Text>View contract on Etherscan</Text>
+            </TouchableOpacity>
+          </View>
           <View style={styles.contractDataRow}>
             <Text>Annual fee: </Text>
             <Text>{feeThousandagePerYear}</Text>
@@ -38,14 +40,6 @@ export function ContractData({style}: {style?: any}) {
             <Text>Minimum fee: </Text>
             <Text>{minFeePerYear}</Text>
             <Text>$</Text>
-          </View>
-          <View style={styles.contractDataRow}>
-            <TouchableOpacity
-              onPress={() => {
-                Linking.openURL(etherscanLink);
-              }}>
-              <Text>View contract on Etherscan</Text>
-            </TouchableOpacity>
           </View>
         </View>
       ) : (

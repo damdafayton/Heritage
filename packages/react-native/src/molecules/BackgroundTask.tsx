@@ -27,7 +27,7 @@ export function BackgroundTask() {
   const [forceUpdate, forceUpdateBackgroundFetcher] = useReducer(x => x + 1, 0);
   const theme = useTheme();
 
-  const {authToken, setError} = useContext(AppStateContext);
+  const {setError} = useContext(AppStateContext);
 
   const {refresh: refreshAuthentication, isLoading: isLoadingAuth} =
     useRefreshAuthenticationToken();
@@ -101,14 +101,17 @@ export function BackgroundTask() {
       setIsBackgroundFetching(isAllowedToTrack);
 
       if (isAllowedToTrack) {
-        await startBackgroundFetch(address, authToken);
+        await startBackgroundFetch(
+          address,
+          await AsyncStorage.getItem(AUTHENTICATION_TOKEN),
+        );
       } else {
         BackgroundFetch.stop();
       }
 
       setIsPageLoading(false);
     })();
-  }, [address, authToken, forceUpdate]);
+  }, [address, forceUpdate]);
 
   const [showTrackerSnack, setShowTrackerSnack] = useState(false);
 
