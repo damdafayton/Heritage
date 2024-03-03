@@ -16,23 +16,25 @@ import {Help} from '../pages/Help';
 import {ScrollView} from 'react-native';
 import {Text} from '../ui';
 
+export const StyledScrollView = ({children, ...props}) => {
+  const theme = useTheme();
+
+  return (
+    <ScrollView
+      showsVerticalScrollIndicator={false}
+      style={{backgroundColor: theme.colors.background}}
+      {...props}>
+      {children}
+      <Text style={{marginBottom: 24}}>{''}</Text>
+    </ScrollView>
+  );
+};
+
 export function Tabs() {
   const theme = useTheme();
 
   const Tab = createMaterialBottomTabNavigator();
   const isConnected = useContext(HerritageWalletContext);
-
-  const StyledScrollView = ({children, ...props}) => {
-    return (
-      <ScrollView
-        showsVerticalScrollIndicator={false}
-        style={{backgroundColor: theme.colors.background}}
-        {...props}>
-        {children}
-        <Text style={{marginBottom: 24}}>{''}</Text>
-      </ScrollView>
-    );
-  };
 
   return (
     <Tab.Navigator
@@ -75,22 +77,16 @@ export function Tabs() {
         }}
       />
       {isConnected && (
-        <>
-          <Tab.Screen
-            name={MenuType.CONTRACT}
-            options={{
-              tabBarLabel: MenuType.CONTRACT,
-              tabBarIcon: ({color}) => (
-                <MaterialCommunityIcons name="bell" color={color} size={24} />
-              ),
-            }}>
-            {props => (
-              <StyledScrollView {...props}>
-                <Contract />
-              </StyledScrollView>
-            )}
-          </Tab.Screen>
-        </>
+        <Tab.Screen
+          component={Contract}
+          name={MenuType.CONTRACT}
+          options={{
+            tabBarLabel: MenuType.CONTRACT,
+            tabBarIcon: ({color}) => (
+              <MaterialCommunityIcons name="bell" color={color} size={24} />
+            ),
+          }}
+        />
       )}
       <Tab.Screen
         name={MenuType.HELP}

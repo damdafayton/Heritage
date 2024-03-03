@@ -14,9 +14,7 @@ import {HomeActions} from './HomeActions';
 const log = logger('HomeActionsStack');
 
 export function HomeActionsStack() {
-  const {subscriptionData, refetchSubscriptionData} = useContext(
-    HerritageWalletContext,
-  );
+  const {subscriptionData} = useContext(HerritageWalletContext);
 
   if (!subscriptionData) return <ActivityIndicator />;
 

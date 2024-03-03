@@ -27,6 +27,8 @@ export function Subscribe({visible, setVisible}) {
       setSuccess({
         message: 'Registration successful!',
       });
+
+      refetchSubscriptionData();
     } catch (e) {
       log.error(e);
       setError({
@@ -48,10 +50,6 @@ export function Subscribe({visible, setVisible}) {
     address,
     functionName: 'registerSubscriber',
   });
-
-  useEffect(() => {
-    if (registerSubscriberIsSuccess) refetchSubscriptionData();
-  }, [registerSubscriberIsSuccess]);
 
   return (
     <PortalWithModal visible={visible} onDismiss={() => setVisible(false)}>
