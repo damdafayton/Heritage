@@ -13,6 +13,8 @@ import {Home} from '../pages/Home';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {useContext} from 'react';
 import {Help} from '../pages/Help';
+import {ScrollView} from 'react-native';
+import {Text} from '../ui';
 
 export function Tabs() {
   const theme = useTheme();
@@ -20,9 +22,31 @@ export function Tabs() {
   const Tab = createMaterialBottomTabNavigator();
   const isConnected = useContext(HerritageWalletContext);
 
+  const StyledScrollView = ({children, ...props}) => {
+    return (
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        style={{backgroundColor: theme.colors.background}}
+        {...props}>
+        {children}
+        <Text style={{marginBottom: 24}}>{''}</Text>
+      </ScrollView>
+    );
+  };
+
   return (
     <Tab.Navigator
-      barStyle={{marginHorizontal: -20}}
+      inactiveColor={theme.colors.onSurface}
+      activeColor={theme.colors.onSurface}
+      // activeIndicatorStyle={{backgroundColor: theme.colors.primaryContainer}}
+      activeIndicatorStyle={{
+        backgroundColor: theme.colors.secondaryContainer,
+      }}
+      // activeColor={theme.colors.primary}
+      barStyle={{
+        marginHorizontal: -20,
+        backgroundColor: theme.colors.inverseOnSurface,
+      }}
       style={{
         paddingHorizontal: 20,
         paddingTop: 10,
@@ -54,19 +78,22 @@ export function Tabs() {
         <>
           <Tab.Screen
             name={MenuType.CONTRACT}
-            component={Contract}
             options={{
               tabBarLabel: MenuType.CONTRACT,
               tabBarIcon: ({color}) => (
                 <MaterialCommunityIcons name="bell" color={color} size={24} />
               ),
-            }}
-          />
+            }}>
+            {props => (
+              <StyledScrollView {...props}>
+                <Contract />
+              </StyledScrollView>
+            )}
+          </Tab.Screen>
         </>
       )}
       <Tab.Screen
         name={MenuType.HELP}
-        component={Help}
         options={{
           tabBarLabel: MenuType.HELP,
           tabBarIcon: ({color}) => (
@@ -76,8 +103,13 @@ export function Tabs() {
               size={24}
             />
           ),
-        }}
-      />
+        }}>
+        {props => (
+          <StyledScrollView {...props}>
+            <Help />
+          </StyledScrollView>
+        )}
+      </Tab.Screen>
     </Tab.Navigator>
   );
 }

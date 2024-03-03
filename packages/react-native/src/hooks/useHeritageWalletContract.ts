@@ -19,7 +19,7 @@ export function useHeritageWalletContract() {
 
   if (!chain?.id) {
     const error = 'Chain or chain ID can not be found.';
-    log.error(error);
+
     return {error};
   }
 

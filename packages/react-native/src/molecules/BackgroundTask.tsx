@@ -15,6 +15,7 @@ import {AUTHENTICATION_TOKEN, TRACK_PING} from '../utils/constants';
 import {useRefreshAuthenticationToken} from '../hooks/useRefreshAuthenticationToken';
 import {Loading} from './Loading';
 import {AppStateContext} from '../context/AppState.context';
+import {appConfig} from '../../app.config';
 const log = logger('BackgroundTask');
 
 export function BackgroundTask() {
@@ -169,7 +170,7 @@ This button enables the app to send a ping in the background to the server every
               Last ping: {new Date(lastPingTimestamp).toLocaleString()}{' '}
               <TouchableOpacity
                 onPress={refreshTimestamp}
-                style={{marginBottom: -3}}>
+                style={{marginBottom: -2}}>
                 <MaterialCommunityIcons
                   size={18}
                   name="refresh"
@@ -192,16 +193,23 @@ This button enables the app to send a ping in the background to the server every
   );
 }
 
+import * as Sentry from '@sentry/react-native';
+
 async function startBackgroundFetch(address, signedToken) {
   // BackgroundFetch event handler.
   const onEvent = async taskId => {
     log.debug('task => ' + taskId);
-    // Do your background work...
-    // await this.addEvent(taskId);
-    // IMPORTANT:  You must signal to the OS that your task is complete.
+    // temporary log to test fetching
+    Sentry.init({
+      dsn: appConfig.sentryDSN,
+    });
+
     await pingGet(address as `0x${string}`, signedToken);
+
+    // IMPORTANT:  You must signal to the OS that your task is complete.
     BackgroundFetch.finish(taskId);
 
+    // temporary log to test fetching
     log.error(
       `This is not a real error, it's just a test on ${Platform.OS} for BackgroundFetch. Task id: ${taskId}`,
     );

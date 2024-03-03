@@ -1,4 +1,4 @@
-import {StyleSheet, View} from 'react-native';
+import {ScrollView, StyleSheet} from 'react-native';
 import {useState} from 'react';
 import {logger} from 'react-native-logs';
 
@@ -12,7 +12,7 @@ export function UserNotSubscribed() {
   const [visible, setVisible] = useState(false);
 
   return (
-    <View>
+    <>
       <ContractData />
       <Divider />
       <DividerFollowerView>
@@ -24,7 +24,7 @@ export function UserNotSubscribed() {
         </Button>
         <Subscribe visible={visible} setVisible={setVisible} />
       </DividerFollowerView>
-    </View>
+    </>
   );
 }
 

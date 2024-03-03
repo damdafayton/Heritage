@@ -32,7 +32,7 @@ import '../shim';
 import App from './App';
 import {wagmiConfig, chains} from './services/wagmiConfig';
 import {appConfig} from '../app.config';
-import {Appearance} from 'react-native';
+import {Appearance, useColorScheme} from 'react-native';
 
 const clipboardClient = {
   setString: async (value: string) => {
@@ -56,7 +56,6 @@ const darkTheme = {
     success: 'rgb(116 194 119)',
   },
 };
-const theme = Appearance.getColorScheme() === 'dark' ? darkTheme : lightTheme;
 
 // 3. Create modal
 createWeb3Modal({
@@ -82,10 +81,12 @@ createWeb3Modal({
 });
 
 export const index = () => {
+  const colorScheme = useColorScheme();
+
   return (
     <NavigationContainer>
       <WagmiConfig config={wagmiConfig}>
-        <PaperProvider theme={theme}>
+        <PaperProvider theme={colorScheme === 'dark' ? darkTheme : lightTheme}>
           <App />
         </PaperProvider>
         <Web3Modal />

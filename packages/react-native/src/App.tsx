@@ -27,12 +27,13 @@ import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
 import * as Sentry from '@sentry/react-native';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {Appearance} from 'react-native';
 import PolyfillCrypto from 'react-native-webview-crypto';
+import {appConfig} from '../app.config';
+import {useTheme} from 'react-native-paper';
 
 Sentry.init({
-  dsn: 'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
+  dsn: appConfig.sentryDSN,
 });
 
 const log = logger('App');
@@ -87,15 +88,19 @@ const App = () => {
       return;
     }
 
-    log.error(
-      `Connection error to contract at ${heritageAddress}. Will try again in 10 seconds`,
-    );
+    if (forceUpdateKey > 1) {
+      log.error(
+        `Failed to connect to the contract at ${
+          heritageAddress || '??'
+        } for 2 times. App will try connecting again in 5 seconds`,
+      );
+    }
 
     const timeoutId = setTimeout(() => {
       refetch();
       refetch2();
       forceUpdate();
-    }, 10000);
+    }, 5000);
 
     return () => clearTimeout(timeoutId);
   }, [forceUpdateKey, isFetching1, isUserDisconnected]);
@@ -109,10 +114,7 @@ const App = () => {
     SplashScreen.hide();
   }, []);
 
-  useLayoutEffect(() => {
-    // Make sure theme is same for all components
-    Appearance.setColorScheme(Appearance.getColorScheme());
-  }, []);
+  const theme = useTheme();
 
   return (
     <>
@@ -152,6 +154,14 @@ const App = () => {
               balance="show"
               loadingLabel="Loading.."
               label="Loading.."
+              connectStyle={{
+                backgroundColor: theme.colors.background,
+                borderRadius: 0,
+              }}
+              accountStyle={{
+                backgroundColor: theme.colors.background,
+                borderRadius: 0,
+              }}
             />
           ) : null}
           <Tabs />

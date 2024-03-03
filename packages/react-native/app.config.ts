@@ -15,6 +15,7 @@ export type ScaffoldConfig = {
   logSeverity: string;
   nodeEnv?: 'production';
   hostName: string;
+  sentryDSN?: string;
 };
 
 export const appConfig: ScaffoldConfig = {
@@ -52,4 +53,6 @@ export const appConfig: ScaffoldConfig = {
    * 2. If user is not connected to any wallet:  On reload, connect to burner wallet if burnerWallet.enabled is true && burnerWallet.onlyLocal is false
    */
   walletAutoConnect: true,
+  sentryDSN:
+    'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
 };
