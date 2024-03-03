@@ -118,7 +118,7 @@ export function BackgroundTask() {
   if (isBackgroundFetching === undefined) return <Loading />;
 
   return (
-    <View style={{marginTop: styles.global.marginTop}}>
+    <View>
       {!isBackgroundFetching ? (
         <>
           <TouchableOpacity
@@ -169,7 +169,7 @@ This button enables the app to send a ping in the background to the server every
               Last ping: {new Date(lastPingTimestamp).toLocaleString()}{' '}
               <TouchableOpacity
                 onPress={refreshTimestamp}
-                style={{marginBottom: -1}}>
+                style={{marginBottom: -3}}>
                 <MaterialCommunityIcons
                   size={18}
                   name="refresh"

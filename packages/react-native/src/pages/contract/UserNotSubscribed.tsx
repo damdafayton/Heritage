@@ -5,6 +5,7 @@ import {logger} from 'react-native-logs';
 import {Button, Divider, Text} from '../../ui';
 import {Subscribe} from './subscribe/Subscribe';
 import {ContractData} from '../../molecules/ContractData';
+import {DividerFollowerView} from '../../molecules/DividerFollowerView';
 const log = logger.createLogger().extend('HomeNonSubscribed');
 
 export function UserNotSubscribed() {
@@ -14,13 +15,15 @@ export function UserNotSubscribed() {
     <View>
       <ContractData />
       <Divider />
-      <Text style={styles.text}>
-        You are not registered. Click below button to register.
-      </Text>
-      <Button mode="contained" onPress={() => setVisible(true)}>
-        Register
-      </Button>
-      <Subscribe visible={visible} setVisible={setVisible} />
+      <DividerFollowerView>
+        <Text style={[styles.text]}>
+          You are not registered. Click below button to register.
+        </Text>
+        <Button mode="contained" onPress={() => setVisible(true)}>
+          Register
+        </Button>
+        <Subscribe visible={visible} setVisible={setVisible} />
+      </DividerFollowerView>
     </View>
   );
 }

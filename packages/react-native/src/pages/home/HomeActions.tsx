@@ -3,6 +3,7 @@ import {BackgroundTask} from '../../molecules/BackgroundTask';
 import {ContractData} from '../../molecules/ContractData';
 import {HomeSubscribedType} from '../../typings/config';
 import {Button, Divider, SegmentedButtons} from '../../ui';
+import {DividerFollowerView} from '../../molecules/DividerFollowerView';
 
 export function HomeActions() {
   const navigation = useNavigation();
@@ -11,7 +12,9 @@ export function HomeActions() {
     <>
       <ContractData />
       <Divider />
-      <BackgroundTask />
+      <DividerFollowerView>
+        <BackgroundTask />
+      </DividerFollowerView>
       <Button
         mode="contained"
         onPress={() =>
