@@ -13,7 +13,7 @@ export function ContractData({style}: {style?: any}) {
     HerritageWalletContext,
   );
 
-  log.debug({minFeePerYear, feeThousandagePerYear});
+  log.debug('rendered');
 
   const contractIsLoaded = minFeePerYear && feeThousandagePerYear;
 

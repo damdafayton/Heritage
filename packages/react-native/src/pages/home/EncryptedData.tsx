@@ -72,12 +72,13 @@ export function EncryptedData() {
       } catch (e) {
         log.error(e);
 
-        setError({message: 'An error occured. Try again.'});
+        // This rerenders the component and causes an infinite loop
+        // setError({message: 'An error occured. Try again.'});
       }
 
       setIsPageLoading(false);
     })();
-  }, [setIsPageLoading]);
+  }, []);
 
   const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
     if (!address || !vals.clientEncryptedText) return;

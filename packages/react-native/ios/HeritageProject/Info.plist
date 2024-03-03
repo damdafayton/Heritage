@@ -75,24 +75,16 @@
 	</array>
 	<key>CFBundleURLTypes</key>
 	<array>
-		<dict>
+		 <dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.walletconnect.web3modal.rnsample</string>
+			<string>com.example.yourBundleId</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>w3mwagmisample</string>
+				<string>heritagenative</string> <!-- your own custom scheme -->
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleURLName</key>
-			<string>com.heritageproject</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-            	<string>heritagenative</string>
-        	</array>
-    	</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
