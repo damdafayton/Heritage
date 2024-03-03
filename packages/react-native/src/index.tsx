@@ -19,7 +19,7 @@ Promise.allSettled =
 import '@walletconnect/react-native-compat';
 import {WagmiConfig} from 'wagmi';
 import {createWeb3Modal, Web3Modal} from '@web3modal/wagmi-react-native';
-import React, {useEffect} from 'react';
+import React from 'react';
 import Clipboard from '@react-native-clipboard/clipboard';
 import {NavigationContainer} from '@react-navigation/native';
 import {

@@ -33,14 +33,14 @@ export async function authGet(address: Address) {
   return token;
 }
 
-export async function userPost(address, token) {
-  log.debug('pinging', {address, token});
+export async function userPost(address, signedToken) {
+  log.debug('This call updates timestamp', {address, signedToken});
   const url = getUrl('user');
 
   return await axios.post(url, {
     data: JSON.stringify({
       address,
-      signedToken: token,
+      signedToken,
     }),
   });
 }
@@ -50,13 +50,21 @@ export async function userGet(address: Address, signedToken) {
   const url = getUrl('user');
 
   return await axios.get(
-    `${url}?address=${address}&signedToken=${signedToken}`,
+    `${url}?address=${address}&signedToken=${signedToken || ''}`,
+  );
+}
+
+export async function pingGet(address: Address, signedToken) {
+  const url = getUrl('ping');
+
+  return await axios.get(
+    `${url}?address=${address}&signedToken=${signedToken || ''}`,
   );
 }
 
 export async function getEncryptedData(address: Address, signedToken: string) {
   const url = getUrl('encryptedData');
   return await axios.get(
-    `${url}?address=${address}&signedToken=${signedToken}`,
+    `${url}?address=${address}&signedToken=${signedToken || ''}`,
   );
 }

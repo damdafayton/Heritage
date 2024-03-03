@@ -113,7 +113,7 @@ const App = () => {
       const token = await AsyncStorage.getItem(AUTHENTICATION_TOKEN);
       setAUTHENTICATION_TOKEN(token || '');
     })();
-  }, []);
+  }, [setAUTHENTICATION_TOKEN]);
 
   useLayoutEffect(() => {
     // Make sure theme is same for all components

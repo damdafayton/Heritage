@@ -3,7 +3,7 @@ import {FormEvent, useContext, useEffect, useState} from 'react';
 import {ScrollView, TouchableOpacity, View} from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 
-import {Button, TextInput, Text, HelperText, Tooltip} from '../ui';
+import {Button, TextInput, Text, HelperText} from '../ui';
 import {sleep} from '../utils/utils';
 import {AppStateContext} from '../context/AppState.context';
 import {useTheme} from 'react-native-paper';
@@ -143,33 +143,29 @@ export function DataEncryptionForm({
             onBlur={handleBlur('text')}
           />
           {errors.text && <HelperText type="error">{errors.text}</HelperText>}
-          <Tooltip
-            title={
-              'You must give this key to the owner of the email addresses that you declare'
-            }>
-            <TextInput
-              label={'Key'}
-              placeholder="Type a secret key"
-              value={values.secretKey}
-              onChangeText={async key => {
-                handleChange('secretKey')(key);
 
-                if (!values.text) return;
+          <TextInput
+            label={'Key'}
+            placeholder="Type a secret key"
+            value={values.secretKey}
+            onChangeText={async key => {
+              handleChange('secretKey')(key);
 
-                try {
-                  const encryptedText = await deriveKeyAndEncryptText(
-                    values.text,
-                    key,
-                  );
+              if (!values.text) return;
 
-                  setClientEncryptedText(encryptedText);
-                } catch (e) {
-                  log.error(e);
-                }
-              }}
-              onBlur={handleBlur('secretKey')}
-            />
-          </Tooltip>
+              try {
+                const encryptedText = await deriveKeyAndEncryptText(
+                  values.text,
+                  key,
+                );
+
+                setClientEncryptedText(encryptedText);
+              } catch (e) {
+                log.error(e);
+              }
+            }}
+            onBlur={handleBlur('secretKey')}
+          />
           {errors.secretKey && (
             <HelperText type="error">{errors.secretKey}</HelperText>
           )}
@@ -216,20 +212,19 @@ export function DataEncryptionForm({
             <Text>Add another email</Text>
           </TouchableOpacity>
           {clientEncryptedText ? (
-            <Tooltip title={'Encryption is done on the client side.'}>
-              <>
-                <Text style={{marginTop: 16}}>
-                  This is what we will see and save:
-                </Text>
-                <Text
-                  style={{
-                    ...globalStyles.encryptedDataBox,
-                    backgroundColor: colors.primaryContainer,
-                  }}>
-                  {clientEncryptedText}
-                </Text>
-              </>
-            </Tooltip>
+            <>
+              <Text style={{marginTop: 16}}>
+                Encryption is done on the client side. This is what we will see
+                and save:
+              </Text>
+              <Text
+                style={{
+                  ...globalStyles.encryptedDataBox,
+                  backgroundColor: colors.primaryContainer,
+                }}>
+                {clientEncryptedText}
+              </Text>
+            </>
           ) : (
             ''
           )}

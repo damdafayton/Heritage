@@ -16,8 +16,6 @@ import {
   DataDecryptionForm,
   DataDecryptionFormVals,
 } from '../../forms/DataDecryptionForm';
-import {AUTHENTICATION_TOKEN} from '../../utils/constants';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useRefreshAuthenticationToken} from '../../hooks/useRefreshAuthenticationToken';
 
 export function EncryptedData() {

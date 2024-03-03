@@ -8,12 +8,12 @@
     ]
   },
   "scripts": {
-    "android": "ENVFILE=.env.dev react-native run-android --port=8082",
+    "android": "ENVFILE=.env.dev react-native run-android --port=8082 --deviceId=emulator-5556",
     "android:build": "ENVFILE=.env.prod npx react-native build-android --mode=release --port=8082",
-    "android:build:run": "ENVFILE=.env.prod react-native run-android --port=8082 --mode=release",
+    "android:rel": "ENVFILE=.env.prod react-native run-android --port=8082 --mode=release",
     "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
-    "ios:testnet": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
-    "ios:build": "yarn pod && ENVFILE=.env.prod react-native run-ios --port=8082 --device 'yucel’s iPhone' --mode Release",
+    "ios:test": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
+    "ios:rel": "yarn pod && ENVFILE=.env.prod react-native run-ios --port=8082 --device 'yucel’s iPhone' --mode Release",
     "lint": "eslint .",
     "start": "react-native start --port=8082 --reset-cache",
     "test": "jest",

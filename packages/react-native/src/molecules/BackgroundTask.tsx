@@ -1,13 +1,13 @@
-import {TouchableOpacity, View} from 'react-native';
-import {Banner, Button, Snackbar, Text, Tooltip} from '../ui';
+import {Platform, TouchableOpacity, View} from 'react-native';
+import {Banner, Button, Text} from '../ui';
 import {useCallback, useContext, useEffect, useReducer, useState} from 'react';
 import BackgroundFetch from 'react-native-background-fetch';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
-import {useAccount, useSignMessage} from 'wagmi';
-import {userGet, userPost, authGet} from '../utils/api';
+import {useAccount} from 'wagmi';
+import {pingGet, userGet} from '../utils/api';
 import {logger} from '../utils/logger';
 import {useTheme} from 'react-native-paper';
 import {styles} from '../ui/styles';
@@ -32,7 +32,7 @@ export function BackgroundTask() {
   const {refresh: refreshAuthentication, isLoading: isLoadingAuth} =
     useRefreshAuthenticationToken();
 
-  const callUserGet = async () => {
+  const userGetWithToken = async () => {
     const signedToken = (await AsyncStorage.getItem(
       AUTHENTICATION_TOKEN,
     )) as `0x${string}`;
@@ -41,9 +41,9 @@ export function BackgroundTask() {
   };
 
   const refreshTimestamp = useCallback(async () => {
-    const {data} = await callUserGet();
+    const res = await userGetWithToken();
 
-    const timestamp = data?.timestamp;
+    const timestamp = res?.data?.timestamp;
 
     if (!timestamp) return;
 
@@ -52,20 +52,30 @@ export function BackgroundTask() {
 
   const startTracking = async () => {
     log.debug('startTracking');
+    if (!address) {
+      setError({message: 'Address is not available. Try again.'});
+      return;
+    }
 
     try {
       // Check if user is authenticated by requesting timestamp
-      const {status} = await callUserGet();
-      log.debug({status});
-      if (status === 200) {
+      const res = await userGetWithToken();
+      log.debug({status: res?.status});
+      if (res?.status === 200) {
         await AsyncStorage.setItem(TRACK_PING, 'true');
         forceUpdateBackgroundFetcher();
         return;
       }
-      await refreshAuthentication();
-    } catch (e) {
+    } catch (e: any) {
       log.error(e);
-      setError({message: 'Something went wrong, please try again.'});
+
+      const {status} = e.response || {};
+      if (status === 401) {
+        await refreshAuthentication(() =>
+          setError({message: 'Something went wrong, please try again.'}),
+        );
+        startTracking();
+      }
     }
   };
 
@@ -75,7 +85,13 @@ export function BackgroundTask() {
     forceUpdateBackgroundFetcher();
   };
 
+  const [isPageLoading, setIsPageLoading] = useState(false);
+
   useEffect(() => {
+    setIsPageLoading(true);
+
+    if (!address) return;
+
     (async () => {
       refreshTimestamp();
 
@@ -85,10 +101,12 @@ export function BackgroundTask() {
       setIsBackgroundFetching(isAllowedToTrack);
 
       if (isAllowedToTrack) {
-        startBackgroundFetch(address, authToken);
+        await startBackgroundFetch(address, authToken);
       } else {
         BackgroundFetch.stop();
       }
+
+      setIsPageLoading(false);
     })();
   }, [address, authToken, forceUpdate]);
 
@@ -120,7 +138,7 @@ This button enables the app to send a ping in the background to the server every
             </Banner>
           ) : null}
           <Button
-            loading={isLoadingAuth}
+            loading={isLoadingAuth || isPageLoading}
             mode="contained-tonal"
             buttonColor={theme.colors.success}
             textColor={theme.colors.background}
@@ -146,17 +164,15 @@ This button enables the app to send a ping in the background to the server every
           {lastPingTimestamp && (
             <Text>
               Last ping: {new Date(lastPingTimestamp).toLocaleString()}{' '}
-              <Tooltip title="Refresh last pinged">
-                <TouchableOpacity
-                  onPress={refreshTimestamp}
-                  style={{marginBottom: -1}}>
-                  <MaterialCommunityIcons
-                    size={18}
-                    name="refresh"
-                    color={theme.colors.primary}
-                  />
-                </TouchableOpacity>
-              </Tooltip>
+              <TouchableOpacity
+                onPress={refreshTimestamp}
+                style={{marginBottom: -1}}>
+                <MaterialCommunityIcons
+                  size={18}
+                  name="refresh"
+                  color={theme.colors.primary}
+                />
+              </TouchableOpacity>
             </Text>
           )}
           <Button
@@ -180,8 +196,12 @@ async function startBackgroundFetch(address, signedToken) {
     // Do your background work...
     // await this.addEvent(taskId);
     // IMPORTANT:  You must signal to the OS that your task is complete.
-    await userPost(address as `0x${string}`, signedToken);
+    await pingGet(address as `0x${string}`, signedToken);
     BackgroundFetch.finish(taskId);
+
+    log.error(
+      `This is not a real error, it's just a test on ${Platform.OS} for BackgroundFetch. Task id: ${taskId}`,
+    );
   };
 
   // Timeout callback is executed when your Task has exceeded its allowed running-time.

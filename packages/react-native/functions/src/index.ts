@@ -71,24 +71,6 @@ export const auth = onRequest(async (req, res) => {
         logger.error("Error writing document: ", error);
       });
 
-    const userDoc = await db.collection("user").doc(address).get();
-
-    if (!userDoc.exists) {
-      db.collection("user")
-        .doc(address)
-        .set({
-          timestamp: Date.now(),
-          address,
-          token,
-        } as User)
-        .then(() => {
-          logger.log("Document successfully written!");
-        })
-        .catch((error: any) => {
-          logger.error("Error writing document: ", error);
-        });
-    }
-
     res.send({token});
     return;
   }
@@ -104,7 +86,7 @@ export const encryptedData = onRequest(async (req, res) => {
     const {query} = req;
 
     const {address, signedToken} = query;
-    if (typeof address !== "string") return;
+    if (!address || typeof address !== "string") return;
 
     if (
       !signedToken ||
@@ -133,7 +115,7 @@ export const encryptedData = onRequest(async (req, res) => {
     logger.debug({encryptedData});
 
     res.send({encryptedData, emails: docData.emails});
-    break;
+    return;
   }
   case "POST": {
     const data = body.data ? JSON.parse(body.data) : {};
@@ -173,7 +155,7 @@ export const encryptedData = onRequest(async (req, res) => {
       .set({address, encryptedData: serverEncryptedData, emails});
 
     res.sendStatus(201);
-    break;
+    return;
   }
   }
 });
@@ -187,6 +169,11 @@ export const user = onRequest(async (req, res) => {
     const {address, signedToken} = query;
     if (typeof address !== "string") return;
 
+    if (!signedToken) {
+      res.sendStatus(401);
+      return;
+    }
+
     if (
       !(await verifySignedToken(address as string, signedToken as string))
     ) {
@@ -198,7 +185,7 @@ export const user = onRequest(async (req, res) => {
     const docData = doc.data() as User;
 
     res.send({timestamp: docData.timestamp});
-    break;
+    return;
   }
   case "POST": {
     const data = body.data ? JSON.parse(body.data) : {};
@@ -214,17 +201,70 @@ export const user = onRequest(async (req, res) => {
     } else if (await verifySignerWithinTimeLimit(address, signedToken)) {
       token = (await db.collection("auth").doc(address).get()).data()?.token;
     } else {
-      res.sendStatus(403);
+      res.sendStatus(401);
+      return;
     }
 
-    await db.collection("user").doc(address).set({
-      timestamp: Date.now(),
-      address,
-      token,
-    });
+    await db
+      .collection("user")
+      .doc(address)
+      .set({
+        timestamp: Date.now(),
+        address,
+        token,
+      })
+      .then(() => {
+        logger.log("User document successfully written! Created new token.");
+      })
+      .catch((error: any) => {
+        logger.error("Error writing document: ", error);
+      });
 
     res.sendStatus(201);
-    break;
+    return;
+  }
+  }
+});
+
+export const ping = onRequest(async (req, res) => {
+  const {method, query} = req;
+  logger.log({method, query});
+
+  switch (method) {
+  case "GET": {
+    const {address, signedToken} = query;
+    if (typeof address !== "string") return;
+
+    if (!signedToken) {
+      res.sendStatus(401);
+      return;
+    }
+
+    if (
+      !(await verifySignedToken(address as string, signedToken as string))
+    ) {
+      res.sendStatus(401);
+      return;
+    }
+
+    await db
+      .collection("user")
+      .doc(address)
+      .set(
+        {
+          timestamp: Date.now(),
+        },
+        {merge: true},
+      )
+      .then(() => {
+        logger.log("User document successfully written! Timestamp updated.");
+      })
+      .catch((error: any) => {
+        logger.error("Error writing document: ", error);
+      });
+
+    res.sendStatus(201);
+    return;
   }
   }
 });

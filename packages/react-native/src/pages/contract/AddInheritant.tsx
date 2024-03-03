@@ -118,13 +118,11 @@ const Inheritants = ({inheritants}) =>
           key={idx}
           title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
           left={props => <List.Icon {...props} icon="human" />}>
-          <Tooltip title={inheritant[0]}>
-            <List.Item
-              title={`Address: ${
-                inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
-              }`}
-            />
-          </Tooltip>
+          <List.Item
+            title={`Address: ${
+              inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
+            }`}
+          />
         </List.Accordion>
       ))}
     </List.Section>

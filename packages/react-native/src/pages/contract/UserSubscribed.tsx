@@ -24,8 +24,14 @@ export function UserSubscribed() {
 
   if (!subscriptionData) return <ActivityIndicator />;
 
-  const {deposited, paidFeeCount, lastYearPaid, startTimestamp, minFeePerYear} =
-    subscriptionData;
+  const {
+    deposited,
+    paidFeeCount,
+    lastYearPaid,
+    startTimestamp,
+    minFeePerYear,
+    feeThousandagePerYear,
+  } = subscriptionData;
 
   const navigation = useNavigation();
 
@@ -51,6 +57,16 @@ export function UserSubscribed() {
 
   return (
     <>
+      <View style={styles.contractDataRow}>
+        <Text>Annual fee: </Text>
+        <Text>{feeThousandagePerYear}</Text>
+        <Text>‰</Text>
+      </View>
+      <View style={styles.contractDataRow}>
+        <Text>Minimum fee: </Text>
+        <Text>{minFeePerYear}</Text>
+        <Text>$</Text>
+      </View>
       <View style={styles.contractDataRow}>
         <Text>Deposited: </Text>
         <Text>{deposited}</Text>
