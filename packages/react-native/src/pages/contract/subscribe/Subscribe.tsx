@@ -32,7 +32,7 @@ export function Subscribe({visible, setVisible}) {
     } catch (e) {
       log.error(e);
       setError({
-        message: 'Something went wrong, please try again.',
+        message: 'Something went wrong during register, please try again.',
         isModalVisible: true,
       });
       return {error: e};

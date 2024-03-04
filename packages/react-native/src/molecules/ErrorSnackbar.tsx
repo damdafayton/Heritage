@@ -45,10 +45,10 @@ export function ErrorSnackbar({errors}: {errors: string[]}) {
             name="warning"
             size={30}
             color={theme.colors.errorContainer}
-            style={{marginRight: 10}}
           />
           <Text
             style={{
+              marginHorizontal: 10,
               color: theme.colors.inverseOnSurface,
             }}>
             {errors.join(', ')}

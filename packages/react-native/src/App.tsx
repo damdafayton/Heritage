@@ -167,8 +167,8 @@ const App = () => {
           <Tabs />
         </HerritageWalletContext.Provider>
       </AppStateContext.Provider>
-      <SuccessSnackbar successes={successes} />
-      <ErrorSnackbar errors={errors} />
+      {!isModalVisible ? <SuccessSnackbar successes={successes} /> : null}
+      {!isModalVisible ? <ErrorSnackbar errors={errors} /> : null}
     </>
   );
 };

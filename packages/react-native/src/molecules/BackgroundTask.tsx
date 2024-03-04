@@ -198,21 +198,25 @@ import * as Sentry from '@sentry/react-native';
 async function startBackgroundFetch(address, signedToken) {
   // BackgroundFetch event handler.
   const onEvent = async taskId => {
-    log.debug('task => ' + taskId);
-    // temporary log to test fetching
-    Sentry.init({
-      dsn: appConfig.sentryDSN,
-    });
+    try {
+      log.debug('task => ' + taskId);
+      // temporary log to test fetching
+      Sentry.init({
+        dsn: appConfig.sentryDSN,
+      });
 
-    await pingGet(address as `0x${string}`, signedToken);
+      await pingGet(address as `0x${string}`, signedToken);
 
-    // IMPORTANT:  You must signal to the OS that your task is complete.
-    BackgroundFetch.finish(taskId);
+      // IMPORTANT:  You must signal to the OS that your task is complete.
+      BackgroundFetch.finish(taskId);
 
-    // temporary log to test fetching
-    log.error(
-      `This is not a real error, it's just a test on ${Platform.OS} for BackgroundFetch. Task id: ${taskId}`,
-    );
+      // temporary log to test fetching
+      log.error(
+        `This is not a real error, it's just a test on ${Platform.OS} for BackgroundFetch. Task id: ${taskId}`,
+      );
+    } catch (e) {
+      console.error(e);
+    }
   };
 
   // Timeout callback is executed when your Task has exceeded its allowed running-time.
