@@ -1,4 +1,4 @@
-import {Portal as PortalRN} from 'react-native-paper';
+import {Portal as PortalRN, useTheme} from 'react-native-paper';
 import {useContext} from 'react';
 
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
@@ -13,6 +13,13 @@ export function PortalWithModal({children, visible, onDismiss}) {
   const heritageContextData = useContext(HerritageWalletContext);
   const appStateContextData = useContext(AppStateContext);
   const {isModalVisible, errors, successes} = appStateContextData;
+
+  const theme = useTheme();
+
+  const containerStyle = {
+    backgroundColor: theme.colors.background,
+    padding: 20,
+  };
 
   log.debug(appStateContextData);
   return (
@@ -37,5 +44,3 @@ export function PortalWithModal({children, visible, onDismiss}) {
     </PortalRN>
   );
 }
-
-const containerStyle = {backgroundColor: 'white', padding: 20};

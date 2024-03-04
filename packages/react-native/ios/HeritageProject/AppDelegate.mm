@@ -3,6 +3,8 @@
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h"
 
+#import <TSBackgroundFetch/TSBackgroundFetch.h>
+
 
 @implementation AppDelegate
 
@@ -18,6 +20,9 @@
   self.initialProps = @{};
 
   bool didFinish=[super application:application didFinishLaunchingWithOptions:launchOptions];
+
+  // [REQUIRED] Register BackgroundFetch
+  [[TSBackgroundFetch sharedInstance] didFinishLaunching];
 
   [RNSplashScreen show];
   return didFinish;
