@@ -194,12 +194,31 @@ describe("HeritageWalletContract", function () {
       await heritageWallet.distributeHeritage(subscriber.address);
 
       const inheritor2NewBalance = await ethers.provider.getBalance(inheritant2);
-
+      console.log(inheritor2NewBalance, inheritor2InitialBalance, inheritantDeposited);
       expect(inheritor2NewBalance - inheritor2InitialBalance).to.eql(inheritantDeposited / BigInt(10));
 
       const [, , , , , deposited] = await heritageWallet.addressSubscriptionMap(subscriber);
 
       expect(deposited).to.eql(0n);
+
+      const [, , , , , , canModify] = await heritageWallet.addressSubscriptionMap(subscriber);
+
+      expect(canModify).to.eql(true);
+    });
+
+    it("distributeHeritage() doesnt distribute if fees can not be paid", async () => {
+      const [, subscriber, inheritant1, inheritant2] = await ethers.getSigners();
+
+      await heritageWallet.updateMinFee(1700);
+      await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("1") });
+
+      await heritageWallet.connect(subscriber).addInheritant(inheritant1.address, 90);
+
+      await time.increase(3600 * 24 * 366);
+
+      await expect(heritageWallet.distributeHeritage(subscriber.address)).to.revertedWith(
+        "Not enough deposit to pay fees.",
+      );
     });
 
     it("payOutstandingFees() emits PayFee event", async () => {
@@ -214,7 +233,7 @@ describe("HeritageWalletContract", function () {
       const [, user] = await ethers.getSigners();
 
       await heritageWallet.connect(user).registerSubscriber({ value: ethers.parseEther("0.1") });
-      time.increase(3600 * 24 * 365);
+      await time.increase(3600 * 24 * 365);
 
       await heritageWallet.updateUnpaidFees();
 
@@ -354,7 +373,7 @@ describe("HeritageWalletContract", function () {
         jsToSolTime(startTime) + 1,
       );
 
-      expect(years).to.eql(1n);
+      expect(years).to.eql(0n);
     });
 
     it("_findYearsBetweenTimestamps() calculates 2 for count of subscription fees", async () => {
@@ -364,10 +383,10 @@ describe("HeritageWalletContract", function () {
 
       const years = await exposedHeritageWallet.findYearsBetweenTimestamps(
         jsToSolTime(startTime),
-        jsToSolTime(endTime),
+        jsToSolTime(endTime) + 1,
       );
 
-      expect(years).to.eql(2n);
+      expect(years).to.eql(1n);
     });
 
     it("_registerUser() registers new user and adds it to subscriber list", async () => {
@@ -428,6 +447,9 @@ describe("HeritageWalletContract", function () {
       const [, second, random] = await ethers.getSigners();
 
       await heritageWallet.connect(second).registerSubscriber({ value: ethers.parseEther("1") });
+
+      await time.increase(3600 * 24 * 365);
+
       await heritageWallet.connect(second).sendFunds(996453900709200000n, random);
 
       await expect(heritageWallet.payOutstandingFees(second.address)).to.revertedWith(
@@ -443,7 +465,7 @@ describe("HeritageWalletContract", function () {
       const [, subscriber] = await ethers.getSigners();
       await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("0.1") });
 
-      time.increase(3600 * 24 * 365);
+      await time.increase(3600 * 24 * 365);
 
       await heritageWallet.updateUnpaidFees();
 
@@ -456,7 +478,7 @@ describe("HeritageWalletContract", function () {
       const [, user] = await ethers.getSigners();
 
       await heritageWallet.connect(user).registerSubscriber({ value: ethers.parseEther("0.1") });
-      time.increase(3600 * 24 * 365);
+      await time.increase(3600 * 24 * 365);
 
       await heritageWallet.updateUnpaidFees();
 
@@ -476,7 +498,7 @@ describe("HeritageWalletContract", function () {
         value: minFeeInWei + BigInt(2),
       });
 
-      time.increase(3600 * 24 * 365);
+      await time.increase(3600 * 24 * 365);
 
       await heritageWallet.updateUnpaidFees();
 

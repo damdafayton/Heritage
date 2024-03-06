@@ -78,7 +78,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	function addInheritant(
 		address payable receiver,
 		uint percentage
-	) public _isAllowedToModify(msg.sender) {
+	) public _ifAllowedDisallowModify(msg.sender) {
 		(
 			uint available,
 			bool existing,
@@ -139,7 +139,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	)
 		public
 		_isAllowedToSend(msg.sender, amount)
-		_isAllowedToModify(msg.sender)
+		_ifAllowedDisallowModify(msg.sender)
 	{
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			msg.sender
@@ -162,7 +162,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 	// User callable functions end
 
-	function forcePaySingleFee() public _isAllowedToModify((msg.sender)) {
+	function forcePaySingleFee() public _ifAllowedDisallowModify((msg.sender)) {
 		Subscription storage subscription = addressSubscriptionMap[msg.sender];
 
 		uint fee = calculateFeeToPay(msg.sender);
@@ -184,15 +184,15 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 	function payOutstandingFees(
 		address _address
-	) public _isAllowedToModify(_address) returns (bool) {
+	) public _ifAllowedDisallowModify(_address) returns (bool) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
 
-		uint requiredPaymentCount = _findYearsBetweenTimestamps(
+		uint requiredPaymentCount = _getRequiredPaymentCount(
 			subscriptionData.startTimestamp,
 			block.timestamp
-		) + 1;
+		) ;
 
 		uint leftYearsToPay = requiredPaymentCount -
 			subscriptionData.paidFeeCount;
@@ -249,28 +249,31 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 	function distributeHeritage(
 		address addr
-	) public onlyOwner _isAllowedToModify(addr) {
+	) public onlyOwner _ifAllowedDisallowModify(addr) {
 		Subscription storage subscription = addressSubscriptionMap[addr];
+
+		updateUnpaidFee(addr);
 
 		if (subscription.lastYearPaid == false) {
 			_allowToModify(addr);
-			payOutstandingFees(addr);
+			bool feesPaid = payOutstandingFees(addr);
+			require(feesPaid, "Fees could not be paid.");
 		}
 
 		// Distribute here
 		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
-		uint amountToDistribute = subscription.deposited;
+		uint deposited = subscription.deposited;
 
 		for (uint i = 0; i < inheritantArr.length; i++) {
 			uint percent = inheritantArr[i].percentToHeritage;
 			address payable to = inheritantArr[i].to;
 
-			to.transfer((amountToDistribute * percent) / 100);
+			to.transfer((deposited * percent) / 100);
 		}
 
 		subscription.deposited = 0;
 
-		_allowToModify(msg.sender);
+		_allowToModify(addr);
 	}
 
 	function getRemainingInheritancePercentage(
@@ -337,18 +340,24 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	function updateUnpaidFees() public {
 		for (uint i = 0; i < subscriberList.length; i++) {
 			address userAddress = subscriberList[0];
-			Subscription storage subscription = addressSubscriptionMap[
-				userAddress
+
+			updateUnpaidFee(userAddress);	
+		}
+	}
+
+	function updateUnpaidFee(address userAddr)public{
+		Subscription storage subscription = addressSubscriptionMap[
+				userAddr
 			];
 
-			uint requiredPaymentCount = _findYearsBetweenTimestamps(
-				subscription.startTimestamp,
-				block.timestamp
-			) + 1;
-
-			if (subscription.paidFeeCount < requiredPaymentCount) {
-				subscription.lastYearPaid = false;
-			}
+		uint requiredPaymentCount = _getRequiredPaymentCount(
+			subscription.startTimestamp,
+			block.timestamp
+		);
+		console.log(subscription.startTimestamp, block.timestamp);
+		console.log("requiredPaymentCount",requiredPaymentCount);
+		if (subscription.paidFeeCount < requiredPaymentCount) {
+			subscription.lastYearPaid = false;
 		}
 	}
 
@@ -431,6 +440,12 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		return subscription;
 	}
 
+	function _getRequiredPaymentCount(
+		uint startTimestamp,
+		uint endTimestamp
+	) internal pure returns (uint) {
+		return _findYearsBetweenTimestamps(startTimestamp, endTimestamp) + 1;
+	}
 	function _findYearsBetweenTimestamps(
 		uint startTimestamp,
 		uint endTimestamp
@@ -438,11 +453,9 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		uint yearsPassedSinceSubscription = 0;
 
 		while (endTimestamp > startTimestamp) {
-			yearsPassedSinceSubscription++;
-
 			startTimestamp += 365 days;
 
-			if (startTimestamp <= endTimestamp) {
+			if (endTimestamp > startTimestamp){
 				yearsPassedSinceSubscription++;
 			}
 		}
@@ -467,7 +480,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		_;
 	}
 
-	modifier _isAllowedToModify(address _address) {
+	modifier _ifAllowedDisallowModify(address _address) {
 		Subscription storage subscriptionData = addressSubscriptionMap[
 			_address
 		];
