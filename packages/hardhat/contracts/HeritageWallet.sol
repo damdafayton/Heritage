@@ -252,6 +252,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	) public onlyOwner _ifAllowedDisallowModify(addr) {
 		Subscription storage subscription = addressSubscriptionMap[addr];
 
+		// Update fee status and pay the fees
 		updateUnpaidFee(addr);
 
 		if (subscription.lastYearPaid == false) {
@@ -262,8 +263,14 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 		// Distribute here
 		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
-		uint deposited = subscription.deposited;
 
+		// Contract pays the gas of the first inheritor, for others minFee is deducted from the deposited
+		uint minDepositInWei = convertUsdToWei(subscription.minFeePerYear);
+		uint distributionCharge = (inheritantArr.length -1) * minDepositInWei;
+		subscription.deposited -= distributionCharge;
+
+		uint deposited = subscription.deposited;
+		
 		for (uint i = 0; i < inheritantArr.length; i++) {
 			uint percent = inheritantArr[i].percentToHeritage;
 			address payable to = inheritantArr[i].to;

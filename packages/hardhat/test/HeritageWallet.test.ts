@@ -179,7 +179,7 @@ describe("HeritageWalletContract", function () {
       expect(remainingPercent).to.eql(80n);
     });
 
-    it("distributeHeritage()", async () => {
+    it("distributeHeritage() pays fee for 2nd inheritee and distributes", async () => {
       const [, subscriber, inheritant1, inheritant2] = await ethers.getSigners();
 
       await heritageWallet.connect(subscriber).registerSubscriber({ value: ethers.parseEther("2") });
@@ -194,8 +194,10 @@ describe("HeritageWalletContract", function () {
       await heritageWallet.distributeHeritage(subscriber.address);
 
       const inheritor2NewBalance = await ethers.provider.getBalance(inheritant2);
-      console.log(inheritor2NewBalance, inheritor2InitialBalance, inheritantDeposited);
-      expect(inheritor2NewBalance - inheritor2InitialBalance).to.eql(inheritantDeposited / BigInt(10));
+
+      const fee = await heritageWallet.convertUsdToWei(BigInt(usdMinFee));
+
+      expect(inheritor2NewBalance - inheritor2InitialBalance).to.eql((inheritantDeposited - fee) / BigInt(10));
 
       const [, , , , , deposited] = await heritageWallet.addressSubscriptionMap(subscriber);
 
