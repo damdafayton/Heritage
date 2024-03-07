@@ -84,7 +84,7 @@ contract HeritageAdmin is
 
 	function addressSubscriptionMap(
 		address addr
-	) external view returns (uint, uint, uint, uint, bool, uint, bool) {
+	) external view returns (uint, uint, uint, uint, bool, uint, bool, uint) {
 		return _getHeritageWallet().addressSubscriptionMap(addr);
 	}
 

@@ -4,6 +4,7 @@
 import * as dotenv from "dotenv";
 dotenv.config();
 import { HardhatUserConfig } from "hardhat/config";
+// import "hardhat-gas-reporter";
 import "@nomicfoundation/hardhat-toolbox";
 import "@nomicfoundation/hardhat-chai-matchers";
 import "hardhat-deploy";
@@ -23,6 +24,10 @@ const deployerPrivateKey =
 const etherscanApiKey = process.env.ETHERSCAN_API_KEY || "DNXJA8RX2Q3VZ4URQIWP7Z68CJXQZSC6AW";
 
 const config: HardhatUserConfig = {
+  // gasReporter: {
+  //   currency: "USD",
+  //   gasPrice: 21,
+  // },
   solidity: {
     settings: {
       optimizer: {

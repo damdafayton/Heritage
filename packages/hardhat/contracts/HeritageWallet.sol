@@ -14,6 +14,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 	uint public minFeePerYearInUsd;
 	uint public feeThousandagePerYear;
 	uint public maxFeePercentagePerYear = 1;
+	uint public maxInheritantCount = 10;
 	struct Subscription {
 		uint startTimestamp;
 		uint minFeePerYear;
@@ -22,6 +23,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		bool lastYearPaid;
 		uint deposited;
 		bool canModify;
+		uint lastPaidFeeInWei;
 	}
 	address[] internal subscriberList;
 	mapping(address => Subscription) public addressSubscriptionMap;
@@ -91,6 +93,8 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		);
 
 		Inheritant[] storage inheritants = addrInheritantListMap[msg.sender];
+
+		require(inheritants.length < maxInheritantCount, "Maximum inheritant count reached.");
 
 		Inheritant memory newInheritant = Inheritant(receiver, percentage);
 
@@ -223,7 +227,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 
 		if (!isItNewSubscription) {
 			require(
-				subscription.deposited / 100 >= fee,
+				(subscription.deposited * maxFeePercentagePerYear) / 100 >= fee,
 				"As a safe-guard, an address can not spend more than 1% of it's balance for a fee payment."
 			);
 		}
@@ -231,6 +235,7 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		subscription.lastYearPaid = isItNewSubscription;
 		subscription.deposited -= fee;
 		subscription.paidFeeCount++;
+		subscription.lastPaidFeeInWei = fee;
 
 		collectedFees += fee;
 
@@ -265,9 +270,13 @@ contract HeritageWallet is HeritageWalletInterface, Ownable {
 		Inheritant[] memory inheritantArr = addrInheritantListMap[addr];
 
 		// Contract pays the gas of the first inheritor, for others minFee is deducted from the deposited
-		uint minDepositInWei = convertUsdToWei(subscription.minFeePerYear);
-		uint distributionCharge = (inheritantArr.length -1) * minDepositInWei;
-		subscription.deposited -= distributionCharge;
+		if( inheritantArr.length > 1){
+			// last fee paid in wei is used as a preventive measure against contract being exploited 
+			// since it can never be more than maxFeePercentagePerYear of the deposited.
+			uint distributionCharge = (inheritantArr.length -1) * subscription.lastPaidFeeInWei;
+			subscription.deposited -= distributionCharge;
+		}
+		
 
 		uint deposited = subscription.deposited;
 		
