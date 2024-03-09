@@ -11,7 +11,7 @@ export function getTargetNetwork() {
     Config.RUN_ENV === 'development' && Platform.OS === 'android';
 
   const isLocalAndAndroidAndDev =
-    configuredNetwork.id === hardhat.id && isAndroidAndDev;
+    configuredNetwork?.id === hardhat.id && isAndroidAndDev;
 
   if (isLocalAndAndroidAndDev) {
     //@ts-ignore
