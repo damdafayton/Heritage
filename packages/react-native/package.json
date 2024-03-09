@@ -8,10 +8,11 @@
     ]
   },
   "scripts": {
-    "android": "ENVFILE=.env.dev react-native run-android --port=8082 --deviceId=emulator-5556",
+    "emulator": "cd $ANDROID_HOME/emulator && ENVFILE=.env.dev emulator @Pixel_4_API_31",
+    "android": "ENVFILE=.env.dev.android react-native run-android --port=8082",
     "android:build": "ENVFILE=.env.prod npx react-native build-android --mode=release --port=8082",
     "android:rel": "ENVFILE=.env.prod react-native run-android --port=8082 --mode=release",
-    "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 14 Pro'",
+    "ios": "yarn pod && ENVFILE=.env.dev react-native run-ios --port=8082 --simulator 'iPhone 15 Pro Max'",
     "ios:test": "yarn pod && ENVFILE=.env.testnet react-native run-ios --port=8082 --device 'yucel’s iPhone'",
     "ios:rel": "yarn pod && ENVFILE=.env.prod react-native run-ios --port=8082 --device 'yucel’s iPhone' --mode Release",
     "lint": "eslint .",

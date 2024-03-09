@@ -67,6 +67,11 @@ target 'HeritageProject' do
     # Pods for testing
   end
 
+  ENVFILES = {
+    # 'Debug' => '$(PODS_ROOT)/../../.env.debug',
+    'Release' => '$(PODS_ROOT)/../../.env.prod',
+  }
+
   post_install do |installer|
     # https://github.com/facebook/react-native/blob/main/packages/react-native/scripts/react_native_pods.rb#L197-L202
     react_native_post_install(
