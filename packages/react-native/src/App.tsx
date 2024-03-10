@@ -31,6 +31,11 @@ import {Appearance} from 'react-native';
 import PolyfillCrypto from 'react-native-webview-crypto';
 import {appConfig} from '../app.config';
 import {useTheme} from 'react-native-paper';
+import {Inheritor} from './pages/Inheritor';
+import {Loading} from './molecules/Loading';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {SelectUserType} from './pages/SelectUserType';
+import {AppMode} from './typings/config';
 
 Sentry.init({
   dsn: appConfig.sentryDSN,
@@ -39,7 +44,26 @@ Sentry.init({
 const log = logger('App');
 
 const App = () => {
+  const [forceUpdateKey, forceUpdate] = useReducer(x => x + 1, 0);
+  const [appMode, setAppMode] = useState<`${AppMode}`>('loading');
+  const [errors, setError] = useState<string[]>([]);
+  const [successes, setSuccess] = useState<string[]>([]);
+  const [isModalVisible, setIsModalVisible] = useState(false);
+
+  useLayoutEffect(() => {
+    (async () => {
+      const mode = await AsyncStorage.getItem('appMode');
+      if (mode) {
+        setAppMode(mode as any);
+      } else {
+        setAppMode('selector');
+      }
+    })();
+  }, [setAppMode]);
+
   useAutoConnect();
+
+  const theme = useTheme();
 
   const {address: userAddress, isDisconnected: isUserDisconnected} =
     useAccount();
@@ -78,8 +102,6 @@ const App = () => {
 
   log.debug({minFeePerYear, feeThousandagePerYear});
 
-  const [forceUpdateKey, forceUpdate] = useReducer(x => x + 1, 0);
-
   useEffect(() => {
     if (isUserDisconnected || isFetching1) return;
 
@@ -105,16 +127,9 @@ const App = () => {
     return () => clearTimeout(timeoutId);
   }, [forceUpdateKey, isFetching1, isUserDisconnected]);
 
-  const [errors, setError] = useState<string[]>([]);
-  const [successes, setSuccess] = useState<string[]>([]);
-
-  const [isModalVisible, setIsModalVisible] = useState(false);
-
   useEffect(() => {
     SplashScreen.hide();
   }, []);
-
-  const theme = useTheme();
 
   return (
     <>
@@ -137,6 +152,8 @@ const App = () => {
             setSuccess([...successes, newMessage]);
             setIsModalVisible(isModal);
           },
+          setAppMode,
+          appMode,
         }}>
         <HerritageWalletContext.Provider
           value={{
@@ -149,22 +166,38 @@ const App = () => {
             isConnected: !!minFeePerYear,
           }}>
           <Appbar />
-          {!isUserDisconnected ? (
-            <W3mButton
-              balance="show"
-              loadingLabel="Loading.."
-              label="Loading.."
-              connectStyle={{
-                backgroundColor: theme.colors.background,
-                borderRadius: 0,
-              }}
-              accountStyle={{
-                backgroundColor: theme.colors.background,
-                borderRadius: 0,
-              }}
-            />
-          ) : null}
-          <Tabs />
+          {(() => {
+            switch (appMode) {
+              case AppMode.LOADING:
+                return <Loading />;
+              case AppMode.INHERITEE:
+                return (
+                  <>
+                    {isUserDisconnected ? null : (
+                      <W3mButton
+                        balance="show"
+                        loadingLabel="Loading.."
+                        label="Loading.."
+                        connectStyle={{
+                          backgroundColor: theme.colors.background,
+                          borderRadius: 0,
+                        }}
+                        accountStyle={{
+                          backgroundColor: theme.colors.background,
+                          borderRadius: 0,
+                        }}
+                      />
+                    )}
+                    <Tabs />
+                  </>
+                );
+              case AppMode.INHERITOR:
+                // Inheritor doesnt need to be connected
+                return <Tabs />;
+              case AppMode.SELECTOR:
+                return <SelectUserType />;
+            }
+          })()}
         </HerritageWalletContext.Provider>
       </AppStateContext.Provider>
       {!isModalVisible ? <SuccessSnackbar successes={successes} /> : null}

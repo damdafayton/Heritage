@@ -1,4 +1,5 @@
 import {createContext} from 'react';
+import {AppMode} from '../typings/config';
 
 export const AppStateContext = createContext({
   errors: [] as string[],
@@ -20,4 +21,6 @@ export const AppStateContext = createContext({
     isModalVisible?: boolean;
   }) => {},
   isModalVisible: false,
+  appMode: undefined as unknown as `${AppMode}`,
+  setAppMode: (() => {}) as any,
 });

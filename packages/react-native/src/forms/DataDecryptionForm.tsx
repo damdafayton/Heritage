@@ -1,6 +1,6 @@
 import {Formik} from 'formik';
 import {FormEvent, useState} from 'react';
-import {ScrollView, View} from 'react-native';
+import {View} from 'react-native';
 
 import {Button, TextInput, Text, HelperText} from '../ui';
 import {sleep} from '../utils/utils';

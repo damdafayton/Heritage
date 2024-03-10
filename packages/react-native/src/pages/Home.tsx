@@ -1,5 +1,4 @@
 import {StyleSheet, ScrollView} from 'react-native';
-import {useContext} from 'react';
 import {W3mConnectButton} from '@web3modal/wagmi-react-native';
 import {useAccount} from 'wagmi';
 import {logger} from 'react-native-logs';

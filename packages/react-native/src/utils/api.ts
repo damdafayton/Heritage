@@ -72,6 +72,18 @@ export async function getEncryptedData(address: Address, signedToken: string) {
   );
 }
 
+export async function getEncryptedDataForInheritor(
+  inheritorKey: string,
+  inheritorEmail: string,
+) {
+  const url = getUrl('encryptedData');
+  return await axios.get(
+    `${url}?inheritorKey=${inheritorKey || ''}&inheritorEmail=${
+      inheritorEmail || ''
+    }`,
+  );
+}
+
 export async function postEncryptedData(address: Address, data: string) {
   const url = getUrl('encryptedData');
 

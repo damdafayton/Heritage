@@ -3,6 +3,7 @@ export enum MenuType {
   REGISTER = 'Register',
   CONTRACT = 'Contract',
   HELP = 'Help',
+  SETTINGS = 'Settings',
 }
 
 export enum HomeSubscribedType {
@@ -11,4 +12,11 @@ export enum HomeSubscribedType {
   SEND = 'Send',
   ENCRYPTED_DATA = 'Encrypted Data',
   ADD_INHERITANT = 'Add Inheritant',
+}
+
+export enum AppMode {
+  LOADING = 'loading',
+  INHERITEE = 'inheritee',
+  INHERITOR = 'inheritor',
+  SELECTOR = 'selector',
 }

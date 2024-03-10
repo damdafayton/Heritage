@@ -1,13 +1,14 @@
 import 'react';
 
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import {useTheme} from 'react-native-paper';
 import {createMaterialBottomTabNavigator} from 'react-native-paper/react-navigation';
 
 import {logger} from '../utils/logger';
 const log = logger('Tabs');
 
-import {MenuType} from '../typings/config';
+import {AppMode, MenuType} from '../typings/config';
 import {Contract} from '../pages/Contract';
 import {Home} from '../pages/Home';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
@@ -15,6 +16,9 @@ import {useContext} from 'react';
 import {Help} from '../pages/Help';
 import {ScrollView} from 'react-native';
 import {Text} from '../ui';
+import {Settings} from '../pages/Settings';
+import {AppStateContext} from '../context/AppState.context';
+import {Inheritor} from '../pages/Inheritor';
 
 export const StyledScrollView = ({children, ...props}) => {
   const theme = useTheme();
@@ -34,7 +38,8 @@ export function Tabs() {
   const theme = useTheme();
 
   const Tab = createMaterialBottomTabNavigator();
-  const isConnected = useContext(HerritageWalletContext);
+  const {isConnected} = useContext(HerritageWalletContext);
+  const {appMode} = useContext(AppStateContext);
 
   return (
     <Tab.Navigator
@@ -66,24 +71,39 @@ export function Tabs() {
           // header: props => <Appbar {...props} />,
         }
       }>
-      <Tab.Screen
-        name={MenuType.HOME}
-        component={Home}
-        options={{
-          tabBarLabel: MenuType.HOME,
-          tabBarIcon: ({color}) => (
-            <MaterialCommunityIcons name="home" color={color} size={24} />
-          ),
-        }}
-      />
-      {isConnected && (
+      {appMode === AppMode.INHERITEE ? (
+        <>
+          <Tab.Screen
+            name={MenuType.HOME}
+            component={Home}
+            options={{
+              tabBarLabel: MenuType.HOME,
+              tabBarIcon: ({color}) => (
+                <MaterialCommunityIcons name="home" color={color} size={24} />
+              ),
+            }}
+          />
+          {isConnected && (
+            <Tab.Screen
+              component={Contract}
+              name={MenuType.CONTRACT}
+              options={{
+                tabBarLabel: MenuType.CONTRACT,
+                tabBarIcon: ({color}) => (
+                  <MaterialCommunityIcons name="bell" color={color} size={24} />
+                ),
+              }}
+            />
+          )}
+        </>
+      ) : (
         <Tab.Screen
-          component={Contract}
-          name={MenuType.CONTRACT}
+          name={MenuType.HOME}
+          component={Inheritor}
           options={{
-            tabBarLabel: MenuType.CONTRACT,
+            tabBarLabel: MenuType.HOME,
             tabBarIcon: ({color}) => (
-              <MaterialCommunityIcons name="bell" color={color} size={24} />
+              <MaterialCommunityIcons name="home" color={color} size={24} />
             ),
           }}
         />
@@ -103,6 +123,20 @@ export function Tabs() {
         {props => (
           <StyledScrollView {...props}>
             <Help />
+          </StyledScrollView>
+        )}
+      </Tab.Screen>
+      <Tab.Screen
+        name={MenuType.SETTINGS}
+        options={{
+          tabBarLabel: MenuType.SETTINGS,
+          tabBarIcon: ({color}) => (
+            <MaterialIcons name="settings" color={color} size={24} />
+          ),
+        }}>
+        {props => (
+          <StyledScrollView {...props}>
+            <Settings />
           </StyledScrollView>
         )}
       </Tab.Screen>
