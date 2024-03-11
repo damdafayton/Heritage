@@ -4,7 +4,7 @@ import {View} from 'react-native';
 
 import {Button, TextInput, Text, HelperText} from '../ui';
 import {sleep} from '../utils/utils';
-import {globalStyles} from '../styles';
+import {globalStyles} from '../ui/styles';
 import {useTheme} from 'react-native-paper';
 
 export type DataDecryptionFormVals = {
@@ -60,7 +60,7 @@ export function DataDecryptionForm({
         <View>
           <Text
             style={{
-              ...globalStyles.encryptedDataBox,
+              ...globalStyles.textDataView,
               backgroundColor: colors.primaryContainer,
             }}>
             {initialEncryptedText}

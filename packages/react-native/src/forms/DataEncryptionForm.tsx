@@ -7,7 +7,7 @@ import {Button, TextInput, Text, HelperText} from '../ui';
 import {sleep} from '../utils/utils';
 import {AppStateContext} from '../context/AppState.context';
 import {useTheme} from 'react-native-paper';
-import {globalStyles} from '../styles';
+import {globalStyles} from '../ui/styles';
 import {styles} from './styles';
 import {logger} from '../utils/logger';
 const log = logger('DataEncryptionForm');
@@ -219,7 +219,7 @@ export function DataEncryptionForm({
               </Text>
               <Text
                 style={{
-                  ...globalStyles.encryptedDataBox,
+                  ...globalStyles.textDataView,
                   backgroundColor: colors.primaryContainer,
                 }}>
                 {clientEncryptedText}

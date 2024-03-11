@@ -1,6 +1,6 @@
-import {useContext, useEffect, useState} from 'react';
+import {useContext, useEffect, useReducer, useState} from 'react';
 import {useAccount, useSignMessage} from 'wagmi';
-import axios from 'axios';
+import axios, {Axios, AxiosError} from 'axios';
 import {logger} from 'react-native-logs';
 const log = logger.createLogger().extend('EncryptedData');
 
@@ -34,6 +34,7 @@ export function EncryptedData() {
   const [showEditForm, setShowEditForm] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [isPageLoading, setIsPageLoading] = useState(true);
+  const [forceUpdate, triggerForceUpdate] = useReducer(x => x + 1, 0);
 
   const {address} = useAccount();
 
@@ -66,11 +67,14 @@ export function EncryptedData() {
           setEncryptedText(data.encryptedData);
           setInitialEmails(data.emails);
           setShowEditForm(false);
-        } else if (status === 501) {
-          await refreshAuth();
         }
-      } catch (e) {
-        log.error(e);
+      } catch (e: AxiosError | any) {
+        log.error(e, Object.keys(e));
+
+        if (e?.response?.status === 401) {
+          await refreshAuth();
+          triggerForceUpdate();
+        }
 
         // This rerenders the component and causes an infinite loop
         // setError({message: 'An error occured. Try again.'});
@@ -78,7 +82,7 @@ export function EncryptedData() {
 
       setIsPageLoading(false);
     })();
-  }, []);
+  }, [forceUpdate]);
 
   const onSubmitEncryptedData = async (vals: EncryptedDataFormVals) => {
     if (!address || !vals.clientEncryptedText) return;

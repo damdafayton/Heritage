@@ -11,7 +11,7 @@ import {
 } from '../forms/DataDecryptionForm';
 import {decryptText, deriveKey} from '../helpers/crpyto';
 import {logger} from '../utils/logger';
-import {globalStyles} from '../styles';
+import {globalStyles} from '../ui/styles';
 import {useTheme} from 'react-native-paper';
 const log = logger('Inheritor');
 
@@ -24,6 +24,7 @@ export function Inheritor() {
   const {setError} = useContext(AppStateContext);
 
   const handleSubmit = async values => {
+    setIsLoading(true);
     const {email, secretKey} = values;
 
     try {
@@ -32,12 +33,14 @@ export function Inheritor() {
       if (res.status === 200) {
         setEncryptedData(res.data.encryptedData);
       }
+      setIsLoading(false);
     } catch (e) {
       console.error(e);
       setError({
         message:
           'Error retrieving data. Please use the correct key and the correct email where you have received the key.',
       });
+      setIsLoading(false);
     }
   };
 
@@ -69,7 +72,7 @@ export function Inheritor() {
     if (!vals.secretKey || !encryptedData) return;
 
     setIsLoading(true);
-
+    log.debug('Decrypting data', {vals, encryptedData});
     try {
       const key = await deriveKey(vals.secretKey);
 
@@ -88,13 +91,13 @@ export function Inheritor() {
 
   if (decryptedData)
     return (
-      <Text
+      <View
         style={{
-          ...globalStyles.encryptedDataBox,
+          ...globalStyles.textDataView,
           backgroundColor: theme.colors.primaryContainer,
         }}>
-        {decryptedData}
-      </Text>
+        <Text>{decryptedData}</Text>
+      </View>
     );
 
   if (encryptedData)
@@ -123,7 +126,7 @@ export function Inheritor() {
                 to switch to Inheritee mode, please go to 'Settings' menu.
               </Text>
               <TextInput
-                placeholder="Secret key"
+                placeholder="Inheritor key"
                 value={values.secretKey}
                 onChangeText={handleChange('secretKey')}
               />
@@ -131,7 +134,7 @@ export function Inheritor() {
                 <HelperText type="error">{errors.secretKey}</HelperText>
               ) : null}
               <TextInput
-                placeholder="Email"
+                placeholder="Inheritor email"
                 value={values.email}
                 onChangeText={handleChange('email')}
               />

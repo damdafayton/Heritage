@@ -7,4 +7,7 @@ export const styles = StyleSheet.create({
   text: {
     marginTop: 4,
   },
+  textDataView: {padding: 10, borderRadius: 8},
 });
+
+export const globalStyles = styles;

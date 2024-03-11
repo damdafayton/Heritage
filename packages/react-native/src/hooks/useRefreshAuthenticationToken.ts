@@ -11,6 +11,7 @@ export function useRefreshAuthenticationToken() {
   const {isLoading: isLoadingSign, signMessageAsync} = useSignMessage();
 
   const refresh = async (onError?: Function) => {
+    log.debug('Refreshing authentication token.');
     try {
       const token = await authGet(address as `0x${string}`);
 
