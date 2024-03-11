@@ -129,6 +129,10 @@ const App = () => {
     SplashScreen.hide();
   }, []);
 
+  useEffect(() => {
+    log.debug('userAddress', userAddress);
+  }, [userAddress]);
+
   return (
     <>
       <PolyfillCrypto />
@@ -171,7 +175,7 @@ const App = () => {
               case AppMode.INHERITEE:
                 return (
                   <>
-                    {isUserDisconnected ? null : (
+                    {!userAddress ? null : (
                       <W3mButton
                         balance="show"
                         loadingLabel="Loading.."

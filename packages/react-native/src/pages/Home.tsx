@@ -8,10 +8,10 @@ import {Text} from '../ui';
 import {HomeActionsStack} from './home/HomeActions.stack';
 
 export function Home() {
-  const {isDisconnected: isUserDisconnected} = useAccount();
-  log.debug('isUserDisconnected', isUserDisconnected);
+  const {address} = useAccount();
+  log.debug('address', address);
 
-  return isUserDisconnected ? <HomeWithConnect /> : <HomeActionsStack />;
+  return !address ? <HomeWithConnect /> : <HomeActionsStack />;
 }
 
 const HomeWithConnect = () => {
