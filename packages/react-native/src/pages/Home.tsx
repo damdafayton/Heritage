@@ -11,7 +11,11 @@ export function Home() {
   const {isDisconnected: isUserDisconnected} = useAccount();
   log.debug('isUserDisconnected', isUserDisconnected);
 
-  return isUserDisconnected ? (
+  return isUserDisconnected ? <HomeWithConnect /> : <HomeActionsStack />;
+}
+
+const HomeWithConnect = () => {
+  return (
     <ScrollView style={styles.view}>
       <Text variant="titleMedium" style={styles.title}>
         HERITAGE
@@ -23,10 +27,8 @@ export function Home() {
         />
       }
     </ScrollView>
-  ) : (
-    <HomeActionsStack />
   );
-}
+};
 
 const styles = StyleSheet.create({
   view: {},

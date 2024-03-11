@@ -12,6 +12,10 @@ import 'react';
 import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
+import * as Sentry from '@sentry/react-native';
+import PolyfillCrypto from 'react-native-webview-crypto';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {useTheme} from 'react-native-paper';
 
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
@@ -26,14 +30,8 @@ import {SuccessSnackbar} from './molecules/SuccessSnackbar';
 import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
 import {logger} from './utils/logger';
-import * as Sentry from '@sentry/react-native';
-import {Appearance} from 'react-native';
-import PolyfillCrypto from 'react-native-webview-crypto';
 import {appConfig} from '../app.config';
-import {useTheme} from 'react-native-paper';
-import {Inheritor} from './pages/Inheritor';
 import {Loading} from './molecules/Loading';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {SelectUserType} from './pages/SelectUserType';
 import {AppMode} from './typings/config';
 

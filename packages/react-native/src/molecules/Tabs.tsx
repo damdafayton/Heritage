@@ -99,14 +99,18 @@ export function Tabs() {
       ) : (
         <Tab.Screen
           name={MenuType.HOME}
-          component={Inheritor}
           options={{
             tabBarLabel: MenuType.HOME,
             tabBarIcon: ({color}) => (
               <MaterialCommunityIcons name="home" color={color} size={24} />
             ),
-          }}
-        />
+          }}>
+          {props => (
+            <StyledScrollView {...props}>
+              <Inheritor />
+            </StyledScrollView>
+          )}
+        </Tab.Screen>
       )}
       <Tab.Screen
         name={MenuType.HELP}

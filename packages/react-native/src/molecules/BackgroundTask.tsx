@@ -51,10 +51,15 @@ export function BackgroundTask() {
     setLastPingTimestamp(timestamp);
   }, [setLastPingTimestamp]);
 
+  const [isPageLoading, setIsPageLoading] = useState(false);
+
   const startTracking = async () => {
+    setIsPageLoading(true);
+
     log.debug('startTracking');
     if (!address) {
       setError({message: 'Address is not available. Try again.'});
+      setIsPageLoading(false);
       return;
     }
 
@@ -64,6 +69,7 @@ export function BackgroundTask() {
       log.debug({status: res?.status});
       if (res?.status === 200) {
         await AsyncStorage.setItem(TRACK_PING, 'true');
+        setIsPageLoading(false);
         forceUpdateBackgroundFetcher();
         return;
       }
@@ -75,6 +81,7 @@ export function BackgroundTask() {
         await refreshAuthentication(() =>
           setError({message: 'Something went wrong, please try again.'}),
         );
+        setIsPageLoading(false);
         startTracking();
       }
     }
@@ -85,8 +92,6 @@ export function BackgroundTask() {
     await AsyncStorage.setItem(TRACK_PING, '');
     forceUpdateBackgroundFetcher();
   };
-
-  const [isPageLoading, setIsPageLoading] = useState(false);
 
   useEffect(() => {
     setIsPageLoading(true);
