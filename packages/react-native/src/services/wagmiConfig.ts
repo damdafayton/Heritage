@@ -24,9 +24,9 @@ const {chains, publicClient} = configureChains(enabledChains, [
 
 // 2. Create config
 const metadata = {
-  name: 'Heritage Wallets',
+  name: 'HeritageDapp',
   description: '3rd party wallets to connect to the Heritage',
-  url: 'https://web3modal.com',
+  url: 'https://damdafayton.github.io/',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
   redirect: {
     native: 'heritagenative://',
