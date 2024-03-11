@@ -58,13 +58,13 @@ export function DataDecryptionForm({
       }}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
         <View>
-          <Text
+          <View
             style={{
               ...globalStyles.textDataView,
               backgroundColor: colors.primaryContainer,
             }}>
-            {initialEncryptedText}
-          </Text>
+            <Text>{initialEncryptedText}</Text>
+          </View>
           <TextInput
             placeholder="Type your secret key"
             value={values.secretKey}
