@@ -32,7 +32,7 @@ import '../shim';
 import App from './App';
 import {wagmiConfig, chains} from './services/wagmiConfig';
 import {appConfig} from '../app.config';
-import {Appearance, useColorScheme} from 'react-native';
+import {useColorScheme} from 'react-native';
 
 const clipboardClient = {
   setString: async (value: string) => {

@@ -1,22 +1,18 @@
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons';
-import {useContext} from 'react';
 
 import {Banner} from '../ui/Banner';
-import {AppStateContext} from '../context/AppState.context';
 import {useTheme} from 'react-native-paper';
 
-export function ErrorBanner() {
-  const {errors, clearErrors} = useContext(AppStateContext);
+export function ErrorBanner(props) {
   const theme = useTheme();
 
-  return errors.length ? (
+  return (
     <Banner
       style={{marginBottom: 16}}
-      visible={errors.length}
       actions={[
         {
           label: 'Dismiss',
-          onPress: clearErrors,
+          onPress: props.onPressDismiss,
         },
       ]}
       icon={({size}) => (
@@ -25,10 +21,9 @@ export function ErrorBanner() {
           size={size}
           color={theme.colors.error}
         />
-      )}>
-      {errors.join('\n')}
+      )}
+      {...props}>
+      {props.children}
     </Banner>
-  ) : (
-    <></>
   );
 }

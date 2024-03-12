@@ -109,3 +109,7 @@ To learn more about React Native, take a look at the following resources:
 
 Simulator v. for 6.7" screen = iPhone 15 Pro Max
 Simulator v. for 5.5" screen = iPhone SE (3rd generation)
+
+### Android
+
+Change version at `android/app/build.gradle`
