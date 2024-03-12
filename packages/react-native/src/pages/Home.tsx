@@ -6,6 +6,7 @@ const log = logger.createLogger().extend('Home');
 
 import {Text} from '../ui';
 import {HomeActionsStack} from './home/HomeActions.stack';
+import {useTheme} from 'react-native-paper/src/core/theming';
 
 export function Home() {
   const {address} = useAccount();
@@ -15,8 +16,11 @@ export function Home() {
 }
 
 const HomeWithConnect = () => {
+  const theme = useTheme();
+
   return (
-    <ScrollView style={styles.view}>
+    <ScrollView
+      style={[styles.view, {backgroundColor: theme.colors.background}]}>
       <Text variant="titleMedium" style={styles.title}>
         HERITAGE
       </Text>
