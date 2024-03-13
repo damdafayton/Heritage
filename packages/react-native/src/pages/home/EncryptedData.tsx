@@ -58,6 +58,7 @@ export function EncryptedData() {
           log.debug('No auth token found.');
           await refreshAuth();
           setIsPageLoading(false);
+          triggerForceUpdate();
           return;
         }
 

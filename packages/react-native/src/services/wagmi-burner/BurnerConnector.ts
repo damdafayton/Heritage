@@ -24,7 +24,7 @@ import {logger} from '../../utils/logger';
 const log = logger('BurnerConnector');
 
 export const burnerWalletId = 'burner-wallet';
-export const burnerWalletName = 'Burner Wallet';
+export const burnerWalletName = 'Demo Wallet';
 export const defaultBurnerChainId = appConfig.targetNetwork.id;
 
 /**

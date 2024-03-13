@@ -10,7 +10,6 @@ import {useAccount} from 'wagmi';
 import {pingGet, userGet} from '../utils/api';
 import {logger} from '../utils/logger';
 import {useTheme} from 'react-native-paper';
-import {styles} from '../ui/styles';
 import {AUTHENTICATION_TOKEN, TRACK_PING} from '../utils/constants';
 import {useRefreshAuthenticationToken} from '../hooks/useRefreshAuthenticationToken';
 import {Loading} from './Loading';

@@ -58,7 +58,8 @@ export const auth = onRequest(async (req, res) => {
     const oneMinAfter = Date.now() + 60000;
     const token = "HERITAGE" + getRandomHex() + getRandomHex();
 
-    db.collection("auth")
+    await db
+      .collection("auth")
       .doc(address)
       .set({
         address,

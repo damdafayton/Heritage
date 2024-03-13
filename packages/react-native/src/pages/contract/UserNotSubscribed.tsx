@@ -1,4 +1,4 @@
-import {ScrollView, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 import {useState} from 'react';
 import {logger} from 'react-native-logs';
 
@@ -6,7 +6,7 @@ import {Button, Divider, Text} from '../../ui';
 import {Subscribe} from './subscribe/Subscribe';
 import {ContractData} from '../../molecules/ContractData';
 import {DividerFollowerView} from '../../molecules/DividerFollowerView';
-const log = logger.createLogger().extend('HomeNonSubscribed');
+const log = logger.createLogger().extend('UserNotSubscribed');
 
 export function UserNotSubscribed() {
   const [visible, setVisible] = useState(false);
@@ -17,7 +17,8 @@ export function UserNotSubscribed() {
       <Divider />
       <DividerFollowerView>
         <Text style={[styles.text]}>
-          You are not registered. Click below button to register.
+          Your address is not registered in the smart contract yet. Click below
+          button to register your address.
         </Text>
         <Button mode="contained" onPress={() => setVisible(true)}>
           Register
