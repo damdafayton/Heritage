@@ -29,7 +29,7 @@ export function Contract() {
       onPressDismiss={() => setShowBurnerBanner(false)}
       style={{
         marginTop: styles.text.marginTop,
-        marginBottom: showBurnerBanner ? styles.global.marginTop : 0,
+        marginBottom: styles.global.marginTop,
       }}>
       <Text>
         You are running the app with a demo wallet. Dont forget to disconnect
@@ -41,7 +41,7 @@ export function Contract() {
   if (isConnected)
     return (
       <>
-        <BurnerBanner />
+        {showBurnerBanner && <BurnerBanner />}
         {isSubscribed ? (
           <UserSubscribedStack />
         ) : (

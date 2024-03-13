@@ -8,7 +8,7 @@ export function ErrorBanner(props) {
 
   return (
     <Banner
-      style={{marginBottom: 16}}
+      style={{marginBottom: 16, backgroundColor: theme.colors.background}}
       actions={[
         {
           label: 'Dismiss',

@@ -571,6 +571,7 @@
 				ENABLE_BITCODE = NO;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
 				INFOPLIST_FILE = HeritageProject/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SmartHeritage;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -599,6 +600,7 @@
 				DEVELOPMENT_TEAM = PPHFGSWRL4;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
 				INFOPLIST_FILE = HeritageProject/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = SmartHeritage;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
