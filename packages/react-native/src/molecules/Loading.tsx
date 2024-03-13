@@ -1,5 +1,13 @@
-import {ActivityIndicator} from '../ui';
+import {ActivityIndicator, Text} from '../ui';
+import {styles} from '../ui/styles';
 
-export function Loading({style = {}}) {
-  return <ActivityIndicator style={[{marginTop: 20}, style]} />;
+export function Loading({text = '', style = {}}) {
+  return (
+    <>
+      {text && <Text style={{textAlign: 'center'}}>{text}</Text>}
+      <ActivityIndicator
+        style={[{marginTop: styles.global.marginTop}, style]}
+      />
+    </>
+  );
 }

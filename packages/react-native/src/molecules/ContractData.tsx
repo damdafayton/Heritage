@@ -19,33 +19,31 @@ export function ContractData({style}: {style?: any}) {
 
   const etherscanLink = useGetEtherScanLink();
 
-  return (
+  return contractIsLoaded ? (
     <View style={[styles.contractData, style]}>
-      {contractIsLoaded ? (
-        <View style={styles.contractDataCell}>
-          <View style={styles.contractDataRow}>
-            <TouchableOpacity
-              onPress={() => {
-                Linking.openURL(etherscanLink);
-              }}>
-              <Text>View contract on Etherscan</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.contractDataRow}>
-            <Text>Annual fee: </Text>
-            <Text>{feeThousandagePerYear}</Text>
-            <Text>‰</Text>
-          </View>
-          <View style={styles.contractDataRow}>
-            <Text>Minimum fee: </Text>
-            <Text>{minFeePerYear}</Text>
-            <Text>$</Text>
-          </View>
+      <View style={styles.contractDataCell}>
+        <View style={styles.contractDataRow}>
+          <TouchableOpacity
+            onPress={() => {
+              Linking.openURL(etherscanLink);
+            }}>
+            <Text>View contract on Etherscan</Text>
+          </TouchableOpacity>
         </View>
-      ) : (
-        <Loading />
-      )}
+        <View style={styles.contractDataRow}>
+          <Text>Annual fee: </Text>
+          <Text>{feeThousandagePerYear}</Text>
+          <Text>‰</Text>
+        </View>
+        <View style={styles.contractDataRow}>
+          <Text>Minimum fee: </Text>
+          <Text>{minFeePerYear}</Text>
+          <Text>$</Text>
+        </View>
+      </View>
     </View>
+  ) : (
+    <Loading text="Waiting for connection to the smart contract" />
   );
 }
 
