@@ -17,7 +17,9 @@ export function DividerFollowerView({
       style={[
         {
           marginTop:
-            type === 'sm' ? styles.text.marginTop : styles.global.marginTop,
+            type === 'sm'
+              ? styles.text.marginTop
+              : styles.global.marginTop - styles.text.marginTop,
         },
         style,
       ]}

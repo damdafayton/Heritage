@@ -175,7 +175,7 @@ const App = () => {
               case AppMode.INHERITEE:
                 return (
                   <>
-                    {!userAddress ? null : (
+                    {userAddress ? (
                       <W3mButton
                         balance="show"
                         loadingLabel="Loading.."
@@ -189,7 +189,7 @@ const App = () => {
                           borderRadius: 0,
                         }}
                       />
-                    )}
+                    ) : null}
                     <Tabs />
                   </>
                 );
