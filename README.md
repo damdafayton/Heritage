@@ -35,7 +35,9 @@ This is a Web3 app to deliver your important stuff (data/assets) to your heirs w
 
 ### Android
 
-Click below image to download the .apk file for Android
+1. From Google Play (in progress..)
+
+2. Click below image to download the .apk file for Android
 
 <a target="_blank" href="./app-release.apk"><img height="50px" src="./assets/android-apk.webp"></a>
 
@@ -63,5 +65,5 @@ You need to allow Unkown Sources to install the app.
 
 iOS users;
 
-1. Must download tracking app from the App Store (soon to be published)
-2. Visit ![Heritage Web dApp](damdafayton.github.io/heritageapp/) to create their authorization token to be used in the iOS app.
+1. Must download tracking app from the App Store (in progress..)
+2. Visit [Heritage Web dApp](damdafayton.github.io/heritageapp/) to create their authorization token to be used in the iOS app.
