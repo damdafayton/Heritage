@@ -48,11 +48,11 @@ In progress...
 
 #### Manual download
 
-Click below image to download the .apk file for Android
+1. Click below image to download the .apk file for Android
 
 <a target="_blank" href="./app-release.apk"><img height="50px" src="./assets/android-apk.webp"></a>
 
-You need to allow Unkown Sources to install the app.
+2. You need to allow Unkown Sources to install the app.
 
 ##### For Android 8.x & higher
 
