@@ -60,3 +60,8 @@ You need to allow Unkown Sources to install the app.
 - To continue, review prompt then tap OK.
 
 ### iOS
+
+iOS users;
+
+1. Must download tracking app from the App Store (soon to be published)
+2. Visit ![Heritage Web dApp](damdafayton.github.io/heritageapp/) to create their authorization token to be used in the iOS app.
