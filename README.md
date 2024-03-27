@@ -9,7 +9,7 @@ This is a Web3 app to deliver your important stuff (data/assets) to your heirs w
     <a target="_blank" href="./assets/screenshots/Simulator Screenshot - iPhone 15 Pro Max - 2024-03-09 at 15.21.04.png"><img height="600px" src="./assets/screenshots/Simulator Screenshot - iPhone 15 Pro Max - 2024-03-09 at 15.21.04.png"></a>
 </div>
 
-<h2 style="color:red;">Q/A</h2>
+## Q/A
 
 ### What are the important stuff?
 
