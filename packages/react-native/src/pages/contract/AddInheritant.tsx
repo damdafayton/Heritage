@@ -21,6 +21,7 @@ import {AppStateContext} from '../../context/AppState.context';
 import {logger} from '../../utils/logger';
 import {Loading} from '../../molecules/Loading';
 import {sleep} from '../../utils/utils';
+import Clipboard from '@react-native-clipboard/clipboard';
 const log = logger('AddInheritant');
 
 export function AddInheritant() {
@@ -99,6 +100,31 @@ export function AddInheritant() {
     });
   }, [subscriptionData, address, isSuccess, setInheritants]);
 
+  const Inheritants = ({inheritants}) =>
+    inheritants?.length ? (
+      <List.Section title="Inheritants" style={{marginTop: 20}}>
+        {inheritants?.map((inheritant: string[], idx) => {
+          const address = inheritant[0];
+          return (
+            <List.Accordion
+              key={idx}
+              title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
+              left={props => <List.Icon {...props} icon="human" />}>
+              <List.Item
+                onPress={() => {
+                  Clipboard.setString(address as string);
+                  setSuccess({message: 'Address copied to clipboard'});
+                }}
+                title={`Address: ${
+                  address?.slice(0, 10) + '...' + address.slice(-5)
+                }`}
+              />
+            </List.Accordion>
+          );
+        })}
+      </List.Section>
+    ) : null;
+
   return (
     <>
       <AddInheritantForm
@@ -109,21 +135,3 @@ export function AddInheritant() {
     </>
   );
 }
-
-const Inheritants = ({inheritants}) =>
-  inheritants?.length ? (
-    <List.Section title="Inheritants" style={{marginTop: 20}}>
-      {inheritants?.map((inheritant: string[], idx) => (
-        <List.Accordion
-          key={idx}
-          title={`Inheritant-${idx + 1}: ${parseInt(inheritant[1])}%`}
-          left={props => <List.Icon {...props} icon="human" />}>
-          <List.Item
-            title={`Address: ${
-              inheritant[0]?.slice(0, 10) + '...' + inheritant[0].slice(-5)
-            }`}
-          />
-        </List.Accordion>
-      ))}
-    </List.Section>
-  ) : null;

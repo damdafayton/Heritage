@@ -1,28 +1,26 @@
-import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('Help');
-import {List} from 'react-native-paper';
-
-import {Text} from '../ui';
 import {useContext} from 'react';
-import {HerritageWalletContext} from '../context/HerritageWallet.context';
 import {
   Appearance,
-  ScrollView,
+  Platform,
   StyleSheet,
   Switch,
   View,
   useColorScheme,
 } from 'react-native';
-import {styles} from '../ui/styles';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import {AppMode} from '../typings/config';
+const log = logger('Help');
+
+import {Text} from '../ui';
+import {AppMode} from '../types/types';
 import {AppStateContext} from '../context/AppState.context';
+import {logger} from '../utils/logger';
 
 export function Settings() {
   const {appMode, setAppMode} = useContext(AppStateContext);
 
   const colorScheme = useColorScheme();
   const changeTheme = () => {
+    console.log('changeTheme', Appearance);
     Appearance.setColorScheme(colorScheme === 'dark' ? 'light' : 'dark');
   };
 
@@ -42,16 +40,17 @@ export function Settings() {
   return (
     <View>
       <Text variant="titleLarge">Settings</Text>
-      <View style={pageStyle.view}>
-        <Text>Switch theme:</Text>
-        <Switch onChange={changeTheme} value={colorScheme === 'dark'} />
-      </View>
+      {Platform.OS !== 'web' && (
+        <View style={pageStyle.view}>
+          <Text>Switch theme:</Text>
+          <Switch onValueChange={changeTheme} value={colorScheme === 'dark'} />
+        </View>
+      )}
       <View style={pageStyle.view}>
         <Text>Switch app type:</Text>
         <Switch
-          onChange={changeAppType}
+          onValueChange={changeAppType}
           value={appMode === AppMode.INHERITOR}
-          style={pageStyle.switch}
         />
       </View>
     </View>
@@ -66,5 +65,4 @@ const pageStyle = StyleSheet.create({
     marginTop: 16,
     justifyContent: 'space-between',
   },
-  switch: {},
 });

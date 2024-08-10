@@ -3,6 +3,10 @@ import {alchemyProvider} from 'wagmi/providers/alchemy';
 import {publicProvider} from 'wagmi/providers/public';
 import {mainnet, hardhat} from 'wagmi/chains';
 import {WalletConnectConnector} from '@web3modal/wagmi-react-native/src/connectors/WalletConnectConnector';
+import {InjectedConnector} from 'wagmi/connectors/injected';
+
+// import {WalletConnectConnector} from '../../web/node_modules/@wagmi/connectors/dist/esm/walletConnect';
+
 import {Platform} from 'react-native';
 
 import {getTargetNetwork} from '../helpers/network';
@@ -11,7 +15,7 @@ import {burnerWalletConfig} from './wagmi-burner/burnerWalletConfig';
 
 const configuredNetwork = getTargetNetwork();
 // We always want to have mainnet enabled (ENS resolution, ETH price, etc). But only once.
-const enabledChains =
+export const enabledChains =
   // @ts-ignore
   configuredNetwork.id === mainnet.id
     ? [configuredNetwork]
@@ -23,14 +27,14 @@ const {chains, publicClient} = configureChains(enabledChains, [
 ]);
 
 // 2. Create config
-const metadata = {
-  name: 'HeritageDapp',
-  description: '3rd party wallets to connect to the Heritage',
+export const metadata = {
+  name: 'Heritage',
+  description: `Heritage App`,
   url: 'https://damdafayton.github.io/',
   icons: ['https://avatars.githubusercontent.com/u/37784886'],
   redirect: {
     native: 'heritagenative://',
-    // universal: 'YOUR_APP_UNIVERSAL_LINK.com',
+    universal: 'damdafayton.github.io/heritageapp',
   },
   defaultChain: chains[0].id,
 };
@@ -47,7 +51,7 @@ const burnerWalletConnector = allowBurner
     ]
   : [];
 
-const connectors = [
+export const connectors = [
   new WalletConnectConnector({
     chains,
     options: {projectId: appConfig.walletConnectProjectId, metadata},
@@ -55,14 +59,13 @@ const connectors = [
   ...burnerWalletConnector,
 ];
 
-// Remove injected connector on mobile
-const removeInjected = connectors.filter(
-  c => Platform.OS === 'web' || c.id !== 'injected',
-);
+if (Platform.OS === 'web') {
+  connectors.unshift(new InjectedConnector());
+}
 
 const wagmiConfig = createConfig({
   autoConnect: false,
-  connectors: removeInjected,
+  connectors: connectors,
   publicClient,
 });
 

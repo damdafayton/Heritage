@@ -16,6 +16,12 @@
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		9E4DA8E12BA23AE3005DC135 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9E4DA8E02BA23AE3005DC135 /* GoogleService-Info.plist */; };
 		9E4DA8E22BA23AE3005DC135 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9E4DA8E02BA23AE3005DC135 /* GoogleService-Info.plist */; };
+		9E4DA8EA2BABB5B4005DC135 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
+		9E4DA8EB2BABB5B4005DC135 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		9E4DA8EF2BABB5B4005DC135 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		9E4DA8F02BABB5B4005DC135 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		9E4DA8F12BABB5B4005DC135 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 9E4DA8E02BA23AE3005DC135 /* GoogleService-Info.plist */; };
+		A7C559D222FCDAF6FE48E710 /* Pods_HeritageProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9292B74A183D216AEF7CB903 /* Pods_HeritageProject.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -43,6 +49,9 @@
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = HeritageProject/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		9292B74A183D216AEF7CB903 /* Pods_HeritageProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_HeritageProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		9E4DA8E02BA23AE3005DC135 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		9E4DA8FB2BABB5B4005DC135 /* Heritage - I am alive.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Heritage - I am alive.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		9E4DA9132BABB8B6005DC135 /* Heritage-IamAlive.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Heritage-IamAlive.plist"; path = "/Users/damdafayton/damdafayton/heritage/packages/react-native/ios/Heritage-IamAlive.plist"; sourceTree = "<absolute>"; };
+		9ED1F3862BAE3F6C00C5B544 /* Heritage - I am alive.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Heritage - I am alive.entitlements"; sourceTree = "<group>"; };
 		9EF9D1D92B71611C0041289C /* FontAwesome6_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome6_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome6_Solid.ttf"; sourceTree = "<group>"; };
 		9EF9D1DA2B71611C0041289C /* Ionicons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Ionicons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
 		9EF9D1DB2B71611C0041289C /* Entypo.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = Entypo.ttf; path = "../node_modules/react-native-vector-icons/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -62,8 +71,8 @@
 		9EF9D1E92B71611C0041289C /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		9EF9D1EA2B71611C0041289C /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = FontAwesome5_Regular.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		9EF9D1EB2B7161A30041289C /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = MaterialCommunityIcons.ttf; path = "../node_modules/react-native-vector-icons/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
-		B29F69A573D79138B4A44010 /* Pods-HeritageProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeritageProject.release.xcconfig"; path = "Target Support Files/Pods-HeritageProject/Pods-HeritageProject.release.xcconfig"; sourceTree = "<group>"; };
-		E828D3B6DEA7477591EDFFD4 /* Pods-HeritageProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeritageProject.debug.xcconfig"; path = "Target Support Files/Pods-HeritageProject/Pods-HeritageProject.debug.xcconfig"; sourceTree = "<group>"; };
+		D1AF6586312E18C954910253 /* Pods-HeritageProject.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeritageProject.debug.xcconfig"; path = "Target Support Files/Pods-HeritageProject/Pods-HeritageProject.debug.xcconfig"; sourceTree = "<group>"; };
+		EAC2EEC1CCE5C4E044D565C3 /* Pods-HeritageProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeritageProject.release.xcconfig"; path = "Target Support Files/Pods-HeritageProject/Pods-HeritageProject.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		FD850E614FD25B8C168F6A80 /* Pods-HeritageProject-HeritageProjectTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-HeritageProject-HeritageProjectTests.release.xcconfig"; path = "Target Support Files/Pods-HeritageProject-HeritageProjectTests/Pods-HeritageProject-HeritageProjectTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -82,6 +91,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				702A1E412ECC11F41A68897B /* Pods_HeritageProject.framework in Frameworks */,
+				A7C559D222FCDAF6FE48E710 /* Pods_HeritageProject.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9E4DA8EC2BABB5B4005DC135 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,6 +156,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				9ED1F3862BAE3F6C00C5B544 /* Heritage - I am alive.entitlements */,
 				9E4DA8E02BA23AE3005DC135 /* GoogleService-Info.plist */,
 				13B07FAE1A68108700A75B9A /* HeritageProject */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
@@ -146,6 +164,7 @@
 				83CBBA001A601CBA00E9B192 /* Products */,
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
+				9E4DA9132BABB8B6005DC135 /* Heritage-IamAlive.plist */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -157,6 +176,7 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* HeritageProject.app */,
 				00E356EE1AD99517003FC87E /* HeritageProjectTests.xctest */,
+				9E4DA8FB2BABB5B4005DC135 /* Heritage - I am alive.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -190,10 +210,10 @@
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				E828D3B6DEA7477591EDFFD4 /* Pods-HeritageProject.debug.xcconfig */,
-				B29F69A573D79138B4A44010 /* Pods-HeritageProject.release.xcconfig */,
 				7923A9A834D4969467F8D5EA /* Pods-HeritageProject-HeritageProjectTests.debug.xcconfig */,
 				FD850E614FD25B8C168F6A80 /* Pods-HeritageProject-HeritageProjectTests.release.xcconfig */,
+				D1AF6586312E18C954910253 /* Pods-HeritageProject.debug.xcconfig */,
+				EAC2EEC1CCE5C4E044D565C3 /* Pods-HeritageProject.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -209,8 +229,8 @@
 				00E356EA1AD99517003FC87E /* Sources */,
 				00E356EB1AD99517003FC87E /* Frameworks */,
 				00E356EC1AD99517003FC87E /* Resources */,
-				5A48CFB6BE7AFE4F08434766 /* [CP] Embed Pods Frameworks */,
 				7115F9CCC0F1C03A3CB8A7EF /* [CP] Copy Pods Resources */,
+				493ED18B0F19271C1788790B /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -232,10 +252,10 @@
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				97573C16962671FF81C205A3 /* [CP] Embed Pods Frameworks */,
 				ABA987C4B549C716E933EBAA /* [CP-User] [RNFB] Core Configuration */,
 				CF62C363FE24C9E70BBBD5D5 /* [CP] Copy Pods Resources */,
 				C54BCCF45278404B97091D74 /* Upload Debug Symbols to Sentry */,
+				73631932A4C31FD95F92BFDF /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -244,6 +264,26 @@
 			name = HeritageProject;
 			productName = HeritageProject;
 			productReference = 13B07F961A680F5B00A75B9A /* HeritageProject.app */;
+			productType = "com.apple.product-type.application";
+		};
+		9E4DA8E62BABB5B4005DC135 /* Heritage - I am alive */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 9E4DA8F72BABB5B4005DC135 /* Build configuration list for PBXNativeTarget "Heritage - I am alive" */;
+			buildPhases = (
+				9E4DA8E82BABB5B4005DC135 /* Start Packager */,
+				9E4DA8E92BABB5B4005DC135 /* Sources */,
+				9E4DA8EC2BABB5B4005DC135 /* Frameworks */,
+				9E4DA8EE2BABB5B4005DC135 /* Resources */,
+				9E4DA8F22BABB5B4005DC135 /* Bundle React Native code and images */,
+				9E4DA8F62BABB5B4005DC135 /* Upload Debug Symbols to Sentry */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = "Heritage - I am alive";
+			productName = HeritageProject;
+			productReference = 9E4DA8FB2BABB5B4005DC135 /* Heritage - I am alive.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -278,6 +318,7 @@
 			targets = (
 				13B07F861A680F5B00A75B9A /* HeritageProject */,
 				00E356ED1AD99517003FC87E /* HeritageProjectTests */,
+				9E4DA8E62BABB5B4005DC135 /* Heritage - I am alive */,
 			);
 		};
 /* End PBXProject section */
@@ -298,6 +339,16 @@
 				81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
 				9E4DA8E12BA23AE3005DC135 /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9E4DA8EE2BABB5B4005DC135 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9E4DA8EF2BABB5B4005DC135 /* LaunchScreen.storyboard in Resources */,
+				9E4DA8F02BABB5B4005DC135 /* Images.xcassets in Resources */,
+				9E4DA8F12BABB5B4005DC135 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -342,7 +393,7 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5A48CFB6BE7AFE4F08434766 /* [CP] Embed Pods Frameworks */ = {
+		493ED18B0F19271C1788790B /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -376,7 +427,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HeritageProject-HeritageProjectTests/Pods-HeritageProject-HeritageProjectTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		97573C16962671FF81C205A3 /* [CP] Embed Pods Frameworks */ = {
+		73631932A4C31FD95F92BFDF /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -392,6 +443,55 @@
 			shellPath = /bin/sh;
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-HeritageProject/Pods-HeritageProject-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
+		};
+		9E4DA8E82BABB5B4005DC135 /* Start Packager */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = "Start Packager";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "export RCT_METRO_PORT=\"${RCT_METRO_PORT:=8081}\"\necho \"export RCT_METRO_PORT=${RCT_METRO_PORT}\" > \"${SRCROOT}/../node_modules/react-native/scripts/.packager.env\"\nif [ -z \"${RCT_NO_LAUNCH_PACKAGER+xxx}\" ] ; then\n  if nc -w 5 -z localhost ${RCT_METRO_PORT} ; then\n    if ! curl -s \"http://localhost:${RCT_METRO_PORT}/status\" | grep -q \"packager-status:running\" ; then\n      echo \"Port ${RCT_METRO_PORT} already in use, packager is either not running or not running correctly\"\n      exit 2\n    fi\n  else\n    open \"$SRCROOT/../node_modules/react-native/scripts/launchPackager.command\" || echo \"Can't start packager automatically\"\n  fi\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		9E4DA8F22BABB5B4005DC135 /* Bundle React Native code and images */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(SRCROOT)/.xcode.env.local",
+				"$(SRCROOT)/.xcode.env",
+			);
+			name = "Bundle React Native code and images";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "set -e\n\nWITH_ENVIRONMENT=\"../node_modules/react-native/scripts/xcode/with-environment.sh\"\nREACT_NATIVE_XCODE=\"../node_modules/react-native/scripts/react-native-xcode.sh\"\n\n/bin/sh -c \"$WITH_ENVIRONMENT \\\"/bin/sh ../node_modules/@sentry/react-native/scripts/sentry-xcode.sh $REACT_NATIVE_XCODE\\\"\"\n\nif [ \"${CONFIGURATION}\" == \"Debug\" ]; then\n    export SKIP_BUNDLING=true\nfi\n";
+		};
+		9E4DA8F62BABB5B4005DC135 /* Upload Debug Symbols to Sentry */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Upload Debug Symbols to Sentry";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh ../node_modules/@sentry/react-native/scripts/sentry-xcode-debug-files.sh";
 		};
 		ABA987C4B549C716E933EBAA /* [CP-User] [RNFB] Core Configuration */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -498,6 +598,15 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		9E4DA8E92BABB5B4005DC135 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9E4DA8EA2BABB5B4005DC135 /* AppDelegate.mm in Sources */,
+				9E4DA8EB2BABB5B4005DC135 /* main.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
@@ -514,6 +623,7 @@
 			baseConfigurationReference = 7923A9A834D4969467F8D5EA /* Pods-HeritageProject-HeritageProjectTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
+				EXCLUDED_ARCHS = i386;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"DEBUG=1",
 					"$(inherited)",
@@ -525,6 +635,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -542,6 +653,7 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COPY_PHASE_STRIP = NO;
+				EXCLUDED_ARCHS = i386;
 				INFOPLIST_FILE = HeritageProjectTests/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.4;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -549,6 +661,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"-ObjC",
 					"-lc++",
@@ -562,13 +675,14 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E828D3B6DEA7477591EDFFD4 /* Pods-HeritageProject.debug.xcconfig */;
+			baseConfigurationReference = D1AF6586312E18C954910253 /* Pods-HeritageProject.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = PPHFGSWRL4;
 				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = i386;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
 				INFOPLIST_FILE = HeritageProject/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SmartHeritage;
@@ -577,6 +691,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -592,12 +707,13 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B29F69A573D79138B4A44010 /* Pods-HeritageProject.release.xcconfig */;
+			baseConfigurationReference = EAC2EEC1CCE5C4E044D565C3 /* Pods-HeritageProject.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 14;
 				DEVELOPMENT_TEAM = PPHFGSWRL4;
+				EXCLUDED_ARCHS = i386;
 				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
 				INFOPLIST_FILE = HeritageProject/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = SmartHeritage;
@@ -606,6 +722,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 2;
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -687,6 +804,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = YES;
+				NEW_SETTING = "";
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
@@ -770,6 +888,7 @@
 					"\"$(inherited)\"",
 				);
 				MTL_ENABLE_DEBUG_INFO = NO;
+				NEW_SETTING = "";
 				OTHER_CFLAGS = "$(inherited)";
 				OTHER_CPLUSPLUSFLAGS = (
 					"$(OTHER_CFLAGS)",
@@ -788,6 +907,70 @@
 			};
 			name = Release;
 		};
+		9E4DA8F82BABB5B4005DC135 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Heritage - I am alive.entitlements";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PPHFGSWRL4;
+				ENABLE_BITCODE = NO;
+				EXCLUDED_ARCHS = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
+				INFOPLIST_FILE = "Heritage-IamAlive.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Heritage - I am alive";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.heritage.iamalive;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Debug;
+		};
+		9E4DA8F92BABB5B4005DC135 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = "Heritage - I am alive.entitlements";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = PPHFGSWRL4;
+				EXCLUDED_ARCHS = i386;
+				"EXCLUDED_ARCHS[sdk=iphonesimulator*]" = "i386 arm64";
+				INFOPLIST_FILE = "Heritage-IamAlive.plist";
+				INFOPLIST_KEY_CFBundleDisplayName = "Heritage - I am alive";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1;
+				ONLY_ACTIVE_ARCH = NO;
+				OTHER_LDFLAGS = (
+					"$(inherited)",
+					"-ObjC",
+					"-lc++",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.heritage.iamalive;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				VERSIONING_SYSTEM = "apple-generic";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -798,7 +981,7 @@
 				00E356F71AD99517003FC87E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "HeritageProject" */ = {
 			isa = XCConfigurationList;
@@ -807,7 +990,7 @@
 				13B07F951A680F5B00A75B9A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
 		};
 		83CBB9FA1A601CBA00E9B192 /* Build configuration list for PBXProject "HeritageProject" */ = {
 			isa = XCConfigurationList;
@@ -816,7 +999,16 @@
 				83CBBA211A601CBA00E9B192 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
+			defaultConfigurationName = Debug;
+		};
+		9E4DA8F72BABB5B4005DC135 /* Build configuration list for PBXNativeTarget "Heritage - I am alive" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9E4DA8F82BABB5B4005DC135 /* Debug */,
+				9E4DA8F92BABB5B4005DC135 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
 		};
 /* End XCConfigurationList section */
 	};

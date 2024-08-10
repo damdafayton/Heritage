@@ -9,7 +9,7 @@ import {
   DataDecryptionForm,
   DataDecryptionFormVals,
 } from '../forms/DataDecryptionForm';
-import {decryptText, deriveKey} from '../helpers/crpyto';
+import {decryptText, deriveKey} from '../helpers/cryptosWithShim';
 import {logger} from '../utils/logger';
 import {globalStyles} from '../ui/styles';
 import {useTheme} from 'react-native-paper';
@@ -82,7 +82,7 @@ export function Inheritor() {
       setDecryptedData(decryptedData);
       setIsLoading(false);
     } catch (e) {
-      log.error(e);
+      log.warn(e);
       setIsLoading(false);
     }
   };

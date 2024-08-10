@@ -8,11 +8,12 @@ export function getTargetNetwork() {
   const configuredNetwork = appConfig.targetNetwork;
 
   const isAndroidAndDev =
-    Config.RUN_ENV === 'development' && Platform.OS === 'android';
+    Config.NODE_ENV === 'development' && Platform.OS === 'android';
 
   const isLocalAndAndroidAndDev =
     configuredNetwork?.id === hardhat.id && isAndroidAndDev;
 
+  // Android dev env needs to adjust local network to hardhat
   if (isLocalAndAndroidAndDev) {
     //@ts-ignore
     configuredNetwork.rpcUrls.default.http[0] = Config.HARDHAT_RPC;

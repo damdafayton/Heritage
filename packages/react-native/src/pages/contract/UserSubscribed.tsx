@@ -1,11 +1,5 @@
 import {useContext, useState} from 'react';
-import {
-  Linking,
-  ScrollView,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {StyleSheet, View} from 'react-native';
 import {useNavigation} from '@react-navigation/native';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Ant from 'react-native-vector-icons/AntDesign';
@@ -14,20 +8,22 @@ import {SegmentedButtons} from '../../ui/SegmentedButtons';
 import {HerritageWalletContext} from '../../context/HerritageWallet.context';
 import {ActivityIndicator} from '../../ui/ActivityIndicator';
 import {findYearsPassed} from '../../helpers/findYearsPassed';
-import {HomeSubscribedType} from '../../typings/config';
+import {ContractSubscribedType} from '../../types/types';
 import {useContractWrite} from 'wagmi';
 import {useHeritageWalletContract} from '../../hooks/useHeritageWalletContract';
 import {Button} from '../../ui/Button';
 import {Divider} from '../../ui/Divider';
 import {Text} from '../../ui';
 import {useTheme} from 'react-native-paper';
-import {BackgroundTask} from '../../molecules/BackgroundTask';
-import {useGetEtherScanLink} from '../../hooks/useGetEtherScanLink';
+import {ContractData} from '../../molecules/ContractData';
+import {AppStateContext} from '../../context/AppState.context';
 
 export function UserSubscribed() {
   const {subscriptionData, refetchSubscriptionData} = useContext(
     HerritageWalletContext,
   );
+
+  const {setError} = useContext(AppStateContext);
 
   if (!subscriptionData) return <ActivityIndicator />;
 
@@ -54,33 +50,28 @@ export function UserSubscribed() {
     });
 
   const payFee = async () => {
-    // setActiveForm(undefined);
-    await writeAsyncFee();
+    try {
+      // setActiveForm(undefined);
+      await writeAsyncFee();
 
-    refetchSubscriptionData();
+      refetchSubscriptionData();
+    } catch (e) {
+      setError({message: 'An error occured while paying the fee'});
+    }
   };
 
   const theme = useTheme();
 
-  const etherscanLink = useGetEtherScanLink();
-
   return (
     <>
+      <ContractData rowStyle={styles.contractDataRow} />
       <View style={styles.contractDataRow}>
-        <TouchableOpacity
-          onPress={() => {
-            Linking.openURL(etherscanLink);
-          }}>
-          <Text>View contract on Etherscan</Text>
-        </TouchableOpacity>
-      </View>
-      <View style={styles.contractDataRow}>
-        <Text>Annual fee: </Text>
+        <Text>User annual fee: </Text>
         <Text>{feeThousandagePerYear}</Text>
         <Text>‰</Text>
       </View>
       <View style={styles.contractDataRow}>
-        <Text>Minimum fee: </Text>
+        <Text>User minimum fee: </Text>
         <Text>{minFeePerYear}</Text>
         <Text>$</Text>
       </View>
@@ -102,45 +93,45 @@ export function UserSubscribed() {
       <View style={styles.contractDataRow}>
         <Text>Years paid: </Text>
         <Text>{paidFeeCount}</Text>
-        <Button
-          mode="contained-tonal"
-          onPress={payFee}
-          compact={true}
-          style={{marginHorizontal: 8, marginTop: 2}}
-          loading={loadingPayFee}
-          labelStyle={{
-            paddingVertical: 2,
-            marginVertical: 0,
-            paddingHorizontal: 4,
-          }}>
-          Pay extra
-        </Button>
       </View>
       <View style={styles.contractDataRow}>
         <Text>Years required to pay: </Text>
-        <Text>{findYearsPassed(startTimestamp * 1000)}</Text>
+        {startTimestamp ? (
+          <Text>{findYearsPassed(startTimestamp * 1000)}</Text>
+        ) : null}
       </View>
       <Divider />
       <SegmentedButtons
         value={segmentedButtons}
         onValueChange={value => {
+          if (value === ContractSubscribedType.PAY_EXTRA) {
+            payFee();
+            return;
+          }
           // setSegmentedButtons(value);
           navigation.navigate(value);
         }}
         buttons={[
           {
-            value: HomeSubscribedType.DEPOSIT,
-            label: HomeSubscribedType.DEPOSIT,
+            value: ContractSubscribedType.DEPOSIT,
+            label: ContractSubscribedType.DEPOSIT,
           },
-          {value: HomeSubscribedType.SEND, label: HomeSubscribedType.SEND},
+          {
+            value: ContractSubscribedType.SEND,
+            label: ContractSubscribedType.SEND,
+          },
+          {
+            value: ContractSubscribedType.PAY_EXTRA,
+            label: ContractSubscribedType.PAY_EXTRA,
+          },
         ]}
       />
       <Button
         mode="contained-tonal"
         onPress={() =>
-          navigation.navigate(HomeSubscribedType.ADD_INHERITANT as never)
+          navigation.navigate(ContractSubscribedType.ADD_INHERITANT as never)
         }>
-        {HomeSubscribedType.ADD_INHERITANT}
+        {ContractSubscribedType.ADD_INHERITANT}
       </Button>
     </>
   );
@@ -153,6 +144,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     columnGap: 2,
     alignItems: 'center',
-    marginTop: 8,
+    marginTop: 4,
   },
 });

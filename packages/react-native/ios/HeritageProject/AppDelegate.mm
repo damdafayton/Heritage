@@ -1,4 +1,5 @@
 #import "AppDelegate.h"
+#import "RNFBAppCheckModule.h" // ⬅️ ADD THIS LINE
 #import <Firebase.h>
 #import <React/RCTBundleURLProvider.h>
 #import "RNSplashScreen.h"
@@ -11,6 +12,7 @@
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
   // Add me --- \/
+  [RNFBAppCheckModule sharedInstance]; // ⬅️ ADD THIS LINE BEFORE [FIRApp configure]
   [FIRApp configure];
   // Add me --- /\
   

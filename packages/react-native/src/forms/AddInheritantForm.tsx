@@ -56,6 +56,7 @@ export function AddInheritantForm({
             value={values.address}
             onChangeText={handleChange('address')}
             onBlur={handleBlur('address')}
+            multiline={false}
           />
           {errors.address && (
             <HelperText type="error">{errors.address}</HelperText>

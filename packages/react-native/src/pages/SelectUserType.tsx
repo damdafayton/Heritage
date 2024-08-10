@@ -4,7 +4,7 @@ import {Image, StyleSheet, View} from 'react-native';
 import {SegmentedButtons, Text} from '../ui';
 import {AppStateContext} from '../context/AppState.context';
 import {useTheme} from 'react-native-paper';
-import {AppMode} from '../typings/config';
+import {AppMode} from '../types/types';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export function SelectUserType() {
@@ -31,6 +31,7 @@ export function SelectUserType() {
       <SegmentedButtons
         value=""
         onValueChange={onValueChange}
+        style={{width: '100%'}}
         buttons={[
           {value: AppMode.INHERITEE, label: 'Inheritee'},
           {value: AppMode.INHERITOR, label: 'Inheritor'},

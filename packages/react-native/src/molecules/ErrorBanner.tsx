@@ -1,14 +1,13 @@
+import {useTheme} from 'react-native-paper';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialIcons';
 
 import {Banner} from '../ui/Banner';
-import {useTheme} from 'react-native-paper';
 
-export function ErrorBanner(props) {
+export function ErrorBanner({style = {}, ...props}) {
   const theme = useTheme();
 
   return (
     <Banner
-      style={{marginBottom: 16, backgroundColor: theme.colors.background}}
       actions={[
         {
           label: 'Dismiss',
@@ -22,6 +21,10 @@ export function ErrorBanner(props) {
           color={theme.colors.error}
         />
       )}
+      style={[
+        {marginBottom: 16, backgroundColor: theme.colors.background},
+        style,
+      ]}
       {...props}>
       {props.children}
     </Banner>

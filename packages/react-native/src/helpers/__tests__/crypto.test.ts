@@ -1,6 +1,6 @@
 import {test, expect, describe} from '@jest/globals';
 
-import {decryptText, deriveKey, encryptText} from '../crpyto';
+import {decryptText, deriveKey, encryptText} from '../cryptosWithShim';
 
 describe('crypto util', () => {
   let cipherText;

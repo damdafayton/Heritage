@@ -30,7 +30,7 @@
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 			<key>CFBundleURLName</key>
-			<string>com.example.yourBundleId</string>
+			<string>com.HeritageProject.ios</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>heritagenative</string>

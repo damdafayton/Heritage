@@ -1,5 +1,5 @@
 import {createContext} from 'react';
-import {AppMode} from '../typings/config';
+import {AppMode} from '../types/types';
 
 export const AppStateContext = createContext({
   errors: [] as string[],

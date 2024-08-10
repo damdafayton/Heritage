@@ -13,6 +13,8 @@ export function useRefreshAuthenticationToken() {
   const refresh = async (onError?: Function) => {
     log.debug('Refreshing authentication token.');
     try {
+      await AsyncStorage.setItem(AUTHENTICATION_TOKEN, '');
+
       const token = await authGet(address as `0x${string}`);
 
       if (!token) return;

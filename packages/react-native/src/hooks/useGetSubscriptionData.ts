@@ -1,6 +1,5 @@
 import {useContractRead} from 'wagmi';
-import {logger, consoleTransport} from 'react-native-logs';
-const log = logger.createLogger().extend('useGetSubscriptionData');
+const log = logger('useGetSubscriptionData');
 
 import deployedContracts from '../../contracts/deployedContracts';
 import {displayTxResult} from '../helpers/utils';
@@ -8,6 +7,7 @@ import {formatEther} from 'ethers';
 import {useEffect, useState} from 'react';
 import {useHeritageWalletContract} from './useHeritageWalletContract';
 import {isSubscribed} from '../helpers/isSubscribed';
+import {logger} from '../utils/logger';
 
 const defaultABI = deployedContracts['31337']['HeritageWallet'].abi;
 

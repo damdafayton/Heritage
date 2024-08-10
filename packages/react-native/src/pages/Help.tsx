@@ -1,17 +1,18 @@
-import {logger} from 'react-native-logs';
-const log = logger.createLogger().extend('Help');
+const log = logger('Help');
 import {List} from 'react-native-paper';
 
 import {Text} from '../ui';
 import {useContext} from 'react';
 import {HerritageWalletContext} from '../context/HerritageWallet.context';
-import {View, useColorScheme} from 'react-native';
+import {View} from 'react-native';
 import {styles} from '../ui/styles';
+import {logger} from '../utils/logger';
 
 export function Help() {
-  const {minFeePerYear = 5, feeThousandagePerYear = 1} = useContext(
-    HerritageWalletContext,
-  );
+  const heritageWalletData = useContext(HerritageWalletContext);
+
+  const feeThousandagePerYear = heritageWalletData?.feeThousandagePerYear || 1;
+  const minFeePerYear = heritageWalletData?.minFeePerYear || 24;
 
   return (
     <View style={{marginTop: styles.global.marginTop}}>

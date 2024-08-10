@@ -30,7 +30,7 @@ export function Subscribe({visible, setVisible}) {
 
       refetchSubscriptionData();
     } catch (e) {
-      log.error(e);
+      log.warn(e);
       setError({
         message: 'Something went wrong during register, please try again.',
         isModalVisible: true,

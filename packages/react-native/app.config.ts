@@ -2,7 +2,9 @@ import {Hex} from 'viem';
 import * as chains from 'wagmi/chains';
 import Config from 'react-native-config';
 
-console.log('appConfig', JSON.stringify(Config));
+import {configForPlatform} from './src/configForPlatform';
+
+// console.log('appConfig', JSON.stringify(Config));
 
 export type ScaffoldConfig = {
   targetNetwork: chains.Chain;
@@ -16,15 +18,21 @@ export type ScaffoldConfig = {
   nodeEnv?: 'production' | 'development';
   hostName: string;
   sentryDSN?: string;
+  appCheckDebugToken?: string;
+  minimumCheckInterval: number;
+  firebaseApiKey: string;
 };
 
+const isProd = Config.NODE_ENV === 'production';
+
 export const appConfig: ScaffoldConfig = {
+  nodeEnv: Config.NODE_ENV,
+  logSeverity: isProd ? 'error' : 'debug',
+  minimumCheckInterval: isProd ? 240 : 15,
   hostName: Config.HOSTNAME,
   // The network where your DApp lives in
-  logSeverity: Config.LOG_SEVERITY,
   targetNetwork: chains[Config.CHAIN],
   burnerPrivateKey: Config.BURNER_PRIVATE_KEY,
-  nodeEnv: Config.RUN_ENV,
   // The interval at which your front-end polls the RPC servers for new data
   // it has no effect on the local network
   pollingInterval: 30000,
@@ -33,8 +41,9 @@ export const appConfig: ScaffoldConfig = {
   // You can get your own at https://dashboard.alchemyapi.io
   // It's recommended to store it in an env variable:
   // .env.local for local testing, and in the Vercel/system env config for live apps.
-  alchemyApiKey:
-    process.env.PUBLIC_ALCHEMY_API_KEY || Config.PUBLIC_ALCHEMY_API_KEY,
+  alchemyApiKey: isProd
+    ? Config.ALCHEMY_API_KEY
+    : 'oKxs-03sij-U_N0iOlrSsZFr29-IqbuF',
 
   // This is ours WalletConnect's default project ID.
   // You can get your own at https://cloud.walletconnect.com
@@ -55,4 +64,6 @@ export const appConfig: ScaffoldConfig = {
   walletAutoConnect: true,
   sentryDSN:
     'https://88cfa3a3f6d063f2e0e6c4f75e8c86ae@o4506819614736384.ingest.sentry.io/4506819616636928',
+  appCheckDebugToken: Config.APP_CHECK_DEBUG_TOKEN,
+  firebaseApiKey: Config.FIREBASE_API_KEY || configForPlatform.FIREBASE_API_KEY,
 };

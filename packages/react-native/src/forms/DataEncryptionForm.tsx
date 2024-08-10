@@ -10,6 +10,7 @@ import {useTheme} from 'react-native-paper';
 import {globalStyles} from '../ui/styles';
 import {styles} from './styles';
 import {logger} from '../utils/logger';
+import {DataCard} from '../molecules/DataCard';
 const log = logger('DataEncryptionForm');
 
 export type EncryptedDataFormVals = {
@@ -23,19 +24,18 @@ type DataEncryptionFormType = {
   deriveKeyAndEncryptText: (text: string, secretKey) => Promise<string>;
   initialText?: string;
   initialEmails: string[];
-  loading: boolean;
 };
 
 export function DataEncryptionForm({
   initialText,
   initialEmails,
-  loading,
   onSubmit,
   deriveKeyAndEncryptText,
 }: DataEncryptionFormType) {
   const [clientEncryptedText, setClientEncryptedText] = useState('');
   const [validateOnChange, setValidateOnChange] = useState(false);
   const [emails, setEmails] = useState<string[]>(['']);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (initialEmails.length) setEmails(initialEmails);
@@ -48,7 +48,7 @@ export function DataEncryptionForm({
   const validate = values => {
     setValidateOnChange(true);
 
-    return sleep(1000).then(() => {
+    return sleep(100).then(() => {
       const errors: any = {};
 
       const {text, secretKey} = values;
@@ -92,10 +92,13 @@ export function DataEncryptionForm({
   };
 
   const handleOnSubmit = async (values, {resetForm}) => {
+    setLoading(true);
     values.emails = emails;
     values.clientEncryptedText = clientEncryptedText;
 
     await onSubmit(values);
+
+    setLoading(false);
   };
 
   const theme = useTheme();
@@ -134,7 +137,7 @@ export function DataEncryptionForm({
 
                   setClientEncryptedText(encryptedText);
                 } catch (e) {
-                  log.error(e);
+                  log.warn(e);
                 }
               } else {
                 setClientEncryptedText('');
@@ -161,7 +164,7 @@ export function DataEncryptionForm({
 
                 setClientEncryptedText(encryptedText);
               } catch (e) {
-                log.error(e);
+                log.warn(e);
               }
             }}
             onBlur={handleBlur('secretKey')}
@@ -217,17 +220,9 @@ export function DataEncryptionForm({
                 Encryption is done on the client side. This is what we will see
                 and save:
               </Text>
-              <Text
-                style={{
-                  ...globalStyles.textDataView,
-                  backgroundColor: colors.primaryContainer,
-                }}>
-                {clientEncryptedText}
-              </Text>
+              <DataCard text={clientEncryptedText} />
             </>
-          ) : (
-            ''
-          )}
+          ) : null}
           <Button
             loading={loading}
             mode={'contained'}

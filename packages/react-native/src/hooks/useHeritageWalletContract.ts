@@ -27,7 +27,7 @@ export function useHeritageWalletContract() {
 
   if (!deployment) {
     const error = `HeritageWallet can not be found at chain with ID: ${chain.id} and name: ${chain.name}`;
-    log.error(error);
+    log.warn(error);
     return {error};
   }
 

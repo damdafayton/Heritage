@@ -2,10 +2,10 @@ import {Formik} from 'formik';
 import {FormEvent, useState} from 'react';
 import {View} from 'react-native';
 
-import {Button, TextInput, Text, HelperText} from '../ui';
+import {Button, TextInput, HelperText} from '../ui';
 import {sleep} from '../utils/utils';
-import {globalStyles} from '../ui/styles';
-import {useTheme} from 'react-native-paper';
+
+import {DataCard} from '../molecules/DataCard';
 
 export type DataDecryptionFormVals = {
   secretKey: string;
@@ -14,21 +14,19 @@ export type DataDecryptionFormVals = {
 type DataDecryptionFormType = {
   initialEncryptedText: string;
   onSubmitDecrypt: (values: Omit<DataDecryptionFormVals, 'emails'>) => void;
-  loading: boolean;
 };
 
 export function DataDecryptionForm({
   initialEncryptedText,
-  loading,
   onSubmitDecrypt,
 }: DataDecryptionFormType) {
   const [validateOnChange, setValidateOnChange] = useState(false);
-  const colors = useTheme().colors;
+  const [loading, setLoading] = useState(false);
 
   const validate = values => {
     setValidateOnChange(true);
 
-    return sleep(1000).then(() => {
+    return sleep(100).then(() => {
       const errors: any = {};
 
       const {secretKey} = values;
@@ -52,19 +50,15 @@ export function DataDecryptionForm({
       validateOnMount={false}
       validate={validate}
       onSubmit={async (values, {resetForm}) => {
+        setLoading(true);
         await onSubmitDecrypt(values);
 
         resetForm();
+        setLoading(false);
       }}>
       {({handleChange, handleBlur, handleSubmit, values, errors}) => (
         <View>
-          <View
-            style={{
-              ...globalStyles.textDataView,
-              backgroundColor: colors.primaryContainer,
-            }}>
-            <Text>{initialEncryptedText}</Text>
-          </View>
+          <DataCard text={initialEncryptedText} />
           <TextInput
             placeholder="Type your secret key"
             value={values.secretKey}

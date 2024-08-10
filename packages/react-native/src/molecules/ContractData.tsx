@@ -1,4 +1,11 @@
-import {Linking, StyleSheet, TouchableOpacity, View} from 'react-native';
+import {
+  Linking,
+  StyleProp,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewProps,
+} from 'react-native';
 
 import {Text} from '../ui/Text';
 import {useContext} from 'react';
@@ -8,7 +15,9 @@ import {Loading} from './Loading';
 import {useGetEtherScanLink} from '../hooks/useGetEtherScanLink';
 const log = logger('ContractData');
 
-export function ContractData({style}: {style?: any}) {
+type Props = {style?: StyleProp<ViewProps>; rowStyle?: StyleProp<ViewProps>};
+
+export function ContractData(props: Props) {
   const {minFeePerYear, feeThousandagePerYear} = useContext(
     HerritageWalletContext,
   );
@@ -19,27 +28,27 @@ export function ContractData({style}: {style?: any}) {
 
   const etherscanLink = useGetEtherScanLink();
 
+  const {style, rowStyle} = props;
+
   return contractIsLoaded ? (
     <View style={[styles.contractData, style]}>
-      <View style={styles.contractDataCell}>
-        <View style={styles.contractDataRow}>
-          <TouchableOpacity
-            onPress={() => {
-              Linking.openURL(etherscanLink);
-            }}>
-            <Text>View contract on Etherscan</Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.contractDataRow}>
-          <Text>Annual fee: </Text>
-          <Text>{feeThousandagePerYear}</Text>
-          <Text>‰</Text>
-        </View>
-        <View style={styles.contractDataRow}>
-          <Text>Minimum fee: </Text>
-          <Text>{minFeePerYear}</Text>
-          <Text>$</Text>
-        </View>
+      <View style={[styles.contractDataRow, rowStyle]}>
+        <TouchableOpacity
+          onPress={() => {
+            Linking.openURL(etherscanLink);
+          }}>
+          <Text>View contract on Etherscan</Text>
+        </TouchableOpacity>
+      </View>
+      <View style={[styles.contractDataRow, rowStyle]}>
+        <Text>Annual fee: </Text>
+        <Text>{feeThousandagePerYear}</Text>
+        <Text>‰</Text>
+      </View>
+      <View style={[styles.contractDataRow, rowStyle]}>
+        <Text>Minimum fee: </Text>
+        <Text>{minFeePerYear}</Text>
+        <Text>$</Text>
       </View>
     </View>
   ) : (
@@ -49,13 +58,7 @@ export function ContractData({style}: {style?: any}) {
 
 const styles = StyleSheet.create({
   contractData: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
     columnGap: 2,
-  },
-  contractDataCell: {
-    flex: 1,
   },
   contractDataRow: {
     display: 'flex',

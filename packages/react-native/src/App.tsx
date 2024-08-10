@@ -5,7 +5,6 @@
  * @format
  * @flow strict-local
  */
-import SplashScreen from 'react-native-splash-screen';
 
 import 'react';
 
@@ -13,9 +12,9 @@ import {W3mButton} from '@web3modal/wagmi-react-native';
 import {useAccount, useContractRead} from 'wagmi';
 import Config from 'react-native-config';
 import * as Sentry from '@sentry/react-native';
-import PolyfillCrypto from 'react-native-webview-crypto';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {useTheme} from 'react-native-paper';
+import {Platform, View} from 'react-native';
 
 import {useGetSubscriptionData} from './hooks/useGetSubscriptionData';
 import {HerritageWalletContext} from './context/HerritageWallet.context';
@@ -25,7 +24,7 @@ import {displayTxResult} from './helpers/utils';
 import {Appbar} from './ui/Appbar';
 import {useEffect, useLayoutEffect, useReducer, useState} from 'react';
 import {AppStateContext} from './context/AppState.context';
-import {Tabs} from './molecules/Tabs';
+import {Tabs} from './molecules/Tabs.navigator';
 import {SuccessSnackbar} from './molecules/SuccessSnackbar';
 import {ErrorSnackbar} from './molecules/ErrorSnackbar';
 import {useAutoConnect} from './hooks/useAutoConnect';
@@ -33,7 +32,7 @@ import {logger} from './utils/logger';
 import {appConfig} from '../app.config';
 import {Loading} from './molecules/Loading';
 import {SelectUserType} from './pages/SelectUserType';
-import {AppMode} from './typings/config';
+import {AppMode} from './types/types';
 
 Sentry.init({
   dsn: appConfig.sentryDSN,
@@ -101,7 +100,7 @@ const App = () => {
   log.debug({minFeePerYear, feeThousandagePerYear});
 
   useEffect(() => {
-    if (isUserDisconnected || isFetching1) return;
+    if (!userAddress || isFetching1) return;
 
     if (minFeePerYear) {
       log.debug('Connected to contract');
@@ -109,7 +108,7 @@ const App = () => {
     }
 
     if (forceUpdateKey > 1) {
-      log.error(
+      log.warn(
         `Failed to connect to the contract at ${
           heritageAddress || '??'
         } for 2 times. App will try connecting again in 5 seconds`,
@@ -126,23 +125,20 @@ const App = () => {
   }, [forceUpdateKey, isFetching1, isUserDisconnected]);
 
   useEffect(() => {
-    SplashScreen.hide();
-  }, []);
-
-  useEffect(() => {
     log.debug('userAddress', userAddress);
   }, [userAddress]);
 
+  const isIOS = Platform.OS === 'ios';
+
   return (
     <>
-      <PolyfillCrypto />
       <AppStateContext.Provider
         value={{
           isModalVisible,
           errors: errors,
           clearErrors: () => setError([]),
           setError: ({message: newError, isModalVisible: isModal = false}) => {
-            setError([...errors, newError]);
+            setError([newError]);
             setIsModalVisible(isModal);
           },
           successes: successes,
@@ -151,7 +147,7 @@ const App = () => {
             message: newMessage,
             isModalVisible: isModal = false,
           }) => {
-            setSuccess([...successes, newMessage]);
+            setSuccess([newMessage]);
             setIsModalVisible(isModal);
           },
           setAppMode,
@@ -175,20 +171,37 @@ const App = () => {
               case AppMode.INHERITEE:
                 return (
                   <>
-                    {userAddress ? (
-                      <W3mButton
-                        balance="show"
-                        loadingLabel="Loading.."
-                        label="Loading.."
-                        connectStyle={{
-                          backgroundColor: theme.colors.background,
-                          borderRadius: 0,
-                        }}
-                        accountStyle={{
-                          backgroundColor: theme.colors.background,
-                          borderRadius: 0,
-                        }}
-                      />
+                    {userAddress && !isIOS ? (
+                      <>
+                        <View
+                          style={{
+                            width: '100%',
+                            display: 'flex',
+                            alignItems: 'center',
+                            backgroundColor: theme.colors.background,
+                            paddingHorizontal: 18,
+                          }}>
+                          <W3mButton
+                            balance="show"
+                            loadingLabel="Loading.."
+                            label="Loading.."
+                            connectStyle={{
+                              backgroundColor: theme.colors.background,
+                            }}
+                            accountStyle={{
+                              backgroundColor: theme.colors.background,
+                              width: '100%',
+                            }}
+                          />
+                        </View>
+                        <View
+                          style={{
+                            alignSelf: 'center',
+                            backgroundColor: theme.colors.background,
+                            width: '100%',
+                            height: 8,
+                          }}></View>
+                      </>
                     ) : null}
                     <Tabs />
                   </>

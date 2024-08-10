@@ -1,9 +1,11 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 apply plugin: 'com.google.gms.google-services'
+
 // 2nd line, add a new apply:
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
 apply from: file("../../node_modules/react-native-vector-icons/fonts.gradle")
+
 
 
 /**
@@ -84,8 +86,8 @@ android {
         applicationId "com.heritageproject"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4
-        versionName "1.0"
+        versionCode 10
+        versionName "1.10"
     }
     signingConfigs {
         debug {

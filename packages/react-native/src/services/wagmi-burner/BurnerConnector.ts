@@ -25,7 +25,7 @@ const log = logger('BurnerConnector');
 
 export const burnerWalletId = 'burner-wallet';
 export const burnerWalletName = 'Demo Wallet';
-export const defaultBurnerChainId = appConfig.targetNetwork.id;
+export const defaultBurnerChainId = appConfig.targetNetwork?.id;
 
 /**
  * This class is a wagmi connector for BurnerWallet.  Its used by {@link burnerWalletConfig}
