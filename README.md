@@ -11,7 +11,7 @@ This is a Web3 app to deliver your important stuff (data/assets) to your heirs w
 
 ## Q/A
 
-### What are the important stuff?
+### What are the important points?
 
 1.  Your important text data, messages, passwords etc. These are saved in our servers and delivered to the email addresses that you register on the app.
 
