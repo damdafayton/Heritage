@@ -1,6 +1,6 @@
 # HeritageDapp
 
-This is a Web3 app to deliver your important stuff (data/assets) to your heirs without human intervention after you die.
+This is a Web3 app to deliver your important data/assets to your heirs after you die without human intervention thanks to the de-centralized smart contract technology.
 
 <div style="display:flex;">
     <a target="_blank" href="./assets/screenshots/Simulator Screenshot - iPhone 15 Pro Max - 2024-03-14 at 11.50.37.png"><img height="600px" src="./assets/screenshots/Simulator Screenshot - iPhone 15 Pro Max - 2024-03-14 at 11.50.37.png"></a>
